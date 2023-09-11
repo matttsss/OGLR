@@ -12,7 +12,8 @@ add_library(${PROJECT_NAME}
         src/buffers/VertexArray.cpp
         src/buffers/VertexBuffer.cpp
         src/buffers/VertexBufferLayout.cpp
-        src/vendor/stb_image/stb_image.cpp)
+        src/vendor/stb_image/stb_image.cpp
+        src/utils/debug.cpp)
 
 add_subdirectory(ext/glew-cmake)
 add_subdirectory(ext/glfw)
