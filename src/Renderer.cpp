@@ -8,11 +8,11 @@ namespace OGLR
 	Renderer::Renderer()
 	{
 
-#ifdef _DEBUG
+#ifdef _DEBUG 
+		std::cout << "Setting debug callback" << std::endl;
 		DEBUG::setDebugPriorityLevel(DEBUG::PriorityLevel::LOW);
 		DEBUG::enableGLDebug();
 #endif
-
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
