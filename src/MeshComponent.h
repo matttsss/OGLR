@@ -11,21 +11,50 @@
 namespace OGLR
 {
 
+	
+
 	struct MeshComponent
 	{
 
-		MeshComponent(const GLfloat* vertices, GLuint sizeOfVertices, const GLuint* indices, GLsizei countOfIndices,
-			const Buffers::VertexBufferLayout& vbl,
-			const std::string& vertPath, const std::string& fragPath, const std::string& texPath = "");
+		struct MeshComponentBuilder
+		{
 
+			void setVertices(GLfloat* vertices, GLuint verticesSize);
+			void setVerticesLayout(Buffers::VertexBufferLayout& vbl);
+			void setIndices(GLuint* indices, GLsizei indicesCount);
+			void setShaderPath(const std::string& vertPath, const std::string& fragPath);
+			void setTexturePath(const std::string& texPath);
+			void setColor(const glm::vec4& color);
+
+			MeshComponent* build();
+
+		private:
+
+			GLfloat* vertices;
+			GLuint verticesSize;
+			GLuint* indices;
+			GLsizei indicesCount;
+			glm::vec4 color;
+
+			Buffers::VertexBufferLayout vbl;
+			std::string vertPath, fragPath, texturePath;
+
+		};
+
+		MeshComponent() = delete;
 		~MeshComponent();
 
-		Buffers::VertexArray va;
-		Buffers::VertexBuffer vb;
-		Buffers::IndexBuffer ib;
+		Buffers::VertexArray* va;
+		Buffers::VertexBuffer* vb;
+		Buffers::IndexBuffer* ib;
 
 		Shader* shader;
 		Texture* texture;
+
+	private:
+
+		MeshComponent(Buffers::VertexArray* va, Buffers::VertexBuffer* vb, Buffers::IndexBuffer* ib,
+					  Shader* shader, Texture* texture);
 
 	};
 

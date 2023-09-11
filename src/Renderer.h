@@ -7,7 +7,6 @@
 #include "MeshComponent.h"
 #include "Shader.h"
 
-using namespace OGLR::Buffers;
 
 namespace OGLR
 {
@@ -20,7 +19,7 @@ namespace OGLR
 
 		void clear() const;
 
-		void render(const MeshComponent& mesh);
+		void render(const MeshComponent& mesh, const glm::mat4& transform);
 
 	private:
 

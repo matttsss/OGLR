@@ -43,23 +43,17 @@ namespace OGLR
 
 	void Shader::setUniform4f(const std::string& name, float v0, float v1, float v2, float v3)
 	{
-		bind();
 		glUniform4f(getUniformLocation(name), v0, v1, v2, v3);
-		unBind();
 	}
 
 	void Shader::setUniformMat4f(const std::string& name, const glm::mat4& mat)
 	{
-		bind();
 		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &mat[0][0]);
-		unBind();
 	}
 
 	void Shader::setUniform1i(const std::string& name, int v1)
 	{
-		bind();
 		glUniform1i(getUniformLocation(name), v1);
-		unBind();
 	}
 
 	GLuint Shader::CompileShader(GLenum type, const std::string& source)
