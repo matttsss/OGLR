@@ -78,12 +78,12 @@ namespace OGLR
 			GLint maxLength = 0;
 			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
 
-			GLchar infoLog[maxLength];
-			glGetShaderInfoLog(shader, maxLength, &maxLength, infoLog);
+			std::vector<GLchar> infoLog(maxLength);
+			glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
 
 			glDeleteShader(shader);
 
-			std::cout << "Error while compiling shader : " << infoLog << std::endl;
+			std::cout << "Error while compiling shader : " << infoLog.data() << std::endl;
 		}
 
 		return shader;
@@ -133,15 +133,15 @@ namespace OGLR
 			GLint maxLength = 0;
 			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
 
-            GLchar infoLog[maxLength];
-			glGetProgramInfoLog(program, maxLength, &maxLength, infoLog);
+			std::vector<GLchar> infoLog(maxLength);
+			glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
 
 			glDeleteProgram(program);
 
 			glDeleteShader(vertexShader);
 			glDeleteShader(fragmentShader);
 
-			std::cout << "Error while linking shaders : " << infoLog << std::endl;
+			std::cout << "Error while compiling shader : " << infoLog.data() << std::endl;
 		}
 		
 		glDetachShader(program, vertexShader);
