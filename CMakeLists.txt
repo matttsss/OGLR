@@ -13,7 +13,7 @@ add_library(${PROJECT_NAME}
         src/buffers/VertexBuffer.cpp
         src/buffers/VertexBufferLayout.cpp
         src/vendor/stb_image/stb_image.cpp
-        src/utils/debug.cpp)
+        src/utils/debug.cpp "src/Camera.h" "src/Camera.cpp")
 
 add_subdirectory(ext/glew-cmake)
 add_subdirectory(ext/glfw)

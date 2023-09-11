@@ -7,4 +7,5 @@
 
 
 #include "../src/Renderer.h"
+#include "../src/Camera.h"
 #include "../src/MeshComponent.h"

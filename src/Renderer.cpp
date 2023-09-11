@@ -23,7 +23,12 @@ namespace OGLR
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
-	void Renderer::render(const MeshComponent& mesh, const glm::mat4& transform)
+	void Renderer::setCamera(const Camera& camera)
+	{
+		m_PVMatrix = camera.getView() * camera.getProjection();
+	}
+
+	void Renderer::render(const MeshComponent& mesh, const glm::mat4& modelTransform)
 	{
 		mesh.shader->bind();
 		mesh.va->bind();
@@ -32,7 +37,7 @@ namespace OGLR
 		if (mesh.texture)
 			mesh.texture->bind();
 
-		mesh.shader->setUniformMat4f("u_MVP", transform);
+		mesh.shader->setUniformMat4f("u_MVP", m_PVMatrix * modelTransform);
 
 		glDrawElements(GL_TRIANGLES, mesh.ib->getCount(), GL_UNSIGNED_INT, nullptr);
 	}
