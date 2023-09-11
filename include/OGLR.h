@@ -6,6 +6,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-#include "../src/Renderer.h"
-#include "../src/Camera.h"
-#include "../src/MeshComponent.h"
+#include "../src/renderer/Renderer.h"
+#include "../src/renderer/Camera.h"
+#include "../src/renderer/MeshComponent.h"

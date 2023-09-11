@@ -4,18 +4,22 @@ project(OGLR)
 set(CMAKE_CXX_STANDARD 14)
 
 add_library(${PROJECT_NAME}
-        src/MeshComponent.cpp
-        src/Renderer.cpp
-        src/Shader.cpp
-        src/Texture.cpp
+        src/renderer/MeshComponent.cpp
+        src/renderer/Renderer.cpp
+        src/renderer/Shader.cpp
+        src/renderer/Texture.cpp
         src/buffers/IndexBuffer.cpp
         src/buffers/VertexArray.cpp
         src/buffers/VertexBuffer.cpp
         src/buffers/VertexBufferLayout.cpp
         ext/stb_image/stb_image.cpp
         src/utils/debug.cpp
-        src/Camera.h
-        src/Camera.cpp)
+        src/renderer/Camera.h
+        src/renderer/Camera.cpp
+        src/app/Application.cpp
+        src/app/Application.h
+        src/app/Layer.cpp
+        src/app/Layer.h)
 
 add_executable(${PROJECT_NAME}_TEST
         test_src/main.cpp)

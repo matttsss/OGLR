@@ -1,6 +1,6 @@
 #include "Renderer.h"
 
-#include "utils/debug.h"
+#include "../utils/debug.h"
 
 namespace OGLR
 {
