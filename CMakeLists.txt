@@ -12,14 +12,18 @@ add_library(${PROJECT_NAME}
         src/buffers/VertexArray.cpp
         src/buffers/VertexBuffer.cpp
         src/buffers/VertexBufferLayout.cpp
-        src/vendor/stb_image/stb_image.cpp
-        src/utils/debug.cpp "src/Camera.h" "src/Camera.cpp")
+        ext/stb_image/stb_image.cpp
+        src/utils/debug.cpp
+        src/Camera.h
+        src/Camera.cpp)
 
-add_subdirectory(ext/glew-cmake)
-add_subdirectory(ext/glfw)
-add_subdirectory(ext/glm)
+add_executable(${PROJECT_NAME}_TEST
+        test_src/main.cpp)
 
+add_subdirectory(ext)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ext/stb)
+target_include_directories(${PROJECT_NAME} PUBLIC ${EXT_INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME}_TEST PUBLIC include)
 
-target_link_libraries(${PROJECT_NAME} glfw glm libglew_static)
+target_link_libraries(${PROJECT_NAME} EXT_LIB)
+target_link_libraries(${PROJECT_NAME}_TEST ${PROJECT_NAME})
