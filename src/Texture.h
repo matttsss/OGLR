@@ -1,7 +1,8 @@
 #pragma once
 
-#include <string>
+#include <GL/glew.h>
 
+#include <string>
 
 namespace OGLR
 {

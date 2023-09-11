@@ -1,6 +1,7 @@
 #include "Shader.h"
 
 #include <fstream>
+#include <iostream>
 
 namespace OGLR
 {
@@ -19,7 +20,7 @@ namespace OGLR
 		}
 		else
 		{
-			LOG_ERROR("Could not open file '{0}'", filepath);
+			std::cout << "Could not find file : " << filepath << std::endl;
 		}
 
 		return result;
@@ -66,7 +67,7 @@ namespace OGLR
 		GLuint shader = glCreateShader(type);
 
 		const GLchar* sourceCStr = source.c_str();
-		glShaderSource(shader, 1, &sourceCStr, 0);
+		glShaderSource(shader, 1, &sourceCStr, nullptr);
 
 		glCompileShader(shader);
 
@@ -77,13 +78,12 @@ namespace OGLR
 			GLint maxLength = 0;
 			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
 
-			std::vector<GLchar> infoLog(maxLength);
-			glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
+			GLchar infoLog[maxLength];
+			glGetShaderInfoLog(shader, maxLength, &maxLength, infoLog);
 
 			glDeleteShader(shader);
 
-			LOG_ERROR("{0}", infoLog.data());
-			// HZ_CORE_ASSERT(false, "Shader compilation failure!");
+			std::cout << "Error while compiling shader : " << infoLog << std::endl;
 		}
 
 		return shader;
@@ -133,16 +133,15 @@ namespace OGLR
 			GLint maxLength = 0;
 			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
 
-			std::vector<GLchar> infoLog(maxLength);
-			glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
+            GLchar infoLog[maxLength];
+			glGetProgramInfoLog(program, maxLength, &maxLength, infoLog);
 
 			glDeleteProgram(program);
 
 			glDeleteShader(vertexShader);
 			glDeleteShader(fragmentShader);
 
-			LOG_ERROR("{0}", infoLog.data());
-			// HZ_CORE_ASSERT(false, "Shader link failure!");
+			std::cout << "Error while linking shaders : " << infoLog << std::endl;
 		}
 		
 		glDetachShader(program, vertexShader);

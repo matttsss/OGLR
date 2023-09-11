@@ -3,7 +3,7 @@
 namespace OGLR
 {
 
-	MeshComponent::MeshComponent(const GLfloat* vertices, GLuint sizeOfVertices, const GLuint* indices, GLuint countOfIndices, 
+	MeshComponent::MeshComponent(const GLfloat* vertices, GLuint sizeOfVertices, const GLuint* indices, GLsizei countOfIndices,
 		const Buffers::VertexBufferLayout& vbl, 
 		const std::string& vertPath, const std::string& fragPath, const std::string& texPath)
 		: vb(vertices, sizeOfVertices), ib(indices, countOfIndices)

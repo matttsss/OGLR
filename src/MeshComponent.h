@@ -14,7 +14,7 @@ namespace OGLR
 	struct MeshComponent
 	{
 
-		MeshComponent(const GLfloat* vertices, GLuint sizeOfVertices, const GLuint* indices, GLuint countOfIndices, 
+		MeshComponent(const GLfloat* vertices, GLuint sizeOfVertices, const GLuint* indices, GLsizei countOfIndices,
 			const Buffers::VertexBufferLayout& vbl,
 			const std::string& vertPath, const std::string& fragPath, const std::string& texPath = "");
 

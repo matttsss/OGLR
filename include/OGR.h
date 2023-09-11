@@ -1,7 +1,4 @@
-#ifndef OGLR_OGR_H
-#define OGLR_OGR_H
+#pragma once
 
-
-
-
-#endif //OGLR_OGR_H
+#include "../src/Renderer.h"
+#include "../src/MeshComponent.h"

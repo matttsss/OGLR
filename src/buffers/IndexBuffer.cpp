@@ -1,12 +1,10 @@
 #include "IndexBuffer.h"
 
-#include "VertexBufferLayout.h"
-
 namespace OGLR::Buffers
 {
 
-	IndexBuffer::IndexBuffer(const GLuint* indices, GLuint count)
-		: m_Count(count)
+	IndexBuffer::IndexBuffer(const GLuint* indices, GLsizei count)
+		: m_RendererID(0), m_Count(count)
 	{
 		glCreateBuffers(1, &m_RendererID);
 

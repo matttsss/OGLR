@@ -3,20 +3,22 @@ project(OGLR)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(${PROJECT_NAME}
-        src/main.cpp
-        include/OGR.h
+add_library(${PROJECT_NAME}
         src/MeshComponent.cpp
         src/Renderer.cpp
         src/Shader.cpp
         src/Texture.cpp
-        src/Buffers/IndexBuffer.cpp
-        src/Buffers/VertexArray.cpp
-        src/Buffers/VertexBuffer.cpp
-        src/Buffers/VertexBufferLayout.cpp)
+        src/buffers/IndexBuffer.cpp
+        src/buffers/VertexArray.cpp
+        src/buffers/VertexBuffer.cpp
+        src/buffers/VertexBufferLayout.cpp
+        src/vendor/stb_image/stb_image.cpp)
 
+add_subdirectory(ext/glew-cmake)
 add_subdirectory(ext/glfw)
 add_subdirectory(ext/glm)
-add_subdirectory(ext/glew-cmake)
+
+
+target_include_directories(${PROJECT_NAME} PUBLIC ext/stb)
 
 target_link_libraries(${PROJECT_NAME} glfw glm libglew_static)

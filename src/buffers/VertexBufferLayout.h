@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 
 #include <vector>
+#include <iostream>
 
 
 namespace OGLR::Buffers
@@ -28,7 +29,7 @@ namespace OGLR::Buffers
 				case GL_FLOAT: return sizeof(GLfloat);
 
 				default:
-					LOG_ERROR("Incorect type passed to VertexAttibute::getSizeOfType... ");
+					std::cout << "Incorect type passed to VertexAttibute::getSizeOfType... " << std::endl;
 					return 0;
 				}
 			};
@@ -38,13 +39,13 @@ namespace OGLR::Buffers
 		VertexBufferLayout() = default;
 
 		inline const std::vector<VertexAttribute>& getAttributes() const { return m_Attributes; }
-		inline const GLuint& getStride() const { return m_Stride; }
+		inline const GLsizei& getStride() const { return m_Stride; }
 
-		void addFloat(GLint count);
+		void addFloat(GLsizei count);
 
 	private:
 
-		GLuint m_Stride = 0;
+        GLsizei m_Stride = 0;
 		std::vector<VertexAttribute> m_Attributes;
 
 	};

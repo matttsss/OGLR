@@ -2,7 +2,7 @@
 
 namespace OGLR::Buffers
 {
-	void VertexBufferLayout::addFloat(GLint count)
+	void VertexBufferLayout::addFloat(GLsizei count)
 	{
 		VertexAttribute attrib = { count, GL_FLOAT, GL_TRUE };
 		m_Attributes.push_back(attrib);
