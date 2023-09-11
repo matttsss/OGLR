@@ -6,9 +6,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include <GLFW/glfw3.h>
+#include <Gl/glew.h>
 
-int main(void)
+int main()
 {
-
     glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
 }
