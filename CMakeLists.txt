@@ -18,11 +18,13 @@ add_library(${PROJECT_NAME}
         src/renderer/Camera.cpp
         src/app/Application.cpp
         src/app/Application.h
-        src/app/Layer.cpp
-        src/app/Layer.h)
+        src/app/Layer.h
+        )
 
 add_executable(${PROJECT_NAME}_TEST
-        test_src/main.cpp)
+        test_src/main.cpp
+        test_src/TestLayer.cpp
+)
 
 add_subdirectory(ext)
 

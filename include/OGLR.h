@@ -9,3 +9,5 @@
 #include "../src/renderer/Renderer.h"
 #include "../src/renderer/Camera.h"
 #include "../src/renderer/MeshComponent.h"
+#include "../src/app/Application.h"
+#include "../src/app/Layer.h"
