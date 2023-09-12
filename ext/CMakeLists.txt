@@ -3,13 +3,19 @@ project(EXT_LIB)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_library(${PROJECT_NAME}
-        stb_image/stb_image.cpp
+set(IMGUI_SRC
         imgui/imgui.cpp
         imgui/imgui_demo.cpp
         imgui/imgui_draw.cpp
         imgui/imgui_tables.cpp
         imgui/imgui_widgets.cpp
+        imgui/backends/imgui_impl_glfw.cpp
+        imgui/backends/imgui_impl_opengl3.cpp
+)
+
+add_library(${PROJECT_NAME}
+        stb_image/stb_image.cpp
+        ${IMGUI_SRC}
 )
 
 add_subdirectory(glew-cmake)

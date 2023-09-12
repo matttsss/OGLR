@@ -4,6 +4,6 @@ int main()
 {
     OGLR::Application app("OGLR test", 1080, 720);
 
-
+    app.run();
 
 }

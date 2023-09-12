@@ -14,11 +14,8 @@ add_library(${PROJECT_NAME}
         src/buffers/VertexBufferLayout.cpp
         ext/stb_image/stb_image.cpp
         src/utils/debug.cpp
-        src/renderer/Camera.h
         src/renderer/Camera.cpp
         src/app/Application.cpp
-        src/app/Application.h
-        src/app/Layer.h
         )
 
 add_executable(${PROJECT_NAME}_TEST

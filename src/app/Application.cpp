@@ -16,14 +16,14 @@ namespace OGLR
             throw std::runtime_error("GLFW did not initialise... ");
 
         const char* glsl_version = "#version 430 core";
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
         window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
 
-        if (window)
+        if (!window)
             throw std::runtime_error("GLFW window did not get created... ");
 
         glfwMakeContextCurrent(window);
@@ -66,12 +66,15 @@ namespace OGLR
 
     void Application::run()
     {
+
         //std::chrono::
         while (!glfwWindowShouldClose(window))
         {
             // Poll and handle Events
             glfwPollEvents();
             // TODO: handle events
+
+            glClear(GL_COLOR_BUFFER_BIT);
 
             // Start the Dear ImGui frame
             ImGui_ImplOpenGL3_NewFrame();
@@ -83,6 +86,9 @@ namespace OGLR
                 layer.onRender();
 
             }
+
+            ImGui::ShowDemoWindow(nullptr);
+
 
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
