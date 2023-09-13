@@ -56,12 +56,12 @@ namespace OGLR
 	MeshComponent* MeshComponent::MeshComponentBuilder::build()
 	{
 
-		VertexArray* va = new VertexArray();
-		VertexBuffer* vb = new VertexBuffer(vertices, verticesSize);
-		IndexBuffer* ib = new IndexBuffer(indices, indicesCount);
+        VertexArray* pVertexArray = new VertexArray();
+        VertexBuffer* pVertexBuffer = new VertexBuffer(vertices, verticesSize);
+        IndexBuffer* pIndexBuffer = new IndexBuffer(indices, indicesCount);
 
 
-		Shader* shader = Shader::FromGLSLTextFiles(vertPath, fragPath);
+		auto* shader = Shader::FromGLSLTextFiles(vertPath, fragPath);
 		Texture* texture = nullptr;
 
 		shader->bind();
@@ -76,11 +76,11 @@ namespace OGLR
 				color.r, color.g, color.b, color.a);
 		}
 
-		va->bind();
-		va->bindAttributes(*vb, vbl);
+        pVertexArray->bind();
+        pVertexArray->bindAttributes(*pVertexBuffer, vbl);
 
 		shader->unBind();
-		return new MeshComponent(va, vb, ib, shader, texture);
+		return new MeshComponent(pVertexArray, pVertexBuffer, pIndexBuffer, shader, texture);
 	}
 
 }

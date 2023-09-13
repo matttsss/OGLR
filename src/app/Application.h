@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -21,16 +22,17 @@ namespace OGLR
         Application(const std::string& windowName, int width, int height);
         ~Application();
 
+        void pushLayer(Layer* layer);
 
         void run();
 
 
     private:
 
-        GLFWwindow* window;
-        ImGuiIO* io;
+        GLFWwindow* m_Window;
+        ImGuiIO* m_Io;
 
-        std::vector<Layer> layers;
+        std::vector<Layer*> m_Layers;
 
     };
 

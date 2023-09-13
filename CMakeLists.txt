@@ -3,6 +3,11 @@ project(OGLR)
 
 set(CMAKE_CXX_STANDARD 14)
 
+if (MSVC)
+    add_compile_options(/std:c++17)
+endif()
+
+
 add_library(${PROJECT_NAME}
         src/renderer/MeshComponent.cpp
         src/renderer/Renderer.cpp
@@ -14,7 +19,7 @@ add_library(${PROJECT_NAME}
         src/buffers/VertexBufferLayout.cpp
         ext/stb_image/stb_image.cpp
         src/utils/debug.cpp
-        src/renderer/Camera.cpp
+        src/utils/Camera.cpp
         src/app/Application.cpp
         )
 
@@ -22,6 +27,12 @@ add_executable(${PROJECT_NAME}_TEST
         test_src/main.cpp
         test_src/TestLayer.cpp
 )
+
+# Copies the resource folder to the target directory for compatibility
+# with different build systems
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND
+                   ${CMAKE_COMMAND} -E copy_directory
+                       ${CMAKE_SOURCE_DIR}/test_res $<TARGET_FILE_DIR:${PROJECT_NAME}>/test_res)
 
 add_subdirectory(ext)
 

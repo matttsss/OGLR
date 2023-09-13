@@ -6,7 +6,7 @@
 #include "../buffers/VertexBufferLayout.h"
 #include "MeshComponent.h"
 #include "Shader.h"
-#include "Camera.h"
+#include "../utils/Camera.h"
 
 namespace OGLR
 {
@@ -17,11 +17,9 @@ namespace OGLR
 
 		Renderer();
 
-		void clear() const;
-
 		void setCamera(const Camera& camera);
 
-		void render(const MeshComponent& mesh, const glm::mat4& modelTransform);
+		void render(const MeshComponent* mesh, const glm::mat4& modelTransform);
 
 	private:
 
