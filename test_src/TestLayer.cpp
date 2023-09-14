@@ -1,6 +1,5 @@
 #include "TestLayer.h"
 
-
 void TestLayer::onAttach()
 {
     OGLR::Buffers::VertexBufferLayout vbl;
@@ -15,6 +14,10 @@ void TestLayer::onAttach()
     mcb.setTexturePath("test_res/textures/mountains.png");
 
     mesh = mcb.build();
+
+    if (OGLR::INPUT::IsKeyPressedImpl(GLFW_KEY_A))
+        std::cout << "Hello A " << std::endl;
+
 }
 
 void TestLayer::onRender() {

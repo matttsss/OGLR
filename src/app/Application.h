@@ -26,10 +26,12 @@ namespace OGLR
 
         void run();
 
+        static GLFWwindow* getWindow();
+
 
     private:
 
-        GLFWwindow* m_Window;
+        static GLFWwindow* s_Window;
         ImGuiIO* m_Io;
 
         std::vector<Layer*> m_Layers;

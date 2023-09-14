@@ -21,7 +21,8 @@ add_library(${PROJECT_NAME}
         src/utils/debug.cpp
         src/utils/Camera.cpp
         src/app/Application.cpp
-        )
+        src/app/Input.cpp
+)
 
 add_executable(${PROJECT_NAME}_TEST
         test_src/main.cpp

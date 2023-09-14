@@ -5,9 +5,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "../src/app/Application.h"
+#include "../src/app/Input.h"
+#include "../src/app/Layer.h"
 
 #include "../src/renderer/Renderer.h"
-#include "../src/utils/Camera.h"
 #include "../src/renderer/MeshComponent.h"
-#include "../src/app/Application.h"
-#include "../src/app/Layer.h"
+
+#include "../src/utils/Camera.h"

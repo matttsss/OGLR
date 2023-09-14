@@ -8,6 +8,8 @@
 namespace OGLR
 {
 
+    GLFWwindow* Application::s_Window;
+
     Application::Application(const std::string& windowName, int width, int height)
     {
 
@@ -21,12 +23,12 @@ namespace OGLR
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-        m_Window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
+        s_Window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
 
-        if (!m_Window)
+        if (!s_Window)
             throw std::runtime_error("GLFW window did not get created... ");
 
-        glfwMakeContextCurrent(m_Window);
+        glfwMakeContextCurrent(s_Window);
         glfwSwapInterval(1); // Enable vsync
 
         IMGUI_CHECKVERSION();
@@ -53,7 +55,7 @@ namespace OGLR
         if (glewInit() != GLEW_OK)
             throw std::runtime_error("Glew initialisation failed... ");
 
-        ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
+        ImGui_ImplGlfw_InitForOpenGL(s_Window, true);
         ImGui_ImplOpenGL3_Init(glsl_version);
 
     }
@@ -71,7 +73,7 @@ namespace OGLR
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
 
-        glfwDestroyWindow(m_Window);
+        glfwDestroyWindow(s_Window);
         glfwTerminate();
     }
 
@@ -79,7 +81,7 @@ namespace OGLR
     {
 
         //std::chrono::
-        while (!glfwWindowShouldClose(m_Window))
+        while (!glfwWindowShouldClose(s_Window))
         {
             // Poll and handle Events
             glfwPollEvents();
@@ -112,7 +114,7 @@ namespace OGLR
                 glfwMakeContextCurrent(backup_current_context);
             }
 
-            glfwSwapBuffers(m_Window);
+            glfwSwapBuffers(s_Window);
 
         }
     }
@@ -121,6 +123,10 @@ namespace OGLR
     {
         layer->onAttach();
         m_Layers.push_back(layer);
+    }
+
+    GLFWwindow *Application::getWindow() {
+        return s_Window;
     }
 
 

@@ -5,8 +5,6 @@ class TestLayer : public OGLR::Layer
 
 public:
 
-    ~TestLayer();
-
     void onAttach() override;
     void onRender() override;
     void onUpdate(float dt) override;
