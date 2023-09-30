@@ -19,7 +19,7 @@ namespace OGLR
 	}
 
 
-	void Renderer::setCamera(const Camera& camera)
+	void Renderer::setCamera(Camera& camera)
 	{
 		m_PVMatrix = camera.getView() * camera.getProjection();
 	}

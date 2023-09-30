@@ -17,7 +17,7 @@ namespace OGLR
 
 		Renderer();
 
-		void setCamera(const Camera& camera);
+		void setCamera(Camera& camera);
 
 		void render(const MeshComponent* mesh, const glm::mat4& modelTransform);
 

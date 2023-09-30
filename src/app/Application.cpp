@@ -79,10 +79,16 @@ namespace OGLR
 
     void Application::run()
     {
+        using clock = std::chrono::high_resolution_clock;
 
-        //std::chrono::
+        auto baseTime = clock::now();
         while (!glfwWindowShouldClose(s_Window))
         {
+            const auto currentTime = clock::now();
+            const float frameTime = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - baseTime).count() * 1e-9f;
+            baseTime = currentTime;
+
+
             // Poll and handle Events
             glfwPollEvents();
             // TODO: handle events
@@ -96,8 +102,8 @@ namespace OGLR
 
             for (Layer* layer : m_Layers)
             {
+                layer->onUpdate(frameTime);
                 layer->onRender();
-
             }
 
             ImGui::Render();

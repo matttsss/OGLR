@@ -1,9 +1,13 @@
 #include <iostream>
+#include "../app/Input.h"
 #include "Camera.h"
 
+#include <glm/gtx/rotate_vector.hpp>
 
 namespace OGLR
 {
+
+    static const glm::vec3 s_UP = {0.0f, 0.0f, 1.0f};
 
 	void Camera::setOrthographicProjection(
 		float left, float right, float top, float bottom, float near, float far) {
@@ -75,5 +79,63 @@ namespace OGLR
 		viewMatrix[3][1] = -glm::dot(v, position);
 		viewMatrix[3][2] = -glm::dot(w, position);
 	}
+
+    void Camera::onUpdate(float dt)
+    {
+        if (Input::IsKeyPressed(GLFW_KEY_W))
+        {
+            position += dt * aim;
+            hasMoved = true;
+        }
+        if (Input::IsKeyPressed(GLFW_KEY_S))
+        {
+            position -= dt * aim;
+            hasMoved = true;
+        }
+        if (Input::IsKeyPressed(GLFW_KEY_D))
+        {
+            position += dt * glm::cross(aim, s_UP);
+            hasMoved = true;
+        }
+        if (Input::IsKeyPressed(GLFW_KEY_A))
+        {
+            position -= dt * glm::cross(aim, s_UP);
+            hasMoved = true;
+        }
+
+
+        if (Input::IsKeyPressed(GLFW_KEY_UP))
+        {
+            aim = glm::rotate(aim, -5 * dt, glm::cross(s_UP, aim));
+            hasMoved = true;
+        }
+        if (Input::IsKeyPressed(GLFW_KEY_DOWN))
+        {
+            aim = glm::rotate(aim, 5 * dt, glm::cross(s_UP, aim));
+            hasMoved = true;
+        }
+        if (Input::IsKeyPressed(GLFW_KEY_LEFT))
+        {
+            aim = glm::rotate(aim, 5 * dt, s_UP);
+            hasMoved = true;
+        }
+        if (Input::IsKeyPressed(GLFW_KEY_RIGHT))
+        {
+            aim = glm::rotate(aim, -5 * dt, s_UP);
+            hasMoved = true;
+        }
+
+    }
+
+    const glm::mat4 &Camera::getView()
+    {
+        if (hasMoved)
+        {
+            setViewDirection(position, aim);
+            hasMoved = false;
+        }
+
+        return viewMatrix;
+    }
 
 }
