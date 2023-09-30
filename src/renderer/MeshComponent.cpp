@@ -1,13 +1,38 @@
 #include "MeshComponent.h"
 
+#include "../utils/utils.h"
+
 #include <vector>
+#include <unordered_map>
 #include <tiny_obj_loader.h>
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
+
 using namespace OGLR::Buffers;
+
+namespace std
+{
+    template<>
+    struct __attribute__((unused)) hash<OGLR::Vertex>
+    {
+        size_t operator()(OGLR::Vertex const &vertex) const
+        {
+            size_t seed = 0;
+            hashCombine(seed, vertex.position, vertex.normal, vertex.color, vertex.uv);
+            return seed;
+        }
+    };
+
+}
+
+
 
 namespace OGLR
 {
 
+    static tinyobj::ObjReader reader;
+    static tinyobj::ObjReaderConfig reader_config;
 
 	MeshComponent::MeshComponent(VertexArray* va, VertexBuffer* vb, IndexBuffer* ib,
 		Shader* shader, Texture* texture)
@@ -17,31 +42,65 @@ namespace OGLR
 
     MeshComponent::MeshComponent(const std::string &objPath)
     {
-        tinyobj::attrib_t attrib;
-        std::vector<tinyobj::shape_t> shapes;
-        std::vector<tinyobj::material_t> materials;
-        std::string warn, err;
+        if (!reader.ParseFromFile(objPath, reader_config))
+        {
+            if (!reader.Error().empty())
+                std::cerr << "TinyObjReader: " << reader.Error();
+            exit(1);
+        }
 
-        if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, objPath.c_str()))
-            throw std::runtime_error(warn + err);
+        if (!reader.Warning().empty()) {
+            std::cout << "TinyObjReader: " << reader.Warning();
+        }
+
+        auto& attrib = reader.GetAttrib();
+        auto& shapes = reader.GetShapes();
+        auto& materials = reader.GetMaterials();
 
         std::vector<Vertex> vertices;
+        std::vector<uint32_t> indices;
 
-        for (const auto& shape : shapes)
+        std::unordered_map<Vertex, uint32_t> uniqueVertices {};
+
+        // Loop over shapes
+        for (const auto & shape : shapes)
         {
-            for (const auto& index : shape.mesh.indices)
+            // Loop over faces(polygon)
+            size_t index_offset = 0;
+            for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); ++f)
             {
                 Vertex vert {};
+                size_t fv = size_t(shape.mesh.num_face_vertices[f]);
 
-                if (index.vertex_index >= 0)
-                {
+                // Loop over vertices in the face.
+                for (size_t v = 0; v < fv; v++) {
+                    // access to vertex
+                    tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
+
                     vert.position = {
-                            attrib.vertices[3 * index.vertex_index + 0],
-                            attrib.vertices[3 * index.vertex_index + 1],
-                            attrib.vertices[3 * index.vertex_index + 2]
+                            attrib.vertices[3 * idx.vertex_index + 0],
+                            attrib.vertices[3 * idx.vertex_index + 1],
+                            attrib.vertices[3 * idx.vertex_index + 2]
                     };
 
-                    auto colorIndex = 3 * index.vertex_index + 2;
+                    // Check if `normal_index` is zero or positive. negative = no normal data
+                    if (idx.normal_index >= 0) {
+                        vert.normal = {
+                                attrib.normals[3 * idx.normal_index + 0],
+                                attrib.normals[3 * idx.normal_index + 1],
+                                attrib.normals[3 * idx.normal_index + 2]
+                        };
+                    }
+
+                    // Check if `texcoord_index` is zero or positive. negative = no texcoord data
+                    if (idx.texcoord_index >= 0) {
+                        vert.uv = {
+                                attrib.texcoords[2 * idx.texcoord_index + 0],
+                                attrib.texcoords[2 * idx.texcoord_index + 1]
+                        };
+                    }
+
+                    auto colorIndex = 3 * idx.vertex_index + 2;
                     if (colorIndex < attrib.colors.size())
                     {
                         vert.color = {
@@ -55,26 +114,20 @@ namespace OGLR
                         vert.color = { 1.0f, 1.0f, 1.0f };
                     }
 
-                }
 
-                if (index.normal_index >= 0)
+                }
+                index_offset += fv;
+
+                // per-face material
+                shape.mesh.material_ids[f];
+
+                if (uniqueVertices.count(vert) == 0)
                 {
-                    vert.normal = {
-                            attrib.normals[3 * index.normal_index + 0],
-                            attrib.normals[3 * index.normal_index + 1],
-                            attrib.normals[3 * index.normal_index + 2]
-                    };
+                    uniqueVertices[vert] = static_cast<uint32_t>(vertices.size());
+                    vertices.push_back(vert);
                 }
 
-                if (index.texcoord_index >= 0)
-                {
-                    vert.uv = {
-                            attrib.texcoords[2 * index.texcoord_index + 0],
-                            attrib.texcoords[2 * index.texcoord_index + 1]
-                    };
-                }
-
-                vertices.push_back(vert);
+                indices.push_back(uniqueVertices[vert]);
 
             }
         }
