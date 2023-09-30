@@ -25,10 +25,56 @@ namespace OGLR
         if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, objPath.c_str()))
             throw std::runtime_error(warn + err);
 
+        std::vector<Vertex> vertices;
+
         for (const auto& shape : shapes)
         {
             for (const auto& index : shape.mesh.indices)
             {
+                Vertex vert {};
+
+                if (index.vertex_index >= 0)
+                {
+                    vert.position = {
+                            attrib.vertices[3 * index.vertex_index + 0],
+                            attrib.vertices[3 * index.vertex_index + 1],
+                            attrib.vertices[3 * index.vertex_index + 2]
+                    };
+
+                    auto colorIndex = 3 * index.vertex_index + 2;
+                    if (colorIndex < attrib.colors.size())
+                    {
+                        vert.color = {
+                                attrib.colors[colorIndex - 2],
+                                attrib.colors[colorIndex - 1],
+                                attrib.colors[colorIndex - 0],
+                        };
+                    }
+                    else
+                    {
+                        vert.color = { 1.0f, 1.0f, 1.0f };
+                    }
+
+                }
+
+                if (index.normal_index >= 0)
+                {
+                    vert.normal = {
+                            attrib.normals[3 * index.normal_index + 0],
+                            attrib.normals[3 * index.normal_index + 1],
+                            attrib.normals[3 * index.normal_index + 2]
+                    };
+                }
+
+                if (index.texcoord_index >= 0)
+                {
+                    vert.uv = {
+                            attrib.texcoords[2 * index.texcoord_index + 0],
+                            attrib.texcoords[2 * index.texcoord_index + 1]
+                    };
+                }
+
+                vertices.push_back(vert);
 
             }
         }
