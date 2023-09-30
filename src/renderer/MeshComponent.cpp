@@ -34,13 +34,8 @@ namespace OGLR
     static tinyobj::ObjReader reader;
     static tinyobj::ObjReaderConfig reader_config;
 
-	MeshComponent::MeshComponent(VertexArray* va, VertexBuffer* vb, IndexBuffer* ib,
-		Shader* shader, Texture* texture)
-		: va(va), vb(vb), ib(ib), shader(shader), texture(texture)
-	{
-	}
 
-    MeshComponent::MeshComponent(const std::string &objPath)
+    MeshComponent::MeshComponent(const std::string &objPath, const std::string& shaderPathExtentionless)
     {
         if (!reader.ParseFromFile(objPath, reader_config))
         {
@@ -63,19 +58,19 @@ namespace OGLR
         std::unordered_map<Vertex, uint32_t> uniqueVertices {};
 
         // Loop over shapes
-        for (const auto & shape : shapes)
+        for (size_t s = 0; s < shapes.size(); ++s)
         {
             // Loop over faces(polygon)
             size_t index_offset = 0;
-            for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); ++f)
+            for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); ++f)
             {
                 Vertex vert {};
-                size_t fv = size_t(shape.mesh.num_face_vertices[f]);
+                size_t fv = size_t(shapes[s].mesh.num_face_vertices[f]);
 
                 // Loop over vertices in the face.
                 for (size_t v = 0; v < fv; v++) {
                     // access to vertex
-                    tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
+                    tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
 
                     vert.position = {
                             attrib.vertices[3 * idx.vertex_index + 0],
@@ -118,8 +113,7 @@ namespace OGLR
                 }
                 index_offset += fv;
 
-                // per-face material
-                shape.mesh.material_ids[f];
+                shapes[s].mesh.material_ids[f];
 
                 if (uniqueVertices.count(vert) == 0)
                 {
@@ -133,80 +127,60 @@ namespace OGLR
         }
 
 
+        vb = { vertices.data(), static_cast<GLuint>(vertices.size() * sizeof(float)) }; // TODO flatMap vertices to float array
+        ib = { indices.data(), static_cast<GLsizei>(indices.size()) };
+
+
+        shader = Shader::FromGLSLTextFiles(shaderPathExtentionless + ".vert.glsl", shaderPathExtentionless + ".frag.glsl");
+
+        shader->bind();
+        // Set uniforms here
+
+        VertexBufferLayout vbl;
+        vbl.addFloat(3);
+        vbl.addFloat(3);
+        vbl.addFloat(3);
+        vbl.addFloat(2);
+
+
+        va.bind();
+        va.bindAttributes(vb, vbl);
+
+        /*
+        VertexArray* pVertexArray = new VertexArray();
+        VertexBuffer* pVertexBuffer = new VertexBuffer(vertices, verticesSize);
+        IndexBuffer* pIndexBuffer = new IndexBuffer(indices, indicesCount);
+
+
+        auto* shader = Shader::FromGLSLTextFiles(vertPath, fragPath);
+        Texture* texture = nullptr;
+
+        shader->bind();
+        if (!texturePath.empty())
+        {
+            texture = new Texture(texturePath);
+            shader->setUniform1i("u_Texture", 0);
+        }
+        else
+        {
+            shader->setUniform4f("u_Color",
+                                 color.r, color.g, color.b, color.a);
+        }
+
+        pVertexArray->bind();
+        pVertexArray->bindAttributes(*pVertexBuffer, vbl);
+
+        shader->unBind();
+        */
+
     }
 
 
 
     MeshComponent::~MeshComponent()
 	{
-		delete va;
-		delete vb;
-		delete ib;
 		delete texture;
 		delete shader;
-	}
-
-    void MeshComponent::MeshComponentBuilder::setVertices(GLfloat* vertices, GLuint verticesSize)
-	{
-		this->vertices = vertices;
-		this->verticesSize = verticesSize;
-	}
-
-	void MeshComponent::MeshComponentBuilder::setVerticesLayout(VertexBufferLayout& vbl)
-	{
-		this->vbl = vbl;
-	}
-
-	void MeshComponent::MeshComponentBuilder::setIndices(GLuint* indices, GLsizei indicesCount)
-	{
-		this->indices = indices;
-		this->indicesCount = indicesCount;
-	}
-
-	void MeshComponent::MeshComponentBuilder::setShaderPath(const std::string& vertPath, const std::string& fragPath)
-	{
-		this->vertPath = vertPath;
-		this->fragPath = fragPath;
-	}
-
-	void MeshComponent::MeshComponentBuilder::setTexturePath(const std::string& texPath)
-	{
-		this->texturePath = texPath;
-	}
-
-	void MeshComponent::MeshComponentBuilder::setColor(const glm::vec4& color)
-	{
-		this->color = color;
-	}
-
-	MeshComponent* MeshComponent::MeshComponentBuilder::build()
-	{
-
-        VertexArray* pVertexArray = new VertexArray();
-        VertexBuffer* pVertexBuffer = new VertexBuffer(vertices, verticesSize);
-        IndexBuffer* pIndexBuffer = new IndexBuffer(indices, indicesCount);
-
-
-		auto* shader = Shader::FromGLSLTextFiles(vertPath, fragPath);
-		Texture* texture = nullptr;
-
-		shader->bind();
-		if (!texturePath.empty())
-		{
-			texture = new Texture(texturePath);
-			shader->setUniform1i("u_Texture", 0);
-		}
-		else
-		{
-			shader->setUniform4f("u_Color", 
-				color.r, color.g, color.b, color.a);
-		}
-
-        pVertexArray->bind();
-        pVertexArray->bindAttributes(*pVertexBuffer, vbl);
-
-		shader->unBind();
-		return new MeshComponent(pVertexArray, pVertexBuffer, pIndexBuffer, shader, texture);
 	}
 
 }

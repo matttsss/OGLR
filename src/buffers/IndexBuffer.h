@@ -8,6 +8,7 @@ namespace OGLR::Buffers
 	class IndexBuffer
 	{
 	public:
+        IndexBuffer() = default;
 		IndexBuffer(const GLuint* indices, GLsizei count);
 		~IndexBuffer();
 
@@ -17,8 +18,8 @@ namespace OGLR::Buffers
 		const GLsizei& getCount() const { return m_Count; }
 
 	private:
-		GLuint m_RendererID;
-        GLsizei m_Count;
+		GLuint m_RendererID = 0;
+        GLsizei m_Count = 0;
 
 	};
 

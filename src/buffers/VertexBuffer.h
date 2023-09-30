@@ -9,6 +9,7 @@ namespace OGLR::Buffers
 	{
 
 	public:
+        VertexBuffer() = default;
 		VertexBuffer(const void* data, GLuint size);
 		~VertexBuffer();
 
@@ -16,7 +17,7 @@ namespace OGLR::Buffers
 		void unbind() const;
 
 	private:
-		GLuint m_RendererID;
+		GLuint m_RendererID = 0;
 	};
 
 }
