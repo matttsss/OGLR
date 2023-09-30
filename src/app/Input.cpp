@@ -4,22 +4,21 @@
 #include <GLFW/glfw3.h>
 
 
-namespace OGLR::INPUT
+namespace OGLR
 {
 
-
-    bool IsKeyPressedImpl(int keycode)
+    bool Input::IsKeyPressed(int keycode)
     {
         auto state = glfwGetKey(Application::getWindow(), keycode);
         return state == GLFW_PRESS || state == GLFW_REPEAT;
     }
 
-    bool IsMouseButtonPressedImpl(int button)
+    bool Input::IsMouseButtonPressed(int button)
     {
         return glfwGetMouseButton(Application::getWindow(), button) == GLFW_PRESS;
     }
 
-    std::pair<float, float> GetMousePositionImpl()
+    std::pair<float, float> Input::GetMousePosition()
     {
         double xpos, ypos;
         glfwGetCursorPos( Application::getWindow(), &xpos, &ypos);
@@ -27,15 +26,14 @@ namespace OGLR::INPUT
         return { (float)xpos, (float)ypos };
     }
 
-    float GetMouseXImpl()
+    float Input::GetMouseX()
     {
-        return GetMousePositionImpl().first;
+        return GetMousePosition().first;
     }
 
-    float GetMouseYImpl()
+    float Input::GetMouseY()
     {
-        return GetMousePositionImpl().second;
+        return GetMousePosition().second;
     }
-
 
 }

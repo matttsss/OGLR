@@ -4,21 +4,18 @@
 
 #include "Application.h"
 
-namespace OGLR::INPUT
+namespace OGLR
 {
-    /*
-    static bool IsKeyPressedImpl(int keycode);
+    class Input
+    {
+    public:
+        static bool IsKeyPressed(int keycode);
 
-    static bool IsMouseButtonPressedImpl(int button);
-    static std::pair<float, float> GetMousePositionImpl();
-    static float GetMouseXImpl();
-    static float GetMouseYImpl();*/
+        static bool IsMouseButtonPressed(int button);
 
-    bool IsKeyPressedImpl(int keycode);
+        static std::pair<float, float> GetMousePosition();
+        static float GetMouseX();
+        static float GetMouseY();
+    };
 
-    bool IsMouseButtonPressedImpl(int button);
-
-    std::pair<float, float> GetMousePositionImpl();
-    float GetMouseXImpl();
-    float GetMouseYImpl();
 }
