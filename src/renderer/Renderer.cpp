@@ -21,7 +21,7 @@ namespace OGLR
 
 	void Renderer::setCamera(Camera& camera)
 	{
-		m_PVMatrix = camera.getView() * camera.getProjection();
+		m_PVMatrix = camera.getProjection() * camera.getView();
 	}
 
 	void Renderer::render(const MeshComponent* mesh, const glm::mat4& modelTransform)

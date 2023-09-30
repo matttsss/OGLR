@@ -3,17 +3,17 @@
 void TestLayer::onAttach()
 {
     OGLR::Buffers::VertexBufferLayout vbl;
-    vbl.addFloat(2);
+    vbl.addFloat(3);
     vbl.addFloat(2);
 
     OGLR::MeshComponent::MeshComponentBuilder mcb;
-    mcb.setVertices(vertices, 4 * 4 * sizeof(GLfloat));
+    mcb.setVertices(vertices, 4 * 5 * sizeof(GLfloat));
     mcb.setIndices(indices, 6);
     mcb.setVerticesLayout(vbl);
-    mcb.setShaderPath("test_res/shaders/test.vert.glsl", "test_res/shaders/test.frag.glsl");
+    mcb.setShaderPath("test_res/shaders/textured_simple.vert.glsl", "test_res/shaders/textured_simple.frag.glsl");
     mcb.setTexturePath("test_res/textures/mountains.png");
 
-    m_Camera.setOrthographicProjection(-1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
+    m_Camera.setOrthographicProjection(-1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 1.0f);
 
     mesh = mcb.build();
 

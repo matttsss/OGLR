@@ -18,11 +18,11 @@ private:
 
     OGLR::MeshComponent* mesh = nullptr;
 
-    float vertices[16] = {
-            -0.5f, -0.5f, 0.0f, 0.0f,
-            0.5f, -0.5f, 1.0f, 0.0f,
-            0.5f,  0.5f, 1.0f, 1.0f,
-            -0.5f,  0.5f, 0.0f, 1.0f
+    float vertices[20] = {
+            -0.5f, 0.5f, -0.5f,   /* UV */0.0f, 0.0f,
+            0.5f, 0.5f, -0.5f,    /* UV */1.0f, 0.0f,
+            0.5f, 0.5f,  0.5f,  /* UV */1.0f, 1.0f,
+            -0.5f, 0.5f,  0.5f, /* UV */0.0f, 1.0f
     };
 
     GLuint indices[6] = {

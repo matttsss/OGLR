@@ -32,7 +32,7 @@ namespace OGLR
 	}
 
 	void Camera::setViewDirection(glm::vec3 position, glm::vec3 direction, glm::vec3 up) {
-		const glm::vec3 w{ glm::normalize(direction) };
+		const glm::vec3 w{ direction };
 		const glm::vec3 u{ glm::normalize(glm::cross(w, up)) };
 		const glm::vec3 v{ glm::cross(w, u) };
 
@@ -82,6 +82,9 @@ namespace OGLR
 
     void Camera::onUpdate(float dt)
     {
+
+        const glm::vec3 side = glm::cross(s_UP, aim);
+
         if (Input::IsKeyPressed(GLFW_KEY_W))
         {
             position += dt * aim;
@@ -94,24 +97,26 @@ namespace OGLR
         }
         if (Input::IsKeyPressed(GLFW_KEY_D))
         {
-            position += dt * glm::cross(aim, s_UP);
+            position -= dt * side;
             hasMoved = true;
         }
         if (Input::IsKeyPressed(GLFW_KEY_A))
         {
-            position -= dt * glm::cross(aim, s_UP);
+            position += dt * side;
             hasMoved = true;
         }
 
 
-        if (Input::IsKeyPressed(GLFW_KEY_UP))
+        const float dot =  glm::dot(aim, s_UP);
+
+        if (Input::IsKeyPressed(GLFW_KEY_UP) && dot < 0.99f)
         {
-            aim = glm::rotate(aim, -5 * dt, glm::cross(s_UP, aim));
+            aim = glm::rotate(aim, -5 * dt, side);
             hasMoved = true;
         }
-        if (Input::IsKeyPressed(GLFW_KEY_DOWN))
+        if (Input::IsKeyPressed(GLFW_KEY_DOWN) && dot > -0.99f)
         {
-            aim = glm::rotate(aim, 5 * dt, glm::cross(s_UP, aim));
+            aim = glm::rotate(aim, 5 * dt, side);
             hasMoved = true;
         }
         if (Input::IsKeyPressed(GLFW_KEY_LEFT))
@@ -131,6 +136,7 @@ namespace OGLR
     {
         if (hasMoved)
         {
+            aim = glm::normalize(aim);
             setViewDirection(position, aim);
             hasMoved = false;
         }
