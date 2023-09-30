@@ -42,6 +42,9 @@ namespace OGLR
 		};
 
 		MeshComponent() = delete;
+        MeshComponent(const std::string& objPath);
+        MeshComponent(const std::string& objPath, const std::string& shaderName);
+
 		~MeshComponent();
 
 		Buffers::VertexArray* va;

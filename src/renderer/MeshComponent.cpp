@@ -1,17 +1,44 @@
 #include "MeshComponent.h"
 
+#include <vector>
+#include <tiny_obj_loader.h>
 
 using namespace OGLR::Buffers;
 
 namespace OGLR
 {
+
+
 	MeshComponent::MeshComponent(VertexArray* va, VertexBuffer* vb, IndexBuffer* ib,
 		Shader* shader, Texture* texture)
 		: va(va), vb(vb), ib(ib), shader(shader), texture(texture)
 	{
 	}
 
-	MeshComponent::~MeshComponent()
+    MeshComponent::MeshComponent(const std::string &objPath)
+    {
+        tinyobj::attrib_t attrib;
+        std::vector<tinyobj::shape_t> shapes;
+        std::vector<tinyobj::material_t> materials;
+        std::string warn, err;
+
+        if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, objPath.c_str()))
+            throw std::runtime_error(warn + err);
+
+        for (const auto& shape : shapes)
+        {
+            for (const auto& index : shape.mesh.indices)
+            {
+
+            }
+        }
+
+
+    }
+
+
+
+    MeshComponent::~MeshComponent()
 	{
 		delete va;
 		delete vb;
@@ -20,7 +47,7 @@ namespace OGLR
 		delete shader;
 	}
 
-	void MeshComponent::MeshComponentBuilder::setVertices(GLfloat* vertices, GLuint verticesSize)
+    void MeshComponent::MeshComponentBuilder::setVertices(GLfloat* vertices, GLuint verticesSize)
 	{
 		this->vertices = vertices;
 		this->verticesSize = verticesSize;

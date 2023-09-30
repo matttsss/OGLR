@@ -15,6 +15,7 @@ set(IMGUI_SRC
 
 add_library(${PROJECT_NAME}
         stb_image/stb_image.cpp
+        tinyobjloader/tiny_obj_loader.cpp
         ${IMGUI_SRC}
 )
 
@@ -22,7 +23,7 @@ add_subdirectory(glew-cmake)
 add_subdirectory(glfw)
 add_subdirectory(glm)
 
-set(EXT_INCLUDE_DIR ext/stb_image ext/imgui ext/imgui/backends PARENT_SCOPE)
+set(EXT_INCLUDE_DIR ext/tinyobjloader ext/stb_image ext/imgui ext/imgui/backends PARENT_SCOPE)
 
 target_include_directories(${PROJECT_NAME} PUBLIC stb_image imgui imgui/backends)
 
