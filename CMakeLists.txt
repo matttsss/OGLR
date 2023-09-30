@@ -22,7 +22,6 @@ add_library(${PROJECT_NAME}
         src/utils/Camera.cpp
         src/app/Application.cpp
         src/app/Input.cpp
-        src/utils/utils.h
 )
 
 add_executable(${PROJECT_NAME}_TEST

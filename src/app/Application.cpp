@@ -81,6 +81,8 @@ namespace OGLR
     {
         using clock = std::chrono::high_resolution_clock;
 
+        //glClearColor(1.0, 0.5, 1.0, 1.0);
+
         auto baseTime = clock::now();
         while (!glfwWindowShouldClose(s_Window))
         {

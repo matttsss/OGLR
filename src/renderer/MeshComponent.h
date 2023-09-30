@@ -13,6 +13,8 @@ namespace OGLR
 
     struct Vertex
     {
+        static const short ATTRIBUTES_SIZE = 11;
+
         glm::vec3 position { 0.0f };
         glm::vec3 normal   { 0.0f };
         glm::vec3 color    { 1.0f };
@@ -26,6 +28,8 @@ namespace OGLR
             color == other.color &&
             uv == other.uv;
         }
+
+        const float* toArray() const;
 
     };
 	
@@ -44,6 +48,9 @@ namespace OGLR
 
 		Shader* shader;
 		Texture* texture;
+
+    private:
+        static float* flattenVertices(const std::vector<Vertex> &vertices);
 
 	};
 

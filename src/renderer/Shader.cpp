@@ -136,7 +136,8 @@ namespace OGLR
 			glDeleteShader(vertexShader);
 			glDeleteShader(fragmentShader);
 
-			std::cout << "Error while compiling shader : " << infoLog.data() << std::endl;
+			std::cerr << "Error while compiling shader : " << infoLog.data() << std::endl;
+            exit(1);
 		}
 		
 		glDetachShader(program, vertexShader);

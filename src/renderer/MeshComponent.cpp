@@ -126,8 +126,8 @@ namespace OGLR
             }
         }
 
-
-        vb = { vertices.data(), static_cast<GLuint>(vertices.size() * sizeof(float)) }; // TODO flatMap vertices to float array
+        float* flattenedVertices = flattenVertices(vertices);
+        vb = {flattenedVertices, sizeof(flattenedVertices) * sizeof(float) }; // TODO flatMap vertices to float array
         ib = { indices.data(), static_cast<GLsizei>(indices.size()) };
 
 
@@ -183,4 +183,27 @@ namespace OGLR
 		delete shader;
 	}
 
+    float* MeshComponent::flattenVertices(const std::vector<Vertex> &vertices) {
+        const size_t totalSize = vertices.size() * Vertex::ATTRIBUTES_SIZE;
+        float* flattened = new float[totalSize];
+
+        for (size_t i = 0; i < vertices.size(); ++i)
+        {
+            const float* vertex = vertices[i].toArray();
+            for (size_t j = 0; j < Vertex::ATTRIBUTES_SIZE; ++j)
+            {
+                flattened[i * Vertex::ATTRIBUTES_SIZE + j] = vertex[j];
+            }
+            delete vertex;
+        }
+
+        return flattened;
+    }
+
+    const float *Vertex::toArray() const {
+        return new float[]{position.x, position.y, position.z,
+                           normal.x, normal.y, normal.z,
+                           color.r, color.g, color.b,
+                           uv.x, uv.y};
+    }
 }
