@@ -22,6 +22,7 @@ add_library(${PROJECT_NAME}
         src/utils/Camera.cpp
         src/app/Application.cpp
         src/app/Input.cpp
+        src/buffers/UniformBuffer.cpp
 )
 
 add_executable(${PROJECT_NAME}_TEST
@@ -37,7 +38,7 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND
 
 add_subdirectory(ext)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${EXT_INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${EXT_INCLUDE_DIR} src)
 target_include_directories(${PROJECT_NAME}_TEST PUBLIC include)
 
 target_link_libraries(${PROJECT_NAME} EXT_LIB)
