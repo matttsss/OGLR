@@ -38,6 +38,7 @@ namespace OGLR
 	{
 
 		MeshComponent() = delete;
+        MeshComponent(int vertCount, int indicesCount);
         MeshComponent(const std::string &objPath, const std::string& shaderPathExtentionless);
 
 		~MeshComponent();
@@ -46,8 +47,8 @@ namespace OGLR
 		Buffers::VertexBuffer vb;
 		Buffers::IndexBuffer ib;
 
-		Shader* shader;
-		Texture* texture;
+		Shader* shader = nullptr;
+		Texture* texture = nullptr;
 
     private:
         static float* flattenVertices(const std::vector<Vertex> &vertices);

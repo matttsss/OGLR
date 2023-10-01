@@ -2,16 +2,14 @@
 
 void TestLayer::onAttach()
 {
-    OGLR::Buffers::VertexBufferLayout vbl;
-    vbl.addFloat(3);
-    vbl.addFloat(2);
 
-    m_Camera.setOrthographicProjection(-5.0f, 5.0f, 5.0f, -5.0f, -5.0f, 5.0f);
+    m_Camera.setPerspectiveProjection(glm::radians(50.f), 1.6, 0.1f, 100.f);
 
-    mesh = new OGLR::MeshComponent{
-        "test_res/models/flat_vase.obj",
-        "test_res/shaders/colored_obj"};
+    //mesh = new OGLR::MeshComponent{
+      //  "test_res/models/colored_cube.obj",
+      //  "test_res/shaders/colored_obj"};
 
+      mesh = new OGLR::MeshComponent(12, 6);
 
 }
 

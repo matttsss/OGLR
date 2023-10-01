@@ -34,6 +34,19 @@ namespace OGLR
     static tinyobj::ObjReader reader;
     static tinyobj::ObjReaderConfig reader_config;
 
+    static float vertices[12] = {
+            -0.5f, 1.f, -0.5f,   /* UV 0.0f, 0.0f,*/
+            0.5f, 1.f, -0.5f,    /* UV 1.0f, 0.0f,*/
+            0.5f, 1.f,  0.5f,  /* UV 1.0f, 1.0f,*/
+            -0.5f, 1.f,  0.5f /* UV 0.0f, 1.0f*/
+    };
+
+    static GLuint indices[6] = {
+            0, 1, 2, // First triangle
+            2, 3, 0  // Second triangle
+    };
+
+
 
     MeshComponent::MeshComponent(const std::string &objPath, const std::string& shaderPathExtentionless)
     {
@@ -127,7 +140,7 @@ namespace OGLR
         }
 
         float* flattenedVertices = flattenVertices(vertices);
-        vb = {flattenedVertices, sizeof(flattenedVertices) * sizeof(float) }; // TODO flatMap vertices to float array
+        vb = {flattenedVertices, static_cast<GLuint>(vertices.size() * Vertex::ATTRIBUTES_SIZE * sizeof(float)) };
         ib = { indices.data(), static_cast<GLsizei>(indices.size()) };
 
 
@@ -175,6 +188,24 @@ namespace OGLR
 
     }
 
+    MeshComponent::MeshComponent(int vertCount, int indicesCount) {
+        vb = {vertices, static_cast<GLuint>(vertCount * sizeof(float))};
+        ib = {indices, indicesCount};
+
+        vb.bind();
+        ib.bind();
+
+        shader = Shader::FromGLSLTextFiles("test_res/shaders/colored_obj.vert.glsl", "test_res/shaders/colored_obj.frag.glsl");
+        shader->bind();
+
+        VertexBufferLayout vbl;
+        vbl.addFloat(3);
+
+        va.bind();
+        va.bindAttributes(vb, vbl);
+        shader->unBind();
+
+    }
 
 
     MeshComponent::~MeshComponent()
@@ -192,13 +223,15 @@ namespace OGLR
             const float* vertex = vertices[i].toArray();
             for (size_t j = 0; j < Vertex::ATTRIBUTES_SIZE; ++j)
             {
-                flattened[i * Vertex::ATTRIBUTES_SIZE + j] = vertex[j];
+                int index = i * Vertex::ATTRIBUTES_SIZE + j;
+                flattened[index] = vertex[j];
             }
             delete vertex;
         }
 
         return flattened;
     }
+
 
     const float *Vertex::toArray() const {
         return new float[]{position.x, position.y, position.z,
