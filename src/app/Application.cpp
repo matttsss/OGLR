@@ -93,7 +93,6 @@ namespace OGLR
 
             // Poll and handle Events
             glfwPollEvents();
-            // TODO: handle events
 
             glClear(GL_COLOR_BUFFER_BIT);
 

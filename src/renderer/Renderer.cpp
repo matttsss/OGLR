@@ -16,7 +16,12 @@ namespace OGLR
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	}
+
+        // TODO sort culling
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
+
+    }
 
 
 	void Renderer::setCamera(Camera& camera)

@@ -13,6 +13,14 @@ void TestLayer::onAttach()
 
 void TestLayer::onRender() {
 
+
+
+    ImGui::Begin("Renderer settings");
+
+
+
+    ImGui::End();
+
     m_Renderer.setCamera(m_Camera);
     m_Renderer.render(mesh, glm::mat4{1.0f});
 

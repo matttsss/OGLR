@@ -7,7 +7,7 @@
 namespace OGLR
 {
 
-    static const glm::vec3 s_UP = {0.0f, 0.0f, 1.0f};
+    static const glm::vec3 s_UP = {0.0f, 1.0f, 0.0f};
 
 	void Camera::setOrthographicProjection(
 		float left, float right, float top, float bottom, float near, float far) {
@@ -105,7 +105,16 @@ namespace OGLR
             position += dt * side;
             hasMoved = true;
         }
-
+        if (Input::IsKeyPressed(GLFW_KEY_LEFT_CONTROL))
+        {
+            position -= dt * s_UP;
+            hasMoved = true;
+        }
+        if (Input::IsKeyPressed(GLFW_KEY_SPACE))
+        {
+            position += dt * s_UP;
+            hasMoved = true;
+        }
 
         const float dot =  glm::dot(aim, s_UP);
 

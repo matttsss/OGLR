@@ -14,7 +14,7 @@ public:
 private:
 
     OGLR::Renderer m_Renderer {};
-    OGLR::Camera m_Camera {{0.0f, 0.0f, 0.0f},  {0.0f, 1.0f, 0.0f}};
+    OGLR::Camera m_Camera {{0.0f, 0.0f, -5.0f},  {0.0f, 0.0f, 1.0f}};
 
     OGLR::MeshComponent* mesh = nullptr;
 
