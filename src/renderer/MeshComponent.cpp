@@ -35,13 +35,10 @@ namespace OGLR
     static tinyobj::ObjReaderConfig reader_config;
 
 
-    MeshComponent::MeshComponent(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices, Shader *shader)
+    MeshComponent::MeshComponent(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices)
         : va(), vb(flattenVertices(vertices), vertices.size() * Vertex::ATTRIBUTES_SIZE * sizeof(float)),
-          ib(indices.data(), indices.size()), shader(shader)
+          ib(indices.data(), indices.size())
     {
-
-        shader->bind();
-        // Set uniforms here
 
         VertexBufferLayout vbl;
         vbl.addFloat(3);
@@ -57,7 +54,7 @@ namespace OGLR
 
     }
 
-    MeshComponent* MeshComponent::loadFromFiles(const std::string &objPath, const std::string& shaderPathExtentionless)
+    MeshComponent* MeshComponent::loadFromObjFile(const std::string &objPath)
     {
         if (!reader.ParseFromFile(objPath, reader_config))
         {
@@ -124,11 +121,7 @@ namespace OGLR
             }
         }
 
-        Shader* shader = Shader::FromGLSLTextFiles(
-                shaderPathExtentionless + ".vert.glsl",
-                shaderPathExtentionless + ".frag.glsl");
-
-        return new MeshComponent(vertices, indices, shader);
+        return new MeshComponent(vertices, indices);
 
         /*
         VertexArray* pVertexArray = new VertexArray();
@@ -166,6 +159,19 @@ namespace OGLR
 		delete shader;
 	}
 
+
+    MeshComponent *MeshComponent::addTexture(const std::string &texPath) {
+        texture = new Texture(texPath);
+        return this;
+    }
+
+    MeshComponent *MeshComponent::addShader(const std::string &vertPath, const std::string &fragPath) {
+        shader = OGLR::Shader::FromGLSLTextFiles(vertPath, fragPath);
+        return this;
+    }
+
+
+
     float* MeshComponent::flattenVertices(const std::vector<Vertex> &vertices) {
         const size_t totalSize = vertices.size() * Vertex::ATTRIBUTES_SIZE;
         float* flattened = new float[totalSize];
@@ -183,7 +189,6 @@ namespace OGLR
 
         return flattened;
     }
-
 
     const float *Vertex::toArray() const {
         return new float[]{position.x, position.y, position.z,

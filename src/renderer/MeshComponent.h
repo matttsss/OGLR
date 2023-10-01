@@ -38,11 +38,14 @@ namespace OGLR
 	{
 
 		MeshComponent() = delete;
-        MeshComponent(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices, Shader* shader);
+        MeshComponent(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
 
 		~MeshComponent();
 
-        static MeshComponent* loadFromFiles(const std::string &objPath, const std::string& shaderPathExtentionless);
+        MeshComponent* addTexture(const std::string& texPath);
+        MeshComponent* addShader(const std::string& vertPath, const std::string& fragPath);
+
+        static MeshComponent* loadFromObjFile(const std::string &objPath);
 
 		Buffers::VertexArray va;
 		Buffers::VertexBuffer vb;
