@@ -1,6 +1,6 @@
 #version 450 core
 
-#extension GL_EXT_debug_printf : require
+//#extension GL_EXT_debug_printf : require
 
 layout (location = 0) in vec4 a_Position;
 //layout (location = 1) in vec4 a_Normal;
@@ -13,7 +13,7 @@ out vec3 v_Color;
 
 void main()
 {
-    debugPrintfEXT("Hi");
+    //debugPrintfEXT("Hi");
     gl_Position = u_MVP * a_Position;
     v_Color = vec3(1.0f, 1.0f, 1.0f);
 }
