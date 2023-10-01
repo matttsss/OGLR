@@ -9,8 +9,6 @@ void TestLayer::onAttach()
         "test_res/models/colored_cube.obj",
         "test_res/shaders/colored_obj");
 
-    //mesh = new OGLR::MeshComponent(12, 6);
-
 }
 
 void TestLayer::onRender() {
