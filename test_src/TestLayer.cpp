@@ -3,13 +3,13 @@
 void TestLayer::onAttach()
 {
 
-    m_Camera.setOrthographicProjection(-1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 1.0f);
+    m_Camera.setPerspectiveProjection(glm::radians(50.f), 1.6f, 0.1f, 10.f);
 
-    //mesh = new OGLR::MeshComponent{
-      //  "test_res/models/colored_cube.obj",
-      //  "test_res/shaders/colored_obj"};
+    mesh = OGLR::MeshComponent::loadFromFiles(
+        "test_res/models/colored_cube.obj",
+        "test_res/shaders/colored_obj");
 
-      mesh = new OGLR::MeshComponent(12, 6);
+    //mesh = new OGLR::MeshComponent(12, 6);
 
 }
 

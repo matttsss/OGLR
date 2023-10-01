@@ -34,21 +34,42 @@ namespace OGLR
     static tinyobj::ObjReader reader;
     static tinyobj::ObjReaderConfig reader_config;
 
-    static float vertices[12] = {
+    static float v[12] = {
             -0.5f, 1.f, -0.5f,   /* UV 0.0f, 0.0f,*/
             0.5f, 1.f, -0.5f,    /* UV 1.0f, 0.0f,*/
             0.5f, 1.f,  0.5f,  /* UV 1.0f, 1.0f,*/
             -0.5f, 1.f,  0.5f /* UV 0.0f, 1.0f*/
     };
 
-    static GLuint indices[6] = {
+    static GLuint i[6] = {
             0, 1, 2, // First triangle
             2, 3, 0  // Second triangle
     };
 
 
+    MeshComponent::MeshComponent(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices, Shader *shader)
+        : va(), vb(flattenVertices(vertices), vertices.size() * Vertex::ATTRIBUTES_SIZE * sizeof(float)),
+          ib(indices.data(), indices.size()), shader(shader)
+    {
 
-    MeshComponent::MeshComponent(const std::string &objPath, const std::string& shaderPathExtentionless)
+        shader->bind();
+        // Set uniforms here
+
+        VertexBufferLayout vbl;
+        vbl.addFloat(3);
+        vbl.addFloat(3);
+        vbl.addFloat(3);
+        vbl.addFloat(2);
+
+        vb.bind();
+        ib.bind();
+
+        va.bind();
+        va.bindAttributes(vb, vbl);
+
+    }
+
+    MeshComponent* MeshComponent::loadFromFiles(const std::string &objPath, const std::string& shaderPathExtentionless)
     {
         if (!reader.ParseFromFile(objPath, reader_config))
         {
@@ -139,25 +160,9 @@ namespace OGLR
             }
         }
 
-        float* flattenedVertices = flattenVertices(vertices);
-        vb = {flattenedVertices, static_cast<GLuint>(vertices.size() * Vertex::ATTRIBUTES_SIZE * sizeof(float)) };
-        ib = { indices.data(), static_cast<GLsizei>(indices.size()) };
+        Shader* shader = Shader::FromGLSLTextFiles(shaderPathExtentionless + ".vert.glsl", shaderPathExtentionless + ".frag.glsl");
 
-
-        shader = Shader::FromGLSLTextFiles(shaderPathExtentionless + ".vert.glsl", shaderPathExtentionless + ".frag.glsl");
-
-        shader->bind();
-        // Set uniforms here
-
-        VertexBufferLayout vbl;
-        vbl.addFloat(3);
-        vbl.addFloat(3);
-        vbl.addFloat(3);
-        vbl.addFloat(2);
-
-
-        va.bind();
-        va.bindAttributes(vb, vbl);
+        return new MeshComponent(vertices, indices, shader);
 
         /*
         VertexArray* pVertexArray = new VertexArray();
@@ -188,9 +193,9 @@ namespace OGLR
 
     }
 
-    MeshComponent::MeshComponent(int vertCount, int indicesCount) {
-        vb = {vertices, static_cast<GLuint>(vertCount * sizeof(float))};
-        ib = {indices, indicesCount};
+    MeshComponent::MeshComponent(int vertCount, int indicesCount)
+    : va(), vb(v, static_cast<GLuint>(vertCount * sizeof(float))), ib(i, indicesCount)
+    {
 
         vb.bind();
         ib.bind();
