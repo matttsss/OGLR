@@ -36,4 +36,9 @@ namespace OGLR
         return GetMousePosition().second;
     }
 
+    void Input::LockMouseCursor(bool lock)
+    {
+        glfwSetInputMode(Application::getWindow(), GLFW_CURSOR, lock ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+    }
+
 }

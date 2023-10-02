@@ -36,6 +36,8 @@ namespace OGLR
         glm::vec3 position{ 0.f };
 
         bool hasMoved = true;
+        bool mouseIsMoving = false;
+        std::pair<float, float> lastMousePos = {0, 0};
 
     };
 

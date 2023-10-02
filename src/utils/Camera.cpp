@@ -116,27 +116,35 @@ namespace OGLR
             hasMoved = true;
         }
 
-        const float dot =  glm::dot(aim, s_UP);
+        if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1))
+        {
+            if (!mouseIsMoving)
+            {
+                lastMousePos = Input::GetMousePosition();
+                Input::LockMouseCursor(true);
+                mouseIsMoving = true;
+                return;
+            }
 
-        if (Input::IsKeyPressed(GLFW_KEY_UP) && dot < 0.99f)
-        {
-            aim = glm::rotate(aim, -5 * dt, side);
+            const std::pair<float, float> newPos = Input::GetMousePosition();
+
+            // Moves sideways
+            aim = glm::rotate(aim, (lastMousePos.first - newPos.first) * dt, s_UP);
+
+            // Moves up/down
+            const float dot =  glm::dot(aim, s_UP);
+            const float dy = lastMousePos.second - newPos.second;
+            if (!(dot > 0.97f && dy > 0) && !(dot < -0.97f && dy < 0)) // TODO gimbal lock
+                aim = glm::rotate(aim, dy * dt, side);
             hasMoved = true;
+
+            lastMousePos = newPos;
+
         }
-        if (Input::IsKeyPressed(GLFW_KEY_DOWN) && dot > -0.99f)
+        else
         {
-            aim = glm::rotate(aim, 5 * dt, side);
-            hasMoved = true;
-        }
-        if (Input::IsKeyPressed(GLFW_KEY_LEFT))
-        {
-            aim = glm::rotate(aim, 5 * dt, s_UP);
-            hasMoved = true;
-        }
-        if (Input::IsKeyPressed(GLFW_KEY_RIGHT))
-        {
-            aim = glm::rotate(aim, -5 * dt, s_UP);
-            hasMoved = true;
+            Input::LockMouseCursor(false);
+            mouseIsMoving = false;
         }
 
     }
