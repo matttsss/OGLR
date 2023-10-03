@@ -1,4 +1,3 @@
-#include <iostream>
 #include "../app/Input.h"
 #include "Camera.h"
 
@@ -135,7 +134,7 @@ namespace OGLR
             // Moves up/down
             const float dot =  glm::dot(aim, s_UP);
             const float dy = lastMousePos.second - newPos.second;
-            if (!(dot > 0.97f && dy > 0) && !(dot < -0.97f && dy < 0)) // TODO gimbal lock
+            if (!((dy > 0 && dot < -0.90) || (dy < 0 && dot > 0.90))) // TODO gimbal lock
                 aim = glm::rotate(aim, dy * dt, side);
             hasMoved = true;
 
