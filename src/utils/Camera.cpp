@@ -116,16 +116,17 @@ namespace OGLR
             hasMoved = true;
         }
 
-        if (Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1))
+        bool mouseButtonIsPressed = Input::IsMouseButtonPressed(GLFW_MOUSE_BUTTON_1);
+        if (mouseButtonIsPressed && !mouseIsMoving)
         {
-            if (!mouseIsMoving)
-            {
-                lastMousePos = Input::GetMousePosition();
-                Input::LockMouseCursor(true);
-                mouseIsMoving = true;
-                return;
-            }
+            lastMousePos = Input::GetMousePosition();
+            Input::LockMouseCursor(true);
+            mouseIsMoving = true;
+            return;
+        }
 
+        if (mouseButtonIsPressed && mouseIsMoving)
+        {
             const std::pair<float, float> newPos = Input::GetMousePosition();
 
             // Moves sideways
@@ -139,13 +140,11 @@ namespace OGLR
             hasMoved = true;
 
             lastMousePos = newPos;
+            return;
+        }
 
-        }
-        else
-        {
-            Input::LockMouseCursor(false);
-            mouseIsMoving = false;
-        }
+        Input::LockMouseCursor(false);
+        mouseIsMoving = false;
 
     }
 
