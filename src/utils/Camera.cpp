@@ -134,7 +134,7 @@ namespace OGLR
             // Moves up/down
             const float dot =  glm::dot(aim, s_UP);
             const float dy = lastMousePos.second - newPos.second;
-            if (!((dy > 0 && dot < -0.90) || (dy < 0 && dot > 0.90))) // TODO gimbal lock
+            if (!((dy > 0 && dot < -0.90) || (dy < 0 && dot > 0.90)))
                 aim = glm::rotate(aim, dy * dt, side);
             hasMoved = true;
 
