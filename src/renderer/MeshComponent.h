@@ -13,7 +13,14 @@ namespace OGLR
 
     struct Vertex
     {
-        static const short ATTRIBUTES_SIZE = 11;
+        static constexpr short ATTRIBUTES_SIZE = 11;
+
+        Vertex(glm::vec3 position = glm::vec3(0.0f),
+               glm::vec3 normal = glm::vec3(0.0f, 1.0f, 0.0f),
+               glm::vec3 color = glm::vec3{1.0f},
+               glm::vec2 uv = glm::vec3{0.0f}):
+            position(position), normal(normal), color(color), uv(uv) {}
+
 
         glm::vec3 position { 0.0f };
         glm::vec3 normal   { 0.0f };
@@ -23,13 +30,11 @@ namespace OGLR
         bool operator==(const Vertex& other) const
         {
             return
-            position == other.position &&
-            normal == other.normal &&
-            color == other.color &&
-            uv == other.uv;
+                position == other.position &&
+                normal == other.normal &&
+                color == other.color &&
+                uv == other.uv;
         }
-
-        const float* toArray() const;
 
     };
 	
@@ -38,7 +43,7 @@ namespace OGLR
 	{
 
 		MeshComponent() = delete;
-        MeshComponent(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
+        MeshComponent(std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
 
 		~MeshComponent();
 
@@ -53,9 +58,6 @@ namespace OGLR
 
 		Shader* shader = nullptr;
 		Texture* texture = nullptr;
-
-    private:
-        static float* flattenVertices(const std::vector<Vertex> &vertices);
 
 	};
 

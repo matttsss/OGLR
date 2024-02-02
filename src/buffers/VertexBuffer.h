@@ -10,7 +10,7 @@ namespace OGLR::Buffers
 
 	public:
         VertexBuffer() = delete;
-		VertexBuffer(const void* data, GLuint size);
+		VertexBuffer(void* data, GLuint size);
 		~VertexBuffer();
 
 		void bind() const;

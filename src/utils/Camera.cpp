@@ -132,12 +132,15 @@ namespace OGLR
             aim = glm::rotate(aim, (lastMousePos.first - newPos.first) * dt, s_UP);
 
             // Moves up/down
-            const float dot =  glm::dot(aim, s_UP);
             const float dy = lastMousePos.second - newPos.second;
-            if (!(dot > 0.97f && dy > 0) && !(dot < -0.97f && dy < 0)) // TODO gimbal lock
-                aim = glm::rotate(aim, dy * dt, side);
-            hasMoved = true;
+            glm::vec3 newAim = glm::rotate(aim, dy * dt, side);
+            const float dot =  glm::dot(newAim, s_UP);
 
+            // GimBall lock prevention check
+            if (abs(dot) < 1 - 1e-4f)
+                aim = newAim;
+
+            hasMoved = true;
             lastMousePos = newPos;
 
         }

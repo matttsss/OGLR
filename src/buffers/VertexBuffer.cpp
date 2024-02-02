@@ -3,7 +3,7 @@
 namespace OGLR::Buffers
 {
 
-	VertexBuffer::VertexBuffer(const void* data, GLuint size)
+	VertexBuffer::VertexBuffer(void* data, GLuint size)
 	{
 		glCreateBuffers(1, &m_RendererID);
 		bind();

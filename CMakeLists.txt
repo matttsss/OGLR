@@ -23,6 +23,8 @@ add_library(${PROJECT_NAME}
         src/app/Application.cpp
         src/app/Input.cpp
         src/buffers/UniformBuffer.cpp
+        src/renderer/Terrain.cpp
+        src/renderer/Terrain.h
 )
 
 add_executable(${PROJECT_NAME}_TEST

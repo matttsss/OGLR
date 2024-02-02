@@ -35,8 +35,8 @@ namespace OGLR
     static tinyobj::ObjReaderConfig reader_config;
 
 
-    MeshComponent::MeshComponent(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices)
-        : va(), vb(flattenVertices(vertices), vertices.size() * Vertex::ATTRIBUTES_SIZE * sizeof(float)),
+    MeshComponent::MeshComponent(std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices)
+        : va(), vb(vertices.data(), vertices.size() * Vertex::ATTRIBUTES_SIZE * sizeof(float)),
           ib(indices.data(), indices.size())
     {
 
@@ -170,30 +170,4 @@ namespace OGLR
         return this;
     }
 
-
-
-    float* MeshComponent::flattenVertices(const std::vector<Vertex> &vertices) {
-        const size_t totalSize = vertices.size() * Vertex::ATTRIBUTES_SIZE;
-        float* flattened = new float[totalSize];
-
-        for (size_t i = 0; i < vertices.size(); ++i)
-        {
-            const float* vertex = vertices[i].toArray();
-            for (size_t j = 0; j < Vertex::ATTRIBUTES_SIZE; ++j)
-            {
-                int index = i * Vertex::ATTRIBUTES_SIZE + j;
-                flattened[index] = vertex[j];
-            }
-            delete vertex;
-        }
-
-        return flattened;
-    }
-
-    const float *Vertex::toArray() const {
-        return new float[]{position.x, position.y, position.z,
-                           normal.x, normal.y, normal.z,
-                           color.r, color.g, color.b,
-                           uv.x, uv.y};
-    }
 }
