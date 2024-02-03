@@ -18,8 +18,8 @@ namespace OGLR
 
 
         // TODO sort culling
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT);
+        //glEnable(GL_CULL_FACE);
+        //glCullFace(GL_FRONT);
 
     }
 
@@ -35,12 +35,13 @@ namespace OGLR
 		mesh->va.bind();
 		mesh->ib.bind();
 
-		if (mesh->texture)
-			mesh->texture->bind();
+        if (mesh->texture)
+            mesh->texture->bind();
 
-		mesh->shader->setUniformMat4f("u_MVP", m_PVMatrix * modelTransform);
+        mesh->shader->setUniformMat4f("u_MVP", m_PVMatrix * modelTransform);
 
 		glDrawElements(GL_TRIANGLES, mesh->ib.getCount(), GL_UNSIGNED_INT, nullptr);
-	}
+
+    }
 
 }

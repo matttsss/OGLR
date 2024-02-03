@@ -5,7 +5,7 @@ namespace OGLR
 
     Terrain* Terrain::buildTerrain(uint32_t resolution, uint32_t seed) {
         uint32_t pointsNb = resolution * resolution;
-        uint32_t indexNb = 80 * 2 * (resolution-1) * (resolution-1);
+        uint32_t indexNb = 3 * 2 * pointsNb;
         std::vector<Vertex>* vertices = new std::vector<Vertex>(pointsNb);
         std::vector<uint32_t>* indices = new std::vector<uint32_t >(indexNb);
 
@@ -13,26 +13,26 @@ namespace OGLR
         {
             for (uint32_t j = 0; j < resolution; ++j)
             {
-                float x = ((float)i)/resolution;
-                float y = ((float)j)/resolution;
+                float x = ((float)i)/resolution - 0.5f;
+                float y = ((float)j)/resolution - 0.5f;
 
                 uint32_t vertIdx = resolution * j + i;
 
                 vertices->at(vertIdx) = Vertex(
-                        {x,0.0f, y}
+                        {x,sinf(x*y), y}
                 );
 
                 //std::cout << "Passed vertices" << std::endl;
 
-                if (i < resolution && j < resolution)
+                if (i < resolution - 1 && j < resolution - 1)
                 {
                     const uint32_t indexBfrIdx = 6 * vertIdx;
                     indices->at(indexBfrIdx) = vertIdx;
                     indices->at(indexBfrIdx + 1) = resolution * (j+1) + i;
                     indices->at(indexBfrIdx + 2) = resolution * (j+1) + i + 1;
                     indices->at(indexBfrIdx + 3) = vertIdx;
-                    indices->at(indexBfrIdx + 4) = resolution * j + i + 1;
-                    indices->at(indexBfrIdx + 5) = resolution * (j+1) + i + 1;
+                    indices->at(indexBfrIdx + 4) = resolution * (j+1) + i + 1;
+                    indices->at(indexBfrIdx + 5) = resolution * j + i + 1;
                 }
                 //std::cout << "Passed indices" << std::endl;
 

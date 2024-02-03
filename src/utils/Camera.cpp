@@ -138,7 +138,7 @@ namespace OGLR
             const float dot =  glm::dot(newAim, s_UP);
 
             // GimBall lock prevention check
-            if (abs(dot) < 1 - 1e-4f)
+            if (fabsf(dot) < 1 - 1e-4f)
                 aim = newAim;
 
             hasMoved = true;
