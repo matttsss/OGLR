@@ -43,12 +43,15 @@ namespace OGLR
 	{
 
 		MeshComponent() = delete;
-        MeshComponent(std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
+        MeshComponent(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
 
 		~MeshComponent();
 
         MeshComponent* addTexture(const std::string& texPath);
         MeshComponent* addShader(const std::string& vertPath, const std::string& fragPath);
+
+        void bind() const;
+        void unBind() const;
 
         static MeshComponent* loadFromObjFile(const std::string &objPath);
 
@@ -57,7 +60,7 @@ namespace OGLR
 		Buffers::IndexBuffer ib;
 
 		Shader* shader = nullptr;
-		Texture* texture = nullptr;
+		std::vector<Texture> textures;
 
 	};
 

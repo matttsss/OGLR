@@ -11,6 +11,5 @@
 
 #include "../src/renderer/Renderer.h"
 #include "../src/renderer/MeshComponent.h"
-#include "../src/renderer/Terrain.h"
 
 #include "../src/utils/Camera.h"

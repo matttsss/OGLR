@@ -31,16 +31,11 @@ namespace OGLR
 
 	void Renderer::render(const MeshComponent* mesh, const glm::mat4& modelTransform)
 	{
-		mesh->shader->bind();
-		mesh->va.bind();
-		mesh->ib.bind();
-
-        if (mesh->texture)
-            mesh->texture->bind();
-
+		mesh->bind();
         mesh->shader->setUniformMat4f("u_MVP", m_PVMatrix * modelTransform);
 
 		glDrawElements(GL_TRIANGLES, mesh->ib.getCount(), GL_UNSIGNED_INT, nullptr);
+        mesh->unBind();
 
     }
 

@@ -2,6 +2,8 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include "terrain/Terrain.h"
+
 void TestLayer::onAttach()
 {
 
@@ -11,8 +13,8 @@ void TestLayer::onAttach()
             ->addShader("test_res/shaders/textured_simple.vert.glsl", "test_res/shaders/textured_simple.frag.glsl")
             ->addTexture("test_res/textures/tex_cube.png");
 
-    terrain = OGLR::Terrain::buildTerrain(16, 1);
-    terrain->addShader("test_res/shaders/colored_obj.vert.glsl", "test_res/shaders/colored_obj.frag.glsl");
+    terrain = Terrain::buildTile(16, 1)
+                ->addShader("test_res/shaders/colored_obj.vert.glsl", "test_res/shaders/colored_obj.frag.glsl");
 
 }
 

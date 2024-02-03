@@ -35,7 +35,7 @@ namespace OGLR
     static tinyobj::ObjReaderConfig reader_config;
 
 
-    MeshComponent::MeshComponent(std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices)
+    MeshComponent::MeshComponent(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices)
         : va(), vb(vertices.data(), vertices.size() * Vertex::ATTRIBUTES_SIZE * sizeof(float)),
           ib(indices.data(), indices.size())
     {
@@ -69,7 +69,7 @@ namespace OGLR
 
         auto& attrib = reader.GetAttrib();
         auto& shapes = reader.GetShapes();
-        auto& materials = reader.GetMaterials();
+        //auto& materials = reader.GetMaterials();
 
         std::vector<Vertex> vertices;
         std::vector<uint32_t> indices;
@@ -155,19 +155,37 @@ namespace OGLR
 
     MeshComponent::~MeshComponent()
 	{
-		delete texture;
 		delete shader;
 	}
 
 
     MeshComponent *MeshComponent::addTexture(const std::string &texPath) {
-        texture = new Texture(texPath);
+        textures.emplace_back(texPath);
         return this;
     }
 
     MeshComponent *MeshComponent::addShader(const std::string &vertPath, const std::string &fragPath) {
         shader = OGLR::Shader::FromGLSLTextFiles(vertPath, fragPath);
         return this;
+    }
+
+    void MeshComponent::bind() const {
+        shader->bind();
+        va.bind();
+        ib.bind();
+
+        for (uint32_t i = 0; i < textures.size(); ++i)
+            textures[i].bind(i);
+
+    }
+
+    void MeshComponent::unBind() const {
+        for (const Texture& tex : textures)
+            tex.unBind();
+
+        ib.unBind();
+        va.unBind();
+        shader->unBind();
     }
 
 }
