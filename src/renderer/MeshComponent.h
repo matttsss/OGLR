@@ -47,8 +47,7 @@ namespace OGLR
 
 		~MeshComponent();
 
-        template<typename... TextArgs>
-        MeshComponent* addTexture(TextArgs&&... texArgs);
+        MeshComponent* addTexture(Texture texture);
         MeshComponent* addShader(const std::string& vertPath, const std::string& fragPath);
 
         void bind() const;

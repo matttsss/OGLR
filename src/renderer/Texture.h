@@ -18,19 +18,29 @@ namespace OGLR
             X4B = GL_RGBA8
         };
 
-		Texture(const std::string& path, Type t);
+        /***
+         * Builds a texture interpreting data as a file path if width and height are both 0
+         * Or interprets data as a pointer to the data itself if width and height are not 0
+         * @param data (void*) Pointer to string or texture data
+         * @param t (Type) Format of the texture
+         * @param width
+         * @param height
+         */
+        Texture(const void* data, Type t, int32_t width = 0, int32_t height = 0);
+        Texture(Texture&& other);
 		~Texture();
 
 		void bind(GLuint slot = 0) const;
 		void unBind() const;
 
-		inline int getWidth() const { return m_Width; }
-		inline int getHeight() const { return m_Height; }
+		inline uint32_t getWidth() const { return m_Width; }
+		inline uint32_t getHeight() const { return m_Height; }
 
 	private:
 		GLuint m_RendererID;
 		std::string m_FilePath;
-		unsigned char* m_LocalBuffer;
+        Type m_Type;
+		void* m_LocalBuffer;
 		int m_Width, m_Height, m_BPP;
 
 	};
