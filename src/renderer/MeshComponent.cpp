@@ -158,9 +158,9 @@ namespace OGLR
 		delete shader;
 	}
 
-
-    MeshComponent *MeshComponent::addTexture(const std::string &texPath) {
-        textures.emplace_back(texPath);
+    template<typename... TextArgs>
+    MeshComponent *MeshComponent::addTexture(TextArgs&&... texArgs) {
+        textures.emplace_back(std::forward<TextArgs>(texArgs)...);
         return this;
     }
 

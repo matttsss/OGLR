@@ -11,7 +11,7 @@ void TestLayer::onAttach()
 
     mesh = OGLR::MeshComponent::loadFromObjFile("test_res/models/tex_cube.obj")
             ->addShader("test_res/shaders/textured_simple.vert.glsl", "test_res/shaders/textured_simple.frag.glsl")
-            ->addTexture("test_res/textures/tex_cube.png");
+            ->addTexture("test_res/textures/tex_cube.png", OGLR::Texture::Type::X4B);
 
     terrain = Terrain::buildTile(16, 1)
                 ->addShader("test_res/shaders/colored_obj.vert.glsl", "test_res/shaders/colored_obj.frag.glsl");
@@ -40,7 +40,7 @@ void TestLayer::onRender() {
 
     m_Renderer.render(terrain, transform);
 
-    ImGui::ShowDemoWindow(nullptr);
+    //ImGui::ShowDemoWindow(nullptr);
 }
 
 void TestLayer::onUpdate(float dt)

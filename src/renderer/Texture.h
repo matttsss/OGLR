@@ -11,7 +11,14 @@ namespace OGLR
 	{
 
 	public:
-		Texture(const std::string& path);
+
+        enum Type {
+            X3f = GL_RGB32F,
+            X1f = GL_R32F,
+            X4B = GL_RGBA8
+        };
+
+		Texture(const std::string& path, Type t);
 		~Texture();
 
 		void bind(GLuint slot = 0) const;
