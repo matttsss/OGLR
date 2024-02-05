@@ -78,7 +78,7 @@ namespace OGLR
 
 			glDeleteShader(shader);
 
-			std::cout << "Error while compiling shader : " << infoLog.data() << std::endl;
+			std::cout << "Error while compiling shader " << source << ": \n" << infoLog.data() << std::endl;
 		}
 
 		return shader;
@@ -113,10 +113,13 @@ namespace OGLR
 
 		GLuint program = glCreateProgram();
 		int glShaderIDIndex = 0;
-			
+
+        std::cout << "Compiling shader: " << vertexShaderPath << std::endl;
 		GLuint vertexShader = CompileShader(GL_VERTEX_SHADER, vertexSource);
 		glAttachShader(program, vertexShader);
-		GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentSource);
+
+        std::cout << "Compiling shader: " << fragmentShaderPath << std::endl;
+        GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentSource);
 		glAttachShader(program, fragmentShader);
 
 		glLinkProgram(program);

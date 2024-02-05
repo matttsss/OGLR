@@ -27,7 +27,7 @@ OGLR::MeshComponent* Terrain::buildTile(uint32_t resolution, uint32_t seed) {
                         {x, heightAt(x, z, seed), z},
                         {0.0f, 1.0f, 0.0f},
                         {1.0f, 1.0f, 1.0f},
-                        {x, z}
+                        {x + .5f, z + .5f}
                 );
 
                 if (i < resolution - 1 && j < resolution - 1) {
@@ -50,11 +50,23 @@ OGLR::MeshComponent* Terrain::buildTile(uint32_t resolution, uint32_t seed) {
 
     }
 
+
+    mesh->addShader("test_res/shaders/terrain_shader.vert.glsl", "test_res/shaders/terrain_shader.frag.glsl");
+
+    // Create and load height map
+
+    float heightMap[resolution * resolution];
+
+    for (int i = 0; i < resolution * resolution; ++i)
+            heightMap[i] = heightAt((float)(i % resolution)/resolution - 0.5f, (float)(i - i/resolution * resolution)/resolution - 0.5f, seed);
+
+    mesh->addTexture(OGLR::Texture(heightMap, OGLR::Texture::Type::X1f, resolution, resolution));
+
     return mesh;
 }
 
 float Terrain::heightAt(float x, float y, uint32_t seed) {
-    return 0;
+    return sinf(x*y) + 1;
 }
 
 

@@ -13,8 +13,7 @@ void TestLayer::onAttach()
             ->addShader("test_res/shaders/textured_simple.vert.glsl", "test_res/shaders/textured_simple.frag.glsl")
             ->addTexture(OGLR::Texture{"test_res/textures/tex_cube.png", OGLR::Texture::Type::X4B});
 
-    terrain = Terrain::buildTile(16, 1)
-                ->addShader("test_res/shaders/colored_obj.vert.glsl", "test_res/shaders/colored_obj.frag.glsl");
+    terrain = Terrain::buildTile(16, 1);
 
 }
 

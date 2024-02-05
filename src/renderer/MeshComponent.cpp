@@ -41,10 +41,10 @@ namespace OGLR
     {
 
         VertexBufferLayout vbl;
-        vbl.addFloat(3);
-        vbl.addFloat(3);
-        vbl.addFloat(3);
-        vbl.addFloat(2);
+        vbl.addFloat(3); // Position
+        vbl.addFloat(3); // Normal
+        vbl.addFloat(3); // Color
+        vbl.addFloat(2); // UV Coord
 
         vb.bind();
         ib.bind();

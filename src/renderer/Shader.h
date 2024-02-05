@@ -22,7 +22,7 @@ namespace OGLR
 		void setUniformMat4f(const std::string& name, const glm::mat4& mat);
 
 
-		GLuint GetRendererID() const { return m_RendererID; }
+		GLuint getRendererID() const { return m_RendererID; }
 
 		static Shader* FromGLSLTextFiles(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
 	private:
