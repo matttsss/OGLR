@@ -16,6 +16,11 @@ public:
     static void initTerrain();
 
     /***
+     * Closes the resources used by the terrain
+     */
+    static void destroyTerrain();
+
+    /***
      * Builds a terrain with the given resolution and seed
      * @param resolution (int) Number of subdivisions per axis
      * @param seed (int) Seed for random generator
@@ -23,7 +28,6 @@ public:
      */
     static OGLR::MeshComponent* buildTile(int32_t resolution, uint32_t seed);
 
-    static float heightAt(float x, float y, uint32_t seed);
 
 private:
 

@@ -8,6 +8,10 @@ void Terrain::initTerrain() {
     computeShader = OGLR::Shader::FromGLSLTextFiles("test_res/shaders/compute_grad_height.glsl");
 }
 
+void Terrain::destroyTerrain() {
+    delete computeShader;
+}
+
 OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
     OGLR::MeshComponent* mesh = nullptr;
 
@@ -78,7 +82,6 @@ OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
     //    }
     //}
 
-    //mesh->addTexture(OGLR::Texture(nullptr, OGLR::Texture::Type::X1f, resolution, resolution));
     OGLR::Texture grad_height = OGLR::Texture(nullptr, OGLR::Texture::Type::X4f, resolution, resolution);
 
     // Launch computations
@@ -96,9 +99,5 @@ OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
     return mesh;
 }
 
-float Terrain::heightAt(float x, float y, uint32_t seed) {
-    //return 0.5f;
-    return (x-0.5f)*(y-0.5f) + 0.5f;
-}
 
 

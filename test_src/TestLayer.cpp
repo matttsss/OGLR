@@ -50,5 +50,6 @@ void TestLayer::onUpdate(float dt)
 
 void TestLayer::onDettach()
 {
+    Terrain::destroyTerrain();
     delete mesh;
 }
