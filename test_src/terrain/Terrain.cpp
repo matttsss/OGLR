@@ -1,15 +1,19 @@
 #include "Terrain.h"
-
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/ext.hpp"
 
 std::map<uint32_t, std::vector<OGLR::Vertex>> Terrain::terrainVertices;
 std::map<uint32_t, std::vector<uint32_t>> Terrain::terrainIndices;
 
 
-OGLR::MeshComponent* Terrain::buildTile(uint32_t resolution, uint32_t seed) {
+OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
     OGLR::MeshComponent* mesh = nullptr;
 
+    // If chosen resolution is in cache, fetch it:
     if (terrainVertices.count(resolution) && terrainIndices.count(resolution))
         mesh = new OGLR::MeshComponent(terrainVertices[resolution], terrainIndices[resolution]);
+
+    // Else we create it:
     else {
         uint32_t pointsNb = resolution * resolution;
         uint32_t indexNb = 3 * 2 * pointsNb;
@@ -18,16 +22,16 @@ OGLR::MeshComponent* Terrain::buildTile(uint32_t resolution, uint32_t seed) {
 
         for (uint32_t i = 0; i < resolution; ++i) {
             for (uint32_t j = 0; j < resolution; ++j) {
-                float x = ((float) i) / resolution - 0.5f;
-                float z = ((float) j) / resolution - 0.5f;
+                float x = ((float) i) / resolution;
+                float z = ((float) j) / resolution;
 
                 uint32_t vertIdx = resolution * j + i;
 
                 vertices.at(vertIdx) = OGLR::Vertex(
-                        {x, heightAt(x, z, seed), z},
+                        {x, 0.0f, z},
                         {0.0f, 1.0f, 0.0f},
                         {1.0f, 1.0f, 1.0f},
-                        {x + .5f, z + .5f}
+                        {x, z}
                 );
 
                 if (i < resolution - 1 && j < resolution - 1) {
@@ -50,25 +54,37 @@ OGLR::MeshComponent* Terrain::buildTile(uint32_t resolution, uint32_t seed) {
 
     }
 
-
+    // Bind shader
     mesh->addShader("test_res/shaders/terrain_shader.vert.glsl", "test_res/shaders/terrain_shader.frag.glsl");
 
-    // Create and load height map
+    // Create and load height map / gradient map
 
     float* heightMap = new float[resolution * resolution];
 
-    for (int i = 0; i < resolution; ++i)
-        for (int j = 0; j < resolution; ++j)
-            heightMap[j*resolution + i] = heightAt((float)i/resolution - 0.5f, (float)j/resolution - 0.5f, seed);
+    static_assert(sizeof(glm::vec3) == sizeof(GLfloat) * 3, "Platform doesn't support this directly.");
+    glm::vec3* gradientMap = new glm::vec3[resolution * resolution];
 
+    for (int i = 0; i < resolution; ++i)
+    {
+        for (int j = 0; j < resolution; ++j)
+        {
+            float x = (float)i/resolution;
+            float z = (float)j/resolution;
+
+            heightMap[j*resolution + i] = heightAt(x, z, seed);
+            gradientMap[j*resolution + i] = glm::normalize(glm::vec3{z - 0.5f, x - 0.5f, 1.0f});
+        }
+    }
 
     mesh->addTexture(OGLR::Texture(heightMap, OGLR::Texture::Type::X1f, resolution, resolution));
+    mesh->addTexture(OGLR::Texture(gradientMap, OGLR::Texture::Type::X3f, resolution, resolution));
 
     return mesh;
 }
 
 float Terrain::heightAt(float x, float y, uint32_t seed) {
-    return x*x + y*y < 1e-4 ? 0 : x*y + .5f;
+    //return 0.5f;
+    return (x-0.5f)*(y-0.5f) + 0.5f;
 }
 
 

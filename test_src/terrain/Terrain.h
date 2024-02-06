@@ -15,7 +15,7 @@ public:
      * @param seed (int) Seed for random generator
      * @return (Terrain*) Pointer to the newly created terrain
      */
-    static OGLR::MeshComponent* buildTile(uint32_t resolution, uint32_t seed);
+    static OGLR::MeshComponent* buildTile(int32_t resolution, uint32_t seed);
 
     static float heightAt(float x, float y, uint32_t seed);
 

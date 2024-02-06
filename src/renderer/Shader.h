@@ -24,13 +24,23 @@ namespace OGLR
 
 		GLuint getRendererID() const { return m_RendererID; }
 
-		static Shader* FromGLSLTextFiles(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+        /***
+         * Creates a shader with the given file paths,
+         * If the second shader path is empty, it will try to create a compute shader
+         * @param firstShaderPath (std::string) Vertex or Compute shader path
+         * @param secondShaderPath (std::string) Fragment shader path, keep empty if trying to
+         * make a compute shader
+         * @return (Shader*)
+         */
+		static Shader* FromGLSLTextFiles(const std::string& firstShaderPath, const std::string& secondShaderPath = "");
+
 	private:
 		Shader() = default;
 
 		GLint getUniformLocation(const std::string& name);
 
-		void LoadFromGLSLTextFiles(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+		void loadFromGLSLTextFiles(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+        void loadComputeFromFile(const std::string& computeShaderPath);
 		GLuint CompileShader(GLenum type, const std::string& source);
 
 	private:

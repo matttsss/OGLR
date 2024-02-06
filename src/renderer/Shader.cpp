@@ -84,16 +84,18 @@ namespace OGLR
 		return shader;
 	}
 
-	Shader* Shader::FromGLSLTextFiles(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
+	Shader* Shader::FromGLSLTextFiles(const std::string& firstShaderPath, const std::string& secondShaderPath)
 	{
 		Shader* shader = new Shader();
-		shader->LoadFromGLSLTextFiles(vertexShaderPath, fragmentShaderPath);
+        if (secondShaderPath.empty())
+            shader->loadComputeFromFile(firstShaderPath);
+        else
+		    shader->loadFromGLSLTextFiles(firstShaderPath, secondShaderPath);
 		return shader;
 	}
 	
 	GLint Shader::getUniformLocation(const std::string& name)
 	{
-			
 		if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
 			return m_UniformLocationCache[name];
 
@@ -106,19 +108,54 @@ namespace OGLR
 		return location;
 	}
 
-	void Shader::LoadFromGLSLTextFiles(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
+    void Shader::loadComputeFromFile(const std::string &computeShaderPath) {
+        std::string computeSource = ReadFileAsString(computeShaderPath);
+
+        GLuint program = glCreateProgram();
+
+        std::cout << "Compiling vertex shader: " << computeShaderPath << std::endl;
+        GLuint computeShader = CompileShader(GL_VERTEX_SHADER, computeSource);
+        glAttachShader(program, computeShader);
+
+        glLinkProgram(program);
+
+        GLint isLinked = 0;
+        glGetProgramiv(program, GL_LINK_STATUS, (int*)&isLinked);
+        if (isLinked == GL_FALSE)
+        {
+            GLint maxLength = 0;
+            glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+
+            std::vector<GLchar> infoLog(maxLength);
+            glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
+
+            glDeleteProgram(program);
+
+            glDeleteShader(computeShader);
+
+            std::cerr << "Error while compiling shader : " << infoLog.data() << std::endl;
+            exit(1);
+        }
+
+        glDetachShader(program, computeShader);
+        glDeleteShader(computeShader);
+
+        m_RendererID = program;
+    }
+
+
+    void Shader::loadFromGLSLTextFiles(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 	{
 		std::string vertexSource = ReadFileAsString(vertexShaderPath);
 		std::string fragmentSource = ReadFileAsString(fragmentShaderPath);
 
 		GLuint program = glCreateProgram();
-		int glShaderIDIndex = 0;
 
-        std::cout << "Compiling shader: " << vertexShaderPath << std::endl;
+        std::cout << "Compiling vertex shader: " << vertexShaderPath << std::endl;
 		GLuint vertexShader = CompileShader(GL_VERTEX_SHADER, vertexSource);
 		glAttachShader(program, vertexShader);
 
-        std::cout << "Compiling shader: " << fragmentShaderPath << std::endl;
+        std::cout << "Compiling fragment shader: " << fragmentShaderPath << std::endl;
         GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentSource);
 		glAttachShader(program, fragmentShader);
 
