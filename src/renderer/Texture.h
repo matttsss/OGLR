@@ -13,6 +13,7 @@ namespace OGLR
 	public:
 
         enum Type {
+            X4f = GL_RGBA32F,
             X3f = GL_RGB32F,
             X1f = GL_R32F,
             X4B = GL_RGBA8
@@ -33,6 +34,7 @@ namespace OGLR
 		void bind(GLuint slot = 0) const;
 		void unBind() const;
 
+        inline uint32_t getRendererID() const { return m_RendererID; }
 		inline uint32_t getWidth() const { return m_Width; }
 		inline uint32_t getHeight() const { return m_Height; }
 

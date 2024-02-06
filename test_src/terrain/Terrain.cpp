@@ -5,7 +5,7 @@ std::map<uint32_t, std::vector<uint32_t>> Terrain::terrainIndices;
 OGLR::Shader* Terrain::computeShader;
 
 void Terrain::initTerrain() {
-    computeShader = OGLR::Shader::FromGLSLTextFiles("test_res/shaders/compute_height.glsl");
+    computeShader = OGLR::Shader::FromGLSLTextFiles("test_res/shaders/compute_grad_height.glsl");
 }
 
 OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
@@ -78,8 +78,20 @@ OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
     //    }
     //}
 
-    mesh->addTexture(OGLR::Texture(nullptr, OGLR::Texture::Type::X1f, resolution, resolution));
-    mesh->addTexture(OGLR::Texture(nullptr, OGLR::Texture::Type::X3f, resolution, resolution));
+    //mesh->addTexture(OGLR::Texture(nullptr, OGLR::Texture::Type::X1f, resolution, resolution));
+    OGLR::Texture grad_height = OGLR::Texture(nullptr, OGLR::Texture::Type::X4f, resolution, resolution);
+
+    // Launch computations
+    computeShader->bind();
+    computeShader->setUniformMat4f("u_Transform", glm::mat4(1.0f));
+    glBindImageTexture(0, grad_height.getRendererID(), 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+    glDispatchCompute(resolution, resolution, 1);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+    computeShader->unBind();
+
+    // Will hold gradient values in first three components and height in the last one
+    mesh->addTexture(std::move(grad_height));
+
 
     return mesh;
 }

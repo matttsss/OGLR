@@ -46,6 +46,11 @@ namespace OGLR
                 format         = GL_RGB;
                 type           = GL_FLOAT;
                 break;
+            case Type::X4f:
+                internalFormat = GL_RGBA32F;
+                format         = GL_RGBA;
+                type           = GL_FLOAT;
+                break;
         }
 
         glGenTextures(1, &m_RendererID);
