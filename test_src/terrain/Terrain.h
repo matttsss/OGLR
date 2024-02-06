@@ -9,6 +9,12 @@
 class Terrain {
 public:
 
+    /**
+     * Initialises builder and compute shader,
+     * needs to be called once a valid context is present
+     */
+    static void initTerrain();
+
     /***
      * Builds a terrain with the given resolution and seed
      * @param resolution (int) Number of subdivisions per axis
@@ -24,6 +30,8 @@ private:
     // Maps resolution to vertex/indices
     static std::map<uint32_t, std::vector<OGLR::Vertex>> terrainVertices;
     static std::map<uint32_t, std::vector<uint32_t>> terrainIndices;
+
+    static OGLR::Shader* computeShader;
 
 };
 

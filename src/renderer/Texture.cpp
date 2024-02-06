@@ -26,8 +26,8 @@ namespace OGLR
 
         }
 
-        if (!m_LocalBuffer)
-            throw std::runtime_error("Unable to load texture data");
+        //if (!m_LocalBuffer)
+        //    throw std::runtime_error("Unable to load texture data");
 
         GLint internalFormat, format, type;
         switch(m_Type) {

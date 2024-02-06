@@ -114,7 +114,7 @@ namespace OGLR
         GLuint program = glCreateProgram();
 
         std::cout << "Compiling vertex shader: " << computeShaderPath << std::endl;
-        GLuint computeShader = CompileShader(GL_VERTEX_SHADER, computeSource);
+        GLuint computeShader = CompileShader(GL_COMPUTE_SHADER, computeSource);
         glAttachShader(program, computeShader);
 
         glLinkProgram(program);

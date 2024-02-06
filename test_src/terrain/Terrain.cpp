@@ -1,10 +1,12 @@
 #include "Terrain.h"
-#define GLM_ENABLE_EXPERIMENTAL
-#include "glm/ext.hpp"
 
 std::map<uint32_t, std::vector<OGLR::Vertex>> Terrain::terrainVertices;
 std::map<uint32_t, std::vector<uint32_t>> Terrain::terrainIndices;
+OGLR::Shader* Terrain::computeShader;
 
+void Terrain::initTerrain() {
+    computeShader = OGLR::Shader::FromGLSLTextFiles("test_res/shaders/compute_height.glsl");
+}
 
 OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
     OGLR::MeshComponent* mesh = nullptr;
@@ -59,25 +61,25 @@ OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
 
     // Create and load height map / gradient map
 
-    float* heightMap = new float[resolution * resolution];
+    //float* heightMap = new float[resolution * resolution];
+//
+    //static_assert(sizeof(glm::vec3) == sizeof(GLfloat) * 3, "Platform doesn't support this directly.");
+    //glm::vec3* gradientMap = new glm::vec3[resolution * resolution];
+//
+    //for (int i = 0; i < resolution; ++i)
+    //{
+    //    for (int j = 0; j < resolution; ++j)
+    //    {
+    //        float x = (float)i/resolution;
+    //        float z = (float)j/resolution;
+//
+    //        heightMap[j*resolution + i] = heightAt(x, z, seed);
+    //        gradientMap[j*resolution + i] = glm::normalize(glm::vec3{z - 0.5f, x - 0.5f, 1.0f});
+    //    }
+    //}
 
-    static_assert(sizeof(glm::vec3) == sizeof(GLfloat) * 3, "Platform doesn't support this directly.");
-    glm::vec3* gradientMap = new glm::vec3[resolution * resolution];
-
-    for (int i = 0; i < resolution; ++i)
-    {
-        for (int j = 0; j < resolution; ++j)
-        {
-            float x = (float)i/resolution;
-            float z = (float)j/resolution;
-
-            heightMap[j*resolution + i] = heightAt(x, z, seed);
-            gradientMap[j*resolution + i] = glm::normalize(glm::vec3{z - 0.5f, x - 0.5f, 1.0f});
-        }
-    }
-
-    mesh->addTexture(OGLR::Texture(heightMap, OGLR::Texture::Type::X1f, resolution, resolution));
-    mesh->addTexture(OGLR::Texture(gradientMap, OGLR::Texture::Type::X3f, resolution, resolution));
+    mesh->addTexture(OGLR::Texture(nullptr, OGLR::Texture::Type::X1f, resolution, resolution));
+    mesh->addTexture(OGLR::Texture(nullptr, OGLR::Texture::Type::X3f, resolution, resolution));
 
     return mesh;
 }
