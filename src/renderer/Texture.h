@@ -32,6 +32,7 @@ namespace OGLR
 		~Texture();
 
 		void bind(GLuint slot = 0) const;
+        void bindAsImage(GLuint accessType) const;
 		void unBind() const;
 
         inline uint32_t getRendererID() const { return m_RendererID; }

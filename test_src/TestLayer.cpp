@@ -14,7 +14,7 @@ void TestLayer::onAttach()
             ->addTexture(OGLR::Texture{"test_res/textures/tex_cube.png", OGLR::Texture::Type::X4B});
 
     Terrain::initTerrain();
-    terrain = Terrain::buildTile(128, 1);
+    terrain = Terrain::buildTile(256, 1);
 
 }
 
@@ -30,6 +30,8 @@ void TestLayer::onRender() {
         //ImGui::SliderFloat3("Cube scale", glm::value_ptr(scale), 0.00f, 3.0f);
 
     ImGui::End();
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // TODO find somewhere better
 
     transform = glm::translate(transform, position-oldPos);
     //transform = glm::scale(transform, scale-oldScale);

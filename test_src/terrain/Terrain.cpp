@@ -87,7 +87,7 @@ OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
     // Launch computations
     computeShader->bind();
     computeShader->setUniformMat4f("u_Transform", glm::mat4(1.0f));
-    glBindImageTexture(0, grad_height.getRendererID(), 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+    grad_height.bindAsImage(GL_WRITE_ONLY);
     glDispatchCompute(resolution, resolution, 1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
     computeShader->unBind();
