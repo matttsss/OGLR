@@ -6,7 +6,6 @@
 
 void TestLayer::onAttach()
 {
-
     m_Camera.setPerspectiveProjection(glm::radians(50.f), 1.6f, 0.1f, 10.f);
 
     mesh = OGLR::MeshComponent::loadFromObjFile("test_res/models/tex_cube.obj")
@@ -14,7 +13,7 @@ void TestLayer::onAttach()
             ->addTexture(OGLR::Texture{"test_res/textures/tex_cube.png", OGLR::Texture::Type::X4B});
 
     Terrain::initTerrain();
-    terrain = Terrain::buildTile(1024, 1);
+    terrain = Terrain::buildTile(256, 1);
 
 }
 
