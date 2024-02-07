@@ -46,6 +46,7 @@ namespace OGLR
 	private:
 
 		GLuint m_RendererID;
+        std::string m_FirstPath, m_SecondPath;
 		std::unordered_map<std::string, GLint> m_UniformLocationCache;
 
 	};

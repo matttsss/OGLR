@@ -4,7 +4,7 @@ layout(local_size_x = 1,  local_size_y = 1) in;
 
 uniform mat4 u_Transform;
 
-layout(rgba32f, binding = 0) writeonly uniform image2D u_Texture0; // Gradient / Height map
+layout(r32f, binding = 0) writeonly uniform image2D u_Texture0; // Height map
 
 
 #define M_PI 3.14159265358979323846
@@ -65,9 +65,6 @@ float perlin(vec2 p, float dim) {
 }
 
 
-
-
-
 void main()
 {
 
@@ -80,12 +77,6 @@ void main()
     vec2 vertexPosInPlane = vec2(vertexId) / vec2(tileSize);
     vec3 vertexPosInSpace = vec3(vertexPosInPlane.x, 0.0f, vertexPosInPlane.y) + u_Transform[3].xyz;
 
-    float x = vertexPosInSpace.x - 0.5f;
-    float y = vertexPosInSpace.z - 0.5f;
-
-    vec3 normal = normalize(vec3(-y, 1, -x));
-    vec4 grad_height = vec4(abs(normal), perlin(vertexPosInSpace.xz, 6.0f, 0.0f));
-
-    imageStore(u_Texture0, vertexId, grad_height);
+    imageStore(u_Texture0, vertexId, vec4(perlin(vertexPosInSpace.xz, 12.0, 0.0), 0.0, 0.0, 0.0));
 
 }

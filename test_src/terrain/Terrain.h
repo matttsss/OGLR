@@ -35,7 +35,8 @@ private:
     static std::map<uint32_t, std::vector<OGLR::Vertex>> terrainVertices;
     static std::map<uint32_t, std::vector<uint32_t>> terrainIndices;
 
-    static OGLR::Shader* computeShader;
+    static OGLR::Shader* heightComputeShader;
+    static OGLR::Shader* normalComputeShader;
 
 };
 

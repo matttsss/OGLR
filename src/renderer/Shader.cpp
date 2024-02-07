@@ -87,6 +87,8 @@ namespace OGLR
 	Shader* Shader::FromGLSLTextFiles(const std::string& firstShaderPath, const std::string& secondShaderPath)
 	{
 		Shader* shader = new Shader();
+        shader->m_FirstPath = firstShaderPath;
+        shader->m_SecondPath = secondShaderPath;
         if (secondShaderPath.empty())
             shader->loadComputeFromFile(firstShaderPath);
         else

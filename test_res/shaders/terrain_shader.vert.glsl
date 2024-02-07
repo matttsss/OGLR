@@ -7,15 +7,17 @@ layout (location = 3) in vec2 texCoord;
 
 uniform mat4 u_MVP;
 
-uniform sampler2D u_Texture0; // grad / height map
+layout (binding = 0) uniform sampler2D u_Texture0; // height map
+layout (binding = 1) uniform sampler2D u_Texture1; // normal map
 
 out vec3 v_Color;
 
 void main()
 {
-    vec4 grad_height = texture(u_Texture0, texCoord);
+    float height = texture(u_Texture0, texCoord).x;
+    vec3  normal = texture(u_Texture1, texCoord).xyz;
 
-    gl_Position = u_MVP * (a_Position + vec4(0.0f, grad_height.w, 0.0f, 0.0f));
-    v_Color = grad_height.xyz;
-    //v_Color = vec3(0.0, 1.0, 0.0);
+    gl_Position = u_MVP * (a_Position + vec4(0.0f, height, 0.0f, 0.0f));
+    v_Color = normal;
+    //v_Color = vec3(1.0, 1.0, 0.0);
 }

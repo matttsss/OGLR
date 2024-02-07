@@ -2,14 +2,17 @@
 
 std::map<uint32_t, std::vector<OGLR::Vertex>> Terrain::terrainVertices;
 std::map<uint32_t, std::vector<uint32_t>> Terrain::terrainIndices;
-OGLR::Shader* Terrain::computeShader;
+OGLR::Shader* Terrain::heightComputeShader;
+OGLR::Shader* Terrain::normalComputeShader;
 
 void Terrain::initTerrain() {
-    computeShader = OGLR::Shader::FromGLSLTextFiles("test_res/shaders/compute_grad_height.glsl");
+    heightComputeShader = OGLR::Shader::FromGLSLTextFiles("test_res/shaders/compute_height.glsl");
+    normalComputeShader = OGLR::Shader::FromGLSLTextFiles("test_res/shaders/compute_normal.glsl");
 }
 
 void Terrain::destroyTerrain() {
-    delete computeShader;
+    delete heightComputeShader;
+    delete normalComputeShader;
 }
 
 OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
@@ -82,19 +85,42 @@ OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
     //    }
     //}
 
-    OGLR::Texture grad_height = OGLR::Texture(nullptr, OGLR::Texture::Type::X4f, resolution, resolution);
+    OGLR::Texture height = OGLR::Texture(nullptr, OGLR::Texture::Type::X1f, resolution, resolution);
+    OGLR::Texture normal = OGLR::Texture(nullptr, OGLR::Texture::Type::X4f, resolution, resolution);
 
     // Launch computations
-    computeShader->bind();
-    computeShader->setUniformMat4f("u_Transform", glm::mat4(1.0f));
-    grad_height.bindAsImage(GL_WRITE_ONLY);
+    heightComputeShader->bind();
+
+    height.bind();
+    height.bindAsImage(GL_WRITE_ONLY);
+
+    heightComputeShader->setUniform1i("u_Texture0", 0);
+    heightComputeShader->setUniformMat4f("u_Transform", glm::mat4(1.0f));
+
     glDispatchCompute(resolution, resolution, 1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-    computeShader->unBind();
+    heightComputeShader->unBind();
+
+
+
+    normalComputeShader->bind();
+
+    height.bind(0);
+    height.bindAsImage(GL_READ_ONLY);
+
+    normal.bind(1);
+    normal.bindAsImage(GL_WRITE_ONLY);
+
+    normalComputeShader->setUniform1i("u_Texture0", 0);
+    normalComputeShader->setUniform1i("u_Texture1", 1);
+
+    glDispatchCompute(resolution, resolution, 1);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+    normalComputeShader->unBind();
 
     // Will hold gradient values in first three components and height in the last one
-    mesh->addTexture(std::move(grad_height));
-
+    mesh->addTexture(std::move(height));
+    mesh->addTexture(std::move(normal));
 
     return mesh;
 }

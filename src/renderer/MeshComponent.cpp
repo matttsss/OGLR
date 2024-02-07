@@ -178,6 +178,7 @@ namespace OGLR
             shader->setUniform1i("u_Texture" + std::to_string(i), i);
         }
 
+
     }
 
     void MeshComponent::unBind() const {

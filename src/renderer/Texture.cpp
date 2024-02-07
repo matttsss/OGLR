@@ -108,7 +108,22 @@ namespace OGLR
 	}
 
     void Texture::bindAsImage(GLuint accessType) const {
-        glBindImageTexture(0, m_RendererID, 0, GL_FALSE, 0, accessType, GL_RGBA32F);
+        uint32_t format;
+        switch(m_Type) {
+            case Type::X4B:
+                format =  GL_RGBA8;
+                break;
+            case Type::X1f:
+                format = GL_R32F;
+                break;
+            case Type::X3f:
+                throw std::runtime_error("Unsupported format");
+            case Type::X4f:
+                format = GL_RGBA32F;
+                break;
+        }
+
+        glBindImageTexture(0, m_RendererID, 0, GL_FALSE, 0, accessType, format);
     }
 
 }
