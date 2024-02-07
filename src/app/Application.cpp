@@ -87,7 +87,7 @@ namespace OGLR
         while (!glfwWindowShouldClose(s_Window))
         {
             const auto currentTime = clock::now();
-            const float frameTime = std::chrono::duration_cast<std::chrono::nanoseconds>(currentTime - baseTime).count() * 1e-9f;
+            const float frameTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - baseTime).count();
             baseTime = currentTime;
 
 

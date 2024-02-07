@@ -19,9 +19,8 @@ private:
     OGLR::MeshComponent* mesh = nullptr;
     OGLR::MeshComponent* terrain = nullptr;
 
-    glm::vec3 position {0.0f};
-    glm::vec3 scale {1.0f};
-
-    glm::mat4 transform {1.0f};
+    float renderTimes[100];
+    char16_t renderTimeIdx = 0;
+    float avrgFPS = 0;
 
 };

@@ -29,6 +29,10 @@ namespace OGLR
         const glm::mat4& getView();
 
     private:
+
+        float mvmtSpeed = 5e-3;
+        float panSpeed = 1e-3;
+
         glm::mat4 projectionMatrix{ 1.f };
         glm::mat4 viewMatrix{ 1.f };
 

@@ -14,40 +14,48 @@ void TestLayer::onAttach()
             ->addTexture(OGLR::Texture{"test_res/textures/tex_cube.png", OGLR::Texture::Type::X4B});
 
     Terrain::initTerrain();
-    terrain = Terrain::buildTile(256, 1);
+    terrain = Terrain::buildTile(1024, 1);
 
 }
 
 void TestLayer::onRender() {
     static bool renderCube = false;
 
-    glm::vec3 oldPos = position;
-    //glm::vec3 oldScale = scale;
     ImGui::Begin("Renderer settings");
 
-        ImGui::SliderFloat3("Cube position", glm::value_ptr(position), -2.00f, 2.0f);
+        ImGui::Text("Average render time (ms): %f", avrgFPS);
         ImGui::Checkbox("Render cube", &renderCube);
-        //ImGui::SliderFloat3("Cube scale", glm::value_ptr(scale), 0.00f, 3.0f);
 
     ImGui::End();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // TODO find somewhere better
 
-    transform = glm::translate(transform, position-oldPos);
-    //transform = glm::scale(transform, scale-oldScale);
 
     m_Renderer.setCamera(m_Camera);
     if (renderCube)
         m_Renderer.render(mesh, glm::mat4(1.0f));
 
-    m_Renderer.render(terrain, transform);
+    m_Renderer.render(terrain, glm::mat4(1.0f));
 
     //ImGui::ShowDemoWindow(nullptr);
 }
 
 void TestLayer::onUpdate(float dt)
 {
+
     m_Camera.onUpdate(dt);
+
+    renderTimes[renderTimeIdx] = dt;
+    renderTimeIdx = (renderTimeIdx + 1) % 100;
+    if (renderTimeIdx == 0) {
+        avrgFPS = 0;
+        for (float t : renderTimes)
+            avrgFPS += t;
+        avrgFPS /= 100;
+        //avrgFPS = 1.0f/avrgFPS * 1e3;
+
+    }
+
 }
 
 void TestLayer::onDettach()

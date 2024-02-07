@@ -88,32 +88,32 @@ namespace OGLR
 
         if (Input::IsKeyPressed(GLFW_KEY_W))
         {
-            position += dt * aim;
+            position += dt * mvmtSpeed * aim;
             hasMoved = true;
         }
         if (Input::IsKeyPressed(GLFW_KEY_S))
         {
-            position -= dt * aim;
+            position -= dt * mvmtSpeed * aim;
             hasMoved = true;
         }
         if (Input::IsKeyPressed(GLFW_KEY_D))
         {
-            position -= dt * side;
+            position -= dt * mvmtSpeed * side;
             hasMoved = true;
         }
         if (Input::IsKeyPressed(GLFW_KEY_A))
         {
-            position += dt * side;
+            position += dt * mvmtSpeed * side;
             hasMoved = true;
         }
         if (Input::IsKeyPressed(GLFW_KEY_LEFT_CONTROL))
         {
-            position -= dt * s_UP;
+            position -= dt * mvmtSpeed * s_UP;
             hasMoved = true;
         }
         if (Input::IsKeyPressed(GLFW_KEY_SPACE))
         {
-            position += dt * s_UP;
+            position += dt * mvmtSpeed * s_UP;
             hasMoved = true;
         }
 
@@ -130,11 +130,11 @@ namespace OGLR
             const std::pair<float, float> newPos = Input::GetMousePosition();
 
             // Moves sideways
-            aim = glm::rotate(aim, (lastMousePos.first - newPos.first) * dt, s_UP);
+            aim = glm::rotate(aim, (lastMousePos.first - newPos.first) * panSpeed * dt, s_UP);
 
             // Moves up/down
             const float dy = lastMousePos.second - newPos.second;
-            glm::vec3 newAim = glm::rotate(aim, dy * dt, side);
+            glm::vec3 newAim = glm::rotate(aim, dy * panSpeed * dt, side);
             const float dot =  glm::dot(newAim, s_UP);
 
             // GimBall lock prevention check
