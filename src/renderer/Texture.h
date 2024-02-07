@@ -28,11 +28,11 @@ namespace OGLR
          * @param height
          */
         Texture(const void* data, Type t, int32_t width = 0, int32_t height = 0);
-        Texture(Texture&& other);
+        Texture(Texture&& other) noexcept ;
 		~Texture();
 
 		void bind(GLuint slot = 0) const;
-        void bindAsImage(GLuint accessType) const;
+        void bindAsImage(uint32_t slot, GLuint accessType) const;
 		void unBind() const;
 
         inline uint32_t getRendererID() const { return m_RendererID; }

@@ -74,8 +74,8 @@ namespace OGLR
 
 
 
-    Texture::Texture(Texture &&other)
-        : m_RendererID(other.m_RendererID), m_FilePath(std::move(other.m_FilePath)), m_LocalBuffer(other.m_LocalBuffer),
+    Texture::Texture(Texture &&other) noexcept
+    : m_RendererID(other.m_RendererID), m_FilePath(std::move(other.m_FilePath)), m_LocalBuffer(other.m_LocalBuffer),
         m_Width(other.m_Width), m_Height(other.m_Height), m_BPP(other.m_BPP), m_Type(other.m_Type) {
         other.m_RendererID = 0;
         other.m_LocalBuffer = nullptr;
@@ -107,7 +107,7 @@ namespace OGLR
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-    void Texture::bindAsImage(GLuint accessType) const {
+    void Texture::bindAsImage(uint32_t slot, GLuint accessType) const {
         uint32_t format;
         switch(m_Type) {
             case Type::X4B:
@@ -123,7 +123,7 @@ namespace OGLR
                 break;
         }
 
-        glBindImageTexture(0, m_RendererID, 0, GL_FALSE, 0, accessType, format);
+        glBindImageTexture(slot, m_RendererID, 0, GL_FALSE, 0, accessType, format);
     }
 
 }

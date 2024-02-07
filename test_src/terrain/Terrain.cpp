@@ -92,31 +92,31 @@ OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
     heightComputeShader->bind();
 
     height.bind();
-    height.bindAsImage(GL_WRITE_ONLY);
+    height.bindAsImage(0, GL_WRITE_ONLY);
 
     heightComputeShader->setUniform1i("u_Texture0", 0);
     heightComputeShader->setUniformMat4f("u_Transform", glm::mat4(1.0f));
 
-    glDispatchCompute(resolution, resolution, 1);
+    glDispatchCompute((resolution + 7) / 8, (resolution + 7) / 8, 1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
     heightComputeShader->unBind();
-
 
 
     normalComputeShader->bind();
 
     height.bind(0);
-    height.bindAsImage(GL_READ_ONLY);
+    height.bindAsImage(0, GL_READ_ONLY);
 
     normal.bind(1);
-    normal.bindAsImage(GL_WRITE_ONLY);
+    normal.bindAsImage(1, GL_WRITE_ONLY);
 
     normalComputeShader->setUniform1i("u_Texture0", 0);
     normalComputeShader->setUniform1i("u_Texture1", 1);
 
-    glDispatchCompute(resolution, resolution, 1);
+    glDispatchCompute((resolution + 7) / 8, (resolution + 7) / 8, 1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
     normalComputeShader->unBind();
+
 
     // Will hold gradient values in first three components and height in the last one
     mesh->addTexture(std::move(height));
