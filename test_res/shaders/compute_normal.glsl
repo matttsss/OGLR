@@ -21,6 +21,5 @@ void main()
 
     vec3 normal = normalize(vec3(2*(rH - lH), 2*(dH - uH), -4));
     imageStore(u_Texture1, vertexId, vec4(normal, 1.0));
-    //imageStore(u_Texture1, vertexId, vec4(1.0, 1.0, 1.0, 1.0));
 
 }

@@ -77,6 +77,6 @@ void main()
     vec2 vertexPosInPlane = vec2(vertexId) / vec2(tileSize);
     vec3 vertexPosInSpace = vec3(vertexPosInPlane.x, 0.0f, vertexPosInPlane.y) + u_Transform[3].xyz;
 
-    imageStore(u_Texture0, vertexId, vec4(perlin(vertexPosInSpace.xz, 12.0, 0.0), 0.0, 0.0, 0.0));
+    imageStore(u_Texture0, vertexId, vec4(perlin(vertexPosInSpace.xz, 4.0, 0.0), 0.0, 0.0, 0.0));
 
 }
