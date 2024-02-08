@@ -49,10 +49,8 @@ namespace OGLR::Buffers {
             }
 
             GLsizei getCount() const {
-                if (BT == BufferType::Index)
-                    return m_Count / sizeof(GLuint);
-
                 static_assert(BT ==  BufferType::Index, "Cannot get count on a non-index buffer");
+                return m_Count / sizeof(GLuint);
             }
 
 
