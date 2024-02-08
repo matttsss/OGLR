@@ -55,6 +55,7 @@ namespace OGLR
 
         static MeshComponent* loadFromObjFile(const std::string &objPath);
 
+
 		Buffers::VertexArray va;
 		Buffers::VertexBuffer vb;
 		Buffers::IndexBuffer ib;

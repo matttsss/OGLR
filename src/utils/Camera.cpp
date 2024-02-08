@@ -18,7 +18,8 @@ namespace OGLR
     void Camera::onUpdate(float dt)
     {
 
-        const glm::vec3 side = glm::cross(s_UP, aim);
+        const glm::vec3 side = glm::normalize(glm::cross(s_UP, aim));
+
 
         if (Input::IsKeyPressed(GLFW_KEY_W))
         {
