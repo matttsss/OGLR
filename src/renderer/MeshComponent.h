@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../buffers/VertexBuffer.h"
-#include "../buffers/IndexBuffer.h"
+#include "../buffers/Buffer.h"
 #include "../buffers/VertexArray.h"
 #include "../buffers/VertexBufferLayout.h"
 
@@ -57,8 +56,8 @@ namespace OGLR
 
 
 		Buffers::VertexArray va;
-		Buffers::VertexBuffer vb;
-		Buffers::IndexBuffer ib;
+        Buffers::Buffer<Buffers::BufferType::Vertex> vb;
+        Buffers::Buffer<Buffers::BufferType::Index> ib;
 
 		Shader* shader = nullptr;
 		std::vector<Texture> textures;

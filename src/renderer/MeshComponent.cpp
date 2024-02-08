@@ -37,7 +37,7 @@ namespace OGLR
 
     MeshComponent::MeshComponent(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices)
         : va(), vb(vertices.data(), vertices.size() * Vertex::ATTRIBUTES_SIZE * sizeof(float)),
-          ib(indices.data(), indices.size())
+          ib(indices.data(), indices.size() * sizeof(GLuint))
     {
 
         VertexBufferLayout vbl;

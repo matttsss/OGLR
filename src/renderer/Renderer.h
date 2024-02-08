@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../buffers/IndexBuffer.h"
-#include "../buffers/VertexBuffer.h"
 #include "../buffers/VertexArray.h"
 #include "../buffers/VertexBufferLayout.h"
 #include "MeshComponent.h"

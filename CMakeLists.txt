@@ -13,18 +13,16 @@ add_library(${PROJECT_NAME}
         src/renderer/Renderer.cpp
         src/renderer/Shader.cpp
         src/renderer/Texture.cpp
-        src/buffers/IndexBuffer.cpp
         src/buffers/VertexArray.cpp
-        src/buffers/VertexBuffer.cpp
         src/buffers/VertexBufferLayout.cpp
         ext/stb_image/stb_image.cpp
         src/utils/debug.cpp
         src/utils/Camera.cpp
         src/app/Application.cpp
         src/app/Input.cpp
-        src/buffers/UniformBuffer.cpp
         test_src/terrain/Terrain.cpp
         test_src/terrain/Terrain.h
+        src/buffers/Buffer.h
 )
 
 add_executable(${PROJECT_NAME}_TEST
