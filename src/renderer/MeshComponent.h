@@ -49,19 +49,14 @@ namespace OGLR
             : va(), vb(vertices.data(), vertices.size() * sizeof(Vertex<VT...>)),
                   ib(indices.data(), indices.size() * sizeof(GLuint))
         {
-
             Buffers::VertexBufferLayout vbl;
-            vbl.addFloat(3); // Position
-            vbl.addFloat(3); // Normal
-            vbl.addFloat(3); // Color
-            vbl.addFloat(2); // UV Coord
+            (vbl.addAttr<VT>(), ...);
 
             vb.bind();
             ib.bind();
 
             va.bind();
             va.bindAttributes(vb, vbl);
-
         }
 
 

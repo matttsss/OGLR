@@ -14,7 +14,7 @@ namespace OGLR::Buffers
 	public:
 		struct VertexAttribute
 		{
-			VertexAttribute() = default;
+            VertexAttribute(GLint count, GLenum type, GLboolean normalised);
 
 			GLint count;
 			GLenum type;
@@ -40,11 +40,9 @@ namespace OGLR::Buffers
 
 		inline const std::vector<VertexAttribute>& getAttributes() const { return m_Attributes; }
 		inline const GLsizei& getStride() const { return m_Stride; }
-
-		void addFloat(GLsizei count);
-
-        //template<typename T>
-        //void addAttr();
+        
+        template<typename T>
+        void addAttr();
 
 	private:
 
