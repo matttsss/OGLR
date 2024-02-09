@@ -37,10 +37,9 @@ OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
                 uint32_t vertIdx = resolution * j + i;
 
                 vertices.at(vertIdx) = TerrainVertex(
-                        {x, 0.0f, z},
-                        {0.0f, 1.0f, 0.0f},
-                        {1.0f, 1.0f, 1.0f},
-                        {x, z}
+                        {x, z},
+                        {x, z},
+                        {0.0f, 1.0f, 0.0f}
                 );
 
                 if (i < resolution - 1 && j < resolution - 1) {

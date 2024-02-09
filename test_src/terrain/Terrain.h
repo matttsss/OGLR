@@ -5,7 +5,7 @@
 
 #include "renderer/MeshComponent.h"
 
-typedef OGLR::Vertex<glm::vec3, glm::vec3, glm::vec3, glm::vec2> TerrainVertex;
+typedef OGLR::Vertex<glm::vec2, glm::vec2, glm::vec3> TerrainVertex;
 
 class Terrain {
 public:
