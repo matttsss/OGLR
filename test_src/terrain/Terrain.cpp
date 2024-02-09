@@ -66,24 +66,6 @@ OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
     // Bind shader
     mesh->addShader("test_res/shaders/terrain_shader.vert.glsl", "test_res/shaders/terrain_shader.frag.glsl");
 
-    // Create and load height map / gradient map
-
-    //float* heightMap = new float[resolution * resolution];
-//
-    //static_assert(sizeof(glm::vec3) == sizeof(GLfloat) * 3, "Platform doesn't support this directly.");
-    //glm::vec3* gradientMap = new glm::vec3[resolution * resolution];
-//
-    //for (int i = 0; i < resolution; ++i)
-    //{
-    //    for (int j = 0; j < resolution; ++j)
-    //    {
-    //        float x = (float)i/resolution;
-    //        float z = (float)j/resolution;
-//
-    //        heightMap[j*resolution + i] = heightAt(x, z, seed);
-    //        gradientMap[j*resolution + i] = glm::normalize(glm::vec3{z - 0.5f, x - 0.5f, 1.0f});
-    //    }
-    //}
 
     OGLR::Texture height = OGLR::Texture(nullptr, OGLR::Texture::Type::X1f, resolution, resolution);
     OGLR::Texture normal = OGLR::Texture(nullptr, OGLR::Texture::Type::X4f, resolution, resolution);

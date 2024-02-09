@@ -28,7 +28,7 @@ namespace OGLR
          * @param height
          */
         Texture(const void* data, Type t, int32_t width = 0, int32_t height = 0);
-        Texture(Texture&& other) noexcept ;
+        Texture(Texture&& other) noexcept;
 		~Texture();
 
 		void bind(GLuint slot = 0) const;

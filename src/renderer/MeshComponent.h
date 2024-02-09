@@ -43,16 +43,19 @@ namespace OGLR
 
 		MeshComponent() = delete;
         MeshComponent(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
+        static MeshComponent* loadFromObjFile(const std::string &objPath);
 
 		~MeshComponent();
 
-        MeshComponent* addTexture(Texture texture);
+        template <typename... TextArgs>
+        MeshComponent* addTexture(TextArgs... texArgs) {
+            textures.emplace_back(std::forward<TextArgs>(texArgs)...);
+            return this;
+        }
         MeshComponent* addShader(const std::string& vertPath, const std::string& fragPath);
 
         void bind() const;
         void unBind() const;
-
-        static MeshComponent* loadFromObjFile(const std::string &objPath);
 
 
 		Buffers::VertexArray va;

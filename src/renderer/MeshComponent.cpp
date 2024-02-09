@@ -122,34 +122,6 @@ namespace OGLR
         }
 
         return new MeshComponent(vertices, indices);
-
-        /*
-        VertexArray* pVertexArray = new VertexArray();
-        VertexBuffer* pVertexBuffer = new VertexBuffer(vertices, verticesSize);
-        IndexBuffer* pIndexBuffer = new IndexBuffer(indices, indicesCount);
-
-
-        auto* shader = Shader::FromGLSLTextFiles(vertPath, fragPath);
-        Texture* texture = nullptr;
-
-        shader->bind();
-        if (!texturePath.empty())
-        {
-            texture = new Texture(texturePath);
-            shader->setUniform1i("u_Texture", 0);
-        }
-        else
-        {
-            shader->setUniform4f("u_Color",
-                                 color.r, color.g, color.b, color.a);
-        }
-
-        pVertexArray->bind();
-        pVertexArray->bindAttributes(*pVertexBuffer, vbl);
-
-        shader->unBind();
-        */
-
     }
 
 
@@ -158,10 +130,6 @@ namespace OGLR
 		delete shader;
 	}
 
-    MeshComponent *MeshComponent::addTexture(Texture texture) {
-        textures.push_back(std::move(texture));
-        return this;
-    }
 
     MeshComponent *MeshComponent::addShader(const std::string &vertPath, const std::string &fragPath) {
         shader = OGLR::Shader::FromGLSLTextFiles(vertPath, fragPath);

@@ -10,7 +10,7 @@ void TestLayer::onAttach()
 
     mesh = OGLR::MeshComponent::loadFromObjFile("test_res/models/tex_cube.obj")
             ->addShader("test_res/shaders/textured_simple.vert.glsl", "test_res/shaders/textured_simple.frag.glsl")
-            ->addTexture(OGLR::Texture{"test_res/textures/tex_cube.png", OGLR::Texture::Type::X4B});
+            ->addTexture("test_res/textures/tex_cube.png", OGLR::Texture::Type::X4B);
 
     Terrain::initTerrain();
     terrain = Terrain::buildTile(256, 1);
