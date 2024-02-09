@@ -5,6 +5,7 @@
 
 #include "renderer/MeshComponent.h"
 
+typedef OGLR::Vertex<glm::vec3, glm::vec3, glm::vec3, glm::vec2> TerrainVertex;
 
 class Terrain {
 public:
@@ -32,7 +33,7 @@ public:
 private:
 
     // Maps resolution to vertex/indices
-    static std::map<uint32_t, std::vector<OGLR::Vertex>> terrainVertices;
+    static std::map<uint32_t, std::vector<TerrainVertex>> terrainVertices;
     static std::map<uint32_t, std::vector<uint32_t>> terrainIndices;
 
     static OGLR::Shader* heightComputeShader;

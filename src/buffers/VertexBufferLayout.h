@@ -43,6 +43,9 @@ namespace OGLR::Buffers
 
 		void addFloat(GLsizei count);
 
+        //template<typename T>
+        //void addAttr();
+
 	private:
 
         GLsizei m_Stride = 0;

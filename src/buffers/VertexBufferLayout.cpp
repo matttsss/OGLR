@@ -1,5 +1,7 @@
 #include "VertexBufferLayout.h"
 
+#include <glm/glm.hpp>
+
 namespace OGLR::Buffers
 {
 	void VertexBufferLayout::addFloat(GLsizei count)
@@ -8,5 +10,5 @@ namespace OGLR::Buffers
 		m_Attributes.push_back(attrib);
 		m_Stride += count * VertexAttribute::getSizeOfType(GL_FLOAT);
 	}
-	
+
 }

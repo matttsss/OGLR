@@ -4,7 +4,6 @@ namespace OGLR
 {
 
     class Layer {
-
     public:
 
         virtual void onAttach() = 0;

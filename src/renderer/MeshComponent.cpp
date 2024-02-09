@@ -1,31 +1,25 @@
 #include "MeshComponent.h"
 
-#include "../utils/utils.h"
-
 #include <vector>
 #include <unordered_map>
 #include <tiny_obj_loader.h>
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/hash.hpp>
-
 using namespace OGLR::Buffers;
+typedef OGLR::Vertex<glm::vec3, glm::vec3, glm::vec3, glm::vec2> ObjVertex;
+
 
 namespace std
 {
     template<>
-    struct __attribute__((unused)) hash<OGLR::Vertex>
+    struct hash<ObjVertex>
     {
-        size_t operator()(OGLR::Vertex const &vertex) const
+        size_t operator()(ObjVertex const &vertex) const
         {
-            size_t seed = 0;
-            hashCombine(seed, vertex.position, vertex.normal, vertex.color, vertex.uv);
-            return seed;
+            return reinterpret_cast<size_t>(vertex.data);
         }
     };
 
 }
-
 
 
 namespace OGLR
@@ -34,25 +28,6 @@ namespace OGLR
     static tinyobj::ObjReader reader;
     static tinyobj::ObjReaderConfig reader_config;
 
-
-    MeshComponent::MeshComponent(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices)
-        : va(), vb(vertices.data(), vertices.size() * Vertex::ATTRIBUTES_SIZE * sizeof(float)),
-          ib(indices.data(), indices.size() * sizeof(GLuint))
-    {
-
-        VertexBufferLayout vbl;
-        vbl.addFloat(3); // Position
-        vbl.addFloat(3); // Normal
-        vbl.addFloat(3); // Color
-        vbl.addFloat(2); // UV Coord
-
-        vb.bind();
-        ib.bind();
-
-        va.bind();
-        va.bindAttributes(vb, vbl);
-
-    }
 
     MeshComponent* MeshComponent::loadFromObjFile(const std::string &objPath)
     {
@@ -71,16 +46,17 @@ namespace OGLR
         auto& shapes = reader.GetShapes();
         //auto& materials = reader.GetMaterials();
 
-        std::vector<Vertex> vertices;
+        std::vector<ObjVertex> vertices;
         std::vector<uint32_t> indices;
 
-        std::unordered_map<Vertex, uint32_t> uniqueVertices{};
+        std::unordered_map<ObjVertex, uint32_t> uniqueVertices{};
         for (const auto &shape : shapes) {
             for (const auto &index : shape.mesh.indices) {
-                Vertex vertex{};
+                glm::vec3 pos, normal, color;
+                glm::vec2 uv;
 
                 if (index.vertex_index >= 0) {
-                    vertex.position = {
+                    pos = {
                             attrib.vertices[3 * index.vertex_index + 0],
                             attrib.vertices[3 * index.vertex_index + 1],
                             attrib.vertices[3 * index.vertex_index + 2],
@@ -88,18 +64,18 @@ namespace OGLR
 
                     auto colorIndex = 3 * index.vertex_index + 2;
                     if (colorIndex < attrib.colors.size()) {
-                        vertex.color = {
+                        color = {
                                 attrib.colors[colorIndex - 2],
                                 attrib.colors[colorIndex - 1],
                                 attrib.colors[colorIndex - 0],
                         };
                     } else {
-                        vertex.color = {1.f, 1.f, 1.f};  // set default color
+                        color = {1.f, 1.f, 1.f};  // set default color
                     }
                 }
 
                 if (index.normal_index >= 0) {
-                    vertex.normal = {
+                    normal = {
                             attrib.normals[3 * index.normal_index + 0],
                             attrib.normals[3 * index.normal_index + 1],
                             attrib.normals[3 * index.normal_index + 2],
@@ -107,11 +83,13 @@ namespace OGLR
                 }
 
                 if (index.texcoord_index >= 0) {
-                    vertex.uv = {
+                    uv = {
                             attrib.texcoords[2 * index.texcoord_index + 0],
                             attrib.texcoords[2 * index.texcoord_index + 1],
                     };
                 }
+
+                ObjVertex vertex = ObjVertex(pos, normal, color, uv);
 
                 if (uniqueVertices.count(vertex) == 0) {
                     uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());

@@ -1,6 +1,6 @@
 #include "Terrain.h"
 
-std::map<uint32_t, std::vector<OGLR::Vertex>> Terrain::terrainVertices;
+std::map<uint32_t, std::vector<TerrainVertex>> Terrain::terrainVertices;
 std::map<uint32_t, std::vector<uint32_t>> Terrain::terrainIndices;
 OGLR::Shader* Terrain::heightComputeShader;
 OGLR::Shader* Terrain::normalComputeShader;
@@ -26,7 +26,7 @@ OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
     else {
         uint32_t pointsNb = resolution * resolution;
         uint32_t indexNb = 3 * 2 * pointsNb;
-        std::vector<OGLR::Vertex> vertices = std::vector<OGLR::Vertex>(pointsNb);
+        std::vector<TerrainVertex> vertices = std::vector<TerrainVertex>(pointsNb);
         std::vector<uint32_t> indices = std::vector<uint32_t>(indexNb);
 
         for (uint32_t i = 0; i < resolution; ++i) {
@@ -36,7 +36,7 @@ OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
 
                 uint32_t vertIdx = resolution * j + i;
 
-                vertices.at(vertIdx) = OGLR::Vertex(
+                vertices.at(vertIdx) = TerrainVertex(
                         {x, 0.0f, z},
                         {0.0f, 1.0f, 0.0f},
                         {1.0f, 1.0f, 1.0f},

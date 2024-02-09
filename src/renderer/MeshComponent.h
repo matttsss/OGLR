@@ -6,33 +6,34 @@
 
 #include "Texture.h"
 #include "Shader.h"
+#include "glm/gtc/type_ptr.hpp"
+
+#include <cstring>
 
 namespace OGLR
 {
 
+    template <typename ... VTs>
     struct Vertex
     {
-        static constexpr short ATTRIBUTES_SIZE = 11;
+        static constexpr uint32_t N = (sizeof(VTs) + ...);
 
-        Vertex(glm::vec3 position = glm::vec3(0.0f),
-               glm::vec3 normal = glm::vec3(0.0f, 1.0f, 0.0f),
-               glm::vec3 color = glm::vec3{1.0f},
-               glm::vec2 uv = glm::vec3{0.0f}):
-            position(position), normal(normal), color(color), uv(uv) {}
+        char data[N];
 
+        Vertex() = default;
+        Vertex(const VTs& ... args) {
 
-        glm::vec3 position { 0.0f };
-        glm::vec3 normal   { 0.0f };
-        glm::vec3 color    { 1.0f };
-        glm::vec2 uv       { 0.0f };
+            uint32_t idx = 0;
+            auto cpyMember = [&](const auto& val) {
+                memcpy(data + idx, &val, sizeof(val));
+                idx += sizeof(val);
+            };
 
-        bool operator==(const Vertex& other) const
-        {
-            return
-                position == other.position &&
-                normal == other.normal &&
-                color == other.color &&
-                uv == other.uv;
+            (cpyMember(args), ...);
+        }
+
+        bool operator==(const Vertex<VTs...>& other) const {
+            return !memcmp(data, other.data, N);
         }
 
     };
@@ -42,13 +43,34 @@ namespace OGLR
 	{
 
 		MeshComponent() = delete;
-        MeshComponent(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
+
+        template <typename ... VT>
+        MeshComponent(const std::vector<Vertex<VT...>>& vertices, const std::vector<uint32_t>& indices)
+            : va(), vb(vertices.data(), vertices.size() * sizeof(Vertex<VT...>)),
+                  ib(indices.data(), indices.size() * sizeof(GLuint))
+        {
+
+            Buffers::VertexBufferLayout vbl;
+            vbl.addFloat(3); // Position
+            vbl.addFloat(3); // Normal
+            vbl.addFloat(3); // Color
+            vbl.addFloat(2); // UV Coord
+
+            vb.bind();
+            ib.bind();
+
+            va.bind();
+            va.bindAttributes(vb, vbl);
+
+        }
+
+
         static MeshComponent* loadFromObjFile(const std::string &objPath);
 
 		~MeshComponent();
 
         template <typename... TextArgs>
-        MeshComponent* addTexture(TextArgs... texArgs) {
+        MeshComponent* addTexture(TextArgs&&... texArgs) {
             textures.emplace_back(std::forward<TextArgs>(texArgs)...);
             return this;
         }
