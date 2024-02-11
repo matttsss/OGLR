@@ -27,7 +27,7 @@ namespace OGLR
          * @param width
          * @param height
          */
-        Texture(const void* data, Type t, int32_t width = 0, int32_t height = 0);
+        Texture(const void* data, Type t, uint32_t width = 0, uint32_t height = 0);
         Texture(Texture&& other) noexcept;
 		~Texture();
 
@@ -44,7 +44,7 @@ namespace OGLR
 		std::string m_FilePath;
         Type m_Type;
 		void* m_LocalBuffer;
-		int m_Width, m_Height, m_BPP;
+		uint32_t m_Width, m_Height, m_BPP;
 
 	};
 

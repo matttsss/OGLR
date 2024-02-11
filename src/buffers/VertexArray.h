@@ -23,7 +23,8 @@ namespace OGLR::Buffers
             {
                 const auto& element = elements[i];
                 glEnableVertexAttribArray(i);
-                glVertexAttribPointer(i, element.count, element.type, element.normalised, bufferLayout.getStride(), (const void*)offset);
+                glVertexAttribPointer(i, element.count, element.type, element.normalised, bufferLayout.getStride(),
+                                      reinterpret_cast<const void *>(offset));
                 offset += element.count * VertexBufferLayout::VertexAttribute::getSizeOfType(element.type);
             }
 

@@ -4,6 +4,7 @@ namespace OGLR::Buffers
 {
 
 	VertexArray::VertexArray()
+        : m_RendererID(0)
 	{
 		glGenVertexArrays(1, &m_RendererID);
 	}

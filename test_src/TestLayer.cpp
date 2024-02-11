@@ -13,19 +13,24 @@ void TestLayer::onAttach()
             ->addTexture("test_res/textures/tex_cube.png", OGLR::Texture::Type::X4B);
 
     Terrain::initTerrain();
-    terrain = Terrain::buildTile(256, 1);
+    terrain = Terrain::buildTile(tSettingsNew);
 
 }
 
 void TestLayer::onRender() {
-    static bool renderCube = false;
-
     ImGui::Begin("Renderer settings");
 
-        ImGui::Text("Average render time (ms): %f", avrgFPS);
+        ImGui::Text("Average render time (ms): %f", avrgFrameTime);
         ImGui::Checkbox("Render cube", &renderCube);
 
+        ImGui::SliderInt("Mesh resolution", (int*)&tSettingsNew.resolution, 0, 512);
+        ImGui::SliderInt("Number of iterations", (int*)&tSettingsNew.iter, 0, 128);
+        ImGui::SliderAngle("Terrain offset angle", &tSettingsNew.angle, 0, 2 * 360);
+
     ImGui::End();
+
+    bool newSettings = !(tSettingsNew == tSettingsOld);
+    tSettingsOld = tSettingsNew;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // TODO find somewhere better
 
@@ -36,7 +41,7 @@ void TestLayer::onRender() {
 
     m_Renderer.render(terrain, glm::mat4(1.0f));
 
-    //ImGui::ShowDemoWindow(nullptr);
+    ImGui::ShowDemoWindow(nullptr);
 }
 
 void TestLayer::onUpdate(float dt)
@@ -47,11 +52,10 @@ void TestLayer::onUpdate(float dt)
     renderTimes[renderTimeIdx] = dt;
     renderTimeIdx = (renderTimeIdx + 1) % 100;
     if (renderTimeIdx == 0) {
-        avrgFPS = 0;
+        avrgFrameTime = 0;
         for (float t : renderTimes)
-            avrgFPS += t;
-        avrgFPS /= 100;
-        //avrgFPS = 1.0f/avrgFPS * 1e3;
+            avrgFrameTime += t;
+        avrgFrameTime /= 100;
 
     }
 

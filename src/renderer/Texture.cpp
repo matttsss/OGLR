@@ -7,7 +7,7 @@ namespace OGLR
 {
 
 
-    Texture::Texture(const void* data, Type t, int32_t width, int32_t height):
+    Texture::Texture(const void* data, Type t, uint32_t width, uint32_t height):
         m_RendererID(0), m_Type(t), m_LocalBuffer(nullptr), m_Height(0), m_Width(0), m_BPP(0) {
 
         bool loadFromPath = width == 0 && height == 0;
@@ -16,7 +16,7 @@ namespace OGLR
             m_FilePath = (char*)data;
 
             stbi_set_flip_vertically_on_load(1);
-            m_LocalBuffer = (void*)stbi_load(m_FilePath.c_str(), &m_Width, &m_Height, &m_BPP, 0);
+            m_LocalBuffer = (void*)stbi_load(m_FilePath.c_str(), (int*)&m_Width, (int*)&m_Height, (int*)&m_BPP, 0);
 
         } else {
 

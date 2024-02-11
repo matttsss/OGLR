@@ -1,5 +1,7 @@
 #include "OGLR.h"
 
+#include "terrain/Terrain.h"
+
 class TestLayer : public OGLR::Layer
 {
 
@@ -19,8 +21,12 @@ private:
     OGLR::MeshComponent* mesh = nullptr;
     OGLR::MeshComponent* terrain = nullptr;
 
+    TerrainSettings tSettingsOld;
+    TerrainSettings tSettingsNew;
+    bool renderCube = false;
+
     float renderTimes[100];
     char16_t renderTimeIdx = 0;
-    float avrgFPS = 0;
+    float avrgFrameTime = 0;
 
 };

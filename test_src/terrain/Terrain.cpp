@@ -15,8 +15,10 @@ void Terrain::destroyTerrain() {
     delete normalComputeShader;
 }
 
-OGLR::MeshComponent* Terrain::buildTile(int32_t resolution, uint32_t seed) {
+OGLR::MeshComponent* Terrain::buildTile(const TerrainSettings& settings) {
     OGLR::MeshComponent* mesh = nullptr;
+
+    uint32_t resolution = settings.resolution;
 
     // If chosen resolution is in cache, fetch it:
     if (terrainVertices.count(resolution) && terrainIndices.count(resolution))

@@ -7,6 +7,18 @@
 
 typedef OGLR::Vertex<glm::vec2, glm::vec2, glm::vec3> TerrainVertex;
 
+struct TerrainSettings {
+    uint32_t resolution = 256;
+    uint32_t iter = 1;
+    float angle = 0;
+
+    bool operator==(const TerrainSettings& other) const {
+        return resolution == other.resolution &&
+               iter       == other.iter       &&
+               angle      == other.angle;
+    }
+};
+
 class Terrain {
 public:
 
@@ -25,9 +37,9 @@ public:
      * Builds a terrain with the given resolution and seed
      * @param resolution (int) Number of subdivisions per axis
      * @param seed (int) Seed for random generator
-     * @return (Terrain*) Pointer to the newly created terrain
+     * @return (OGLR::MeshComponent*) Pointer to the newly created terrain
      */
-    static OGLR::MeshComponent* buildTile(int32_t resolution, uint32_t seed);
+    static OGLR::MeshComponent* buildTile(const TerrainSettings& settings);
 
 
 private:
