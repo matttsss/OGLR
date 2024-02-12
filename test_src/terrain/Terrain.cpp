@@ -45,13 +45,12 @@ OGLR::MeshComponent* Terrain::buildTile(const TerrainSettings& settings) {
                 );
 
                 if (i < resolution - 1 && j < resolution - 1) {
-                    const uint32_t indexBfrIdx = 6 * vertIdx;
-                    indices.at(indexBfrIdx) = vertIdx;
-                    indices.at(indexBfrIdx + 1) = resolution * (j + 1) + i;
-                    indices.at(indexBfrIdx + 2) = resolution * (j + 1) + i + 1;
-                    indices.at(indexBfrIdx + 3) = vertIdx;
-                    indices.at(indexBfrIdx + 4) = resolution * (j + 1) + i + 1;
-                    indices.at(indexBfrIdx + 5) = resolution * j + i + 1;
+                    indices.push_back(vertIdx);
+                    indices.push_back(resolution * (j + 1) + i);
+                    indices.push_back(resolution * (j + 1) + i + 1);
+                    indices.push_back(vertIdx);
+                    indices.push_back(resolution * (j + 1) + i + 1);
+                    indices.push_back(resolution * j + i + 1);
                 }
 
             }
@@ -69,7 +68,7 @@ OGLR::MeshComponent* Terrain::buildTile(const TerrainSettings& settings) {
 
 
     OGLR::Texture height (nullptr, OGLR::Texture::Type::X1f, resolution, resolution);
-    OGLR::Texture normal (nullptr, OGLR::Texture::Type::X4f, resolution, resolution);
+    OGLR::Texture NHMap (nullptr, OGLR::Texture::Type::X4f, resolution, resolution);
 
     // Launch computations
     heightComputeShader->bind();
@@ -77,7 +76,7 @@ OGLR::MeshComponent* Terrain::buildTile(const TerrainSettings& settings) {
     height.bind();
     height.bindAsImage(0, GL_WRITE_ONLY);
 
-    heightComputeShader->setUniform1i("u_Texture0", 0);
+    heightComputeShader->setUniform1i("u_HeightMap", 0);
     heightComputeShader->setUniformVec2i("u_Offset", 0, 0);
 
     glDispatchCompute((resolution + 7) / 8, (resolution + 7) / 8, 1);
@@ -90,11 +89,11 @@ OGLR::MeshComponent* Terrain::buildTile(const TerrainSettings& settings) {
     height.bind(0);
     height.bindAsImage(0, GL_READ_ONLY);
 
-    normal.bind(1);
-    normal.bindAsImage(1, GL_WRITE_ONLY);
+    NHMap.bind(1);
+    NHMap.bindAsImage(1, GL_WRITE_ONLY);
 
-    normalComputeShader->setUniform1i("u_Texture0", 0);
-    normalComputeShader->setUniform1i("u_Texture1", 1);
+    normalComputeShader->setUniform1i("u_HeightMap", 0);
+    normalComputeShader->setUniform1i("u_NHMap", 1);
 
     glDispatchCompute((resolution + 7) / 8, (resolution + 7) / 8, 1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
@@ -102,8 +101,7 @@ OGLR::MeshComponent* Terrain::buildTile(const TerrainSettings& settings) {
 
 
     // Will hold gradient values in first three components and height in the last one
-    mesh->addTexture(std::move(height));
-    mesh->addTexture(std::move(normal));
+    mesh->addTexture(std::move(NHMap));
 
     return mesh;
 }

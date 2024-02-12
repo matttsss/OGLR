@@ -5,7 +5,7 @@ layout(local_size_x = 8,  local_size_y = 8) in;
 
 uniform ivec2 u_Offset;
 
-layout(r32f, binding = 0) writeonly uniform image2D u_Texture0; // Height map
+layout(r32f, binding = 0) writeonly uniform image2D u_HeightMap;
 
 const int maxIter = 5;
 
@@ -59,11 +59,11 @@ void main()
 
     // Check validity of shader instance
     ivec2 vertexId = ivec2(gl_GlobalInvocationID.xy);
-    ivec2 tileSize = imageSize(u_Texture0);
+    ivec2 tileSize = imageSize(u_HeightMap);
     if (vertexId.x >= tileSize.x || vertexId.y >= tileSize.y)
         return;
 
     vec2 vertexPosInPlane = vec2(vertexId) / vec2(tileSize);
-    imageStore(u_Texture0, vertexId, vec4(heightAt(vertexPosInPlane), 0.0, 0.0, 0.0));
+    imageStore(u_HeightMap, vertexId, vec4(heightAt(vertexPosInPlane), 0, 0, 0));
 
 }
