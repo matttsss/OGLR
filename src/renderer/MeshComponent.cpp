@@ -4,7 +4,6 @@
 #include <unordered_map>
 #include <tiny_obj_loader.h>
 
-using namespace OGLR::Buffers;
 typedef OGLR::Vertex<glm::vec3, glm::vec3, glm::vec3, glm::vec2> ObjVertex;
 
 
@@ -110,7 +109,7 @@ namespace OGLR
 
 
     MeshComponent *MeshComponent::addShader(const std::string &vertPath, const std::string &fragPath) {
-        shader = OGLR::Shader::FromGLSLTextFiles(vertPath, fragPath);
+        shader = Shader::FromGLSLTextFiles(vertPath, fragPath);
         return this;
     }
 

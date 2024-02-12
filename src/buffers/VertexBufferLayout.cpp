@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-namespace OGLR::Buffers
+namespace OGLR
 {
     VertexBufferLayout::VertexAttribute::VertexAttribute(GLint count, GLenum type, GLboolean normalised)
             : count(count), type(type), normalised(normalised) {}

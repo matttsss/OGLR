@@ -16,7 +16,7 @@ public:
 private:
 
     OGLR::Renderer m_Renderer {};
-    OGLR::Camera m_Camera {{0.0f, -1.0f, -1.0f},  {0.0f, 1.0f, 1.0f}};
+    OGLR::Camera m_Camera {2.0f * glm::vec3{0.0f, 1.0f, -1.0f},  {0.0f, -1.0f, 1.0f}};
 
     OGLR::MeshComponent* mesh = nullptr;
     OGLR::MeshComponent* terrain = nullptr;

@@ -3,6 +3,7 @@
 #include "glm/glm.hpp"
 #include <map>
 
+#include "buffers/Buffer.h"
 #include "renderer/MeshComponent.h"
 
 typedef OGLR::Vertex<glm::vec2, glm::vec2, glm::vec3> TerrainVertex;
@@ -43,6 +44,13 @@ public:
 
 
 private:
+
+    struct TerrainMesh {
+        OGLR::Buffer<OGLR::BufferType::Vtx> vb;
+        OGLR::Buffer<OGLR::BufferType::Idx> ib;
+
+        OGLR::VertexArray va;
+    };
 
     // Maps resolution to vertex/indices
     static std::map<uint32_t, std::vector<TerrainVertex>> terrainVertices;

@@ -3,7 +3,7 @@
 #include "Buffer.h"
 #include "VertexBufferLayout.h"
 
-namespace OGLR::Buffers
+namespace OGLR
 {
 
 	class VertexArray
@@ -13,7 +13,7 @@ namespace OGLR::Buffers
 		~VertexArray();
 
         template <UsageType UT>
-		void bindAttributes(const Buffer<BufferType::Vertex, UT>& vb, const VertexBufferLayout& bufferLayout) const {
+		void bindAttributes(const Buffer<BufferType::Vtx, UT>& vb, const VertexBufferLayout& bufferLayout) const {
             vb.bind();
 
             const auto& elements = bufferLayout.getAttributes();

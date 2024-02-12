@@ -6,7 +6,7 @@
 #include <iostream>
 
 
-namespace OGLR::Buffers
+namespace OGLR
 {
 
 	class VertexBufferLayout

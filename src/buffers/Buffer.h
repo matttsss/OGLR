@@ -3,11 +3,11 @@
 #include <GL/glew.h>
 #include <iostream>
 
-namespace OGLR::Buffers {
+namespace OGLR {
 
     /// Indicates the type of the buffer
     enum BufferType {
-        Index = GL_ELEMENT_ARRAY_BUFFER, Vertex = GL_ARRAY_BUFFER, Uniform = GL_UNIFORM_BUFFER
+        Idx = GL_ELEMENT_ARRAY_BUFFER, Vtx = GL_ARRAY_BUFFER, Unf = GL_UNIFORM_BUFFER
     };
 
     /// Indicates how the buffer will be used
@@ -80,7 +80,7 @@ namespace OGLR::Buffers {
          * @return (GLsizei) Number of indices
          */
         GLsizei getCount() const {
-            static_assert(BT ==  BufferType::Index, "Cannot get count on a non-index buffer");
+            static_assert(BT ==  BufferType::Idx, "Cannot get count on a non-index buffer");
             return m_Count / sizeof(GLuint);
         }
 
@@ -91,6 +91,4 @@ namespace OGLR::Buffers {
 
     };
 
-
-} // OGLR::Buffers
-
+}

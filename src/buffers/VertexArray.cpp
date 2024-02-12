@@ -1,6 +1,6 @@
 #include "VertexArray.h"
 
-namespace OGLR::Buffers
+namespace OGLR
 {
 
 	VertexArray::VertexArray()

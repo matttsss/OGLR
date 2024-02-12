@@ -20,14 +20,12 @@ add_library(${PROJECT_NAME}
         src/utils/Camera.cpp
         src/app/Application.cpp
         src/app/Input.cpp
-        test_src/terrain/Terrain.cpp
-        test_src/terrain/Terrain.h
-        src/buffers/Buffer.h
 )
 
 add_executable(${PROJECT_NAME}_TEST
         test_src/main.cpp
         test_src/TestLayer.cpp
+        test_src/terrain/Terrain.cpp
 )
 
 # Copies the resource folder to the target directory for compatibility

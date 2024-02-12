@@ -4,40 +4,13 @@
 #include "../buffers/VertexArray.h"
 #include "../buffers/VertexBufferLayout.h"
 
+#include "Vertex.h"
 #include "Texture.h"
 #include "Shader.h"
 #include "glm/gtc/type_ptr.hpp"
 
-#include <cstring>
-
 namespace OGLR
 {
-
-    template <typename ... VTs>
-    struct Vertex
-    {
-        static constexpr uint32_t N = (sizeof(VTs) + ...);
-
-        char data[N];
-
-        Vertex() = default;
-        Vertex(const VTs& ... args) {
-
-            uint32_t idx = 0;
-            auto cpyMember = [&](const auto& val) {
-                memcpy(data + idx, &val, sizeof(val));
-                idx += sizeof(val);
-            };
-
-            (cpyMember(args), ...);
-        }
-
-        bool operator==(const Vertex<VTs...>& other) const {
-            return !memcmp(data, other.data, N);
-        }
-
-    };
-	
 
 	struct MeshComponent
 	{
@@ -49,7 +22,7 @@ namespace OGLR
             : va(), vb(vertices.data(), vertices.size() * sizeof(Vertex<VT...>)),
                   ib(indices.data(), indices.size() * sizeof(GLuint))
         {
-            Buffers::VertexBufferLayout vbl;
+            VertexBufferLayout vbl;
             (vbl.addAttr<VT>(), ...);
 
             vb.bind();
@@ -75,9 +48,9 @@ namespace OGLR
         void unBind() const;
 
 
-		Buffers::VertexArray va;
-        Buffers::Buffer<Buffers::BufferType::Vertex> vb;
-        Buffers::Buffer<Buffers::BufferType::Index> ib;
+		VertexArray va;
+        Buffer<BufferType::Vtx> vb;
+        Buffer<BufferType::Idx> ib;
 
 		Shader* shader = nullptr;
 		std::vector<Texture> textures;
