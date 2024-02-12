@@ -41,7 +41,7 @@ OGLR::MeshComponent* Terrain::buildTile(const TerrainSettings& settings) {
                 vertices.at(vertIdx) = TerrainVertex(
                         {x, z},
                         {x, z},
-                        {0.0f, 1.0f, 0.0f}
+                        {.7f, .7f, .7f}
                 );
 
                 if (i < resolution - 1 && j < resolution - 1) {
@@ -68,8 +68,8 @@ OGLR::MeshComponent* Terrain::buildTile(const TerrainSettings& settings) {
     mesh->addShader("test_res/shaders/terrain_shader.vert.glsl", "test_res/shaders/terrain_shader.frag.glsl");
 
 
-    OGLR::Texture height = OGLR::Texture(nullptr, OGLR::Texture::Type::X1f, resolution, resolution);
-    OGLR::Texture normal = OGLR::Texture(nullptr, OGLR::Texture::Type::X4f, resolution, resolution);
+    OGLR::Texture height (nullptr, OGLR::Texture::Type::X1f, resolution, resolution);
+    OGLR::Texture normal (nullptr, OGLR::Texture::Type::X4f, resolution, resolution);
 
     // Launch computations
     heightComputeShader->bind();

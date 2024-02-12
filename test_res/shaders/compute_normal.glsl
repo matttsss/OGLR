@@ -19,7 +19,7 @@ void main()
     float uH = imageLoad(u_Texture0, vertexId - ivec2(0, 1)).x;
     float dH = imageLoad(u_Texture0, vertexId + ivec2(0, 1)).x;
 
-    vec3 normal = normalize(vec3(2*(rH - lH), 2*(dH - uH), -4));
+    vec3 normal = normalize(vec3(-(rH - lH)*tileSize.x, 2,  -(dH - uH)*tileSize.y));
     imageStore(u_Texture1, vertexId, vec4(normal, 1.0));
 
 }
