@@ -40,7 +40,7 @@ void TestLayer::onRender() {
 
     m_Renderer.render(terrain, glm::mat4(1.0f));
 
-    ImGui::ShowDemoWindow(nullptr);
+    //ImGui::ShowDemoWindow(nullptr);
 }
 
 void TestLayer::onUpdate(float dt)

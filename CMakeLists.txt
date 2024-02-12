@@ -30,9 +30,9 @@ add_executable(${PROJECT_NAME}_TEST
 
 # Copies the resource folder to the target directory for compatibility
 # with different build systems
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND
-                   ${CMAKE_COMMAND} -E copy_directory
-                       ${CMAKE_SOURCE_DIR}/test_res $<TARGET_FILE_DIR:${PROJECT_NAME}>/test_res)
+#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND
+#                   ${CMAKE_COMMAND} -E copy_directory
+#                       ${CMAKE_SOURCE_DIR}/test_res $<TARGET_FILE_DIR:${PROJECT_NAME}>/test_res)
 
 add_subdirectory(ext)
 

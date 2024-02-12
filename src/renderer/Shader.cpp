@@ -66,6 +66,11 @@ namespace OGLR
 		glUniform1i(getUniformLocation(name), v1);
 	}
 
+    void Shader::setUniformVec2i(const std::string& name, int v1, int v2)
+    {
+        glUniform2i(getUniformLocation(name), v1, v2);
+    }
+
 	GLuint Shader::CompileShader(GLenum type, const std::string& source)
 	{
 		GLuint shader = glCreateShader(type);

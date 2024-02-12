@@ -78,7 +78,7 @@ OGLR::MeshComponent* Terrain::buildTile(const TerrainSettings& settings) {
     height.bindAsImage(0, GL_WRITE_ONLY);
 
     heightComputeShader->setUniform1i("u_Texture0", 0);
-    heightComputeShader->setUniformMat4f("u_Transform", glm::mat4(1.0f));
+    heightComputeShader->setUniformVec2i("u_Offset", 0, 0);
 
     glDispatchCompute((resolution + 7) / 8, (resolution + 7) / 8, 1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);

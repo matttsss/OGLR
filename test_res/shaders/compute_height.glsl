@@ -3,7 +3,7 @@
 
 layout(local_size_x = 8,  local_size_y = 8) in;
 
-uniform mat4 u_Transform;
+uniform ivec2 u_Offset;
 
 layout(r32f, binding = 0) writeonly uniform image2D u_Texture0; // Height map
 
@@ -21,29 +21,24 @@ float discreteHeightAt(vec2 pos) {
 }
 
 // Returns heights of the cardinal corners in trigonometric order
-vec4 heightsOfCorners(vec2 translation) {
+vec4 coefsOfN(ivec2 translation) {
     float a = discreteHeightAt(vec2(0, 0) + translation);
     float b = discreteHeightAt(vec2(0, 1) + translation);
     float c = discreteHeightAt(vec2(1, 1) + translation);
     float d = discreteHeightAt(vec2(1, 0) + translation);
 
-    return vec4(a, b, c, d);
+    return vec4(a, b - a, c - a, a - b - c + d);
 }
 
-float N(vec2 pos, vec4 cornerHeights) {
-    float a = cornerHeights.x;
-    float b = cornerHeights.y;
-    float c = cornerHeights.z;
-    float d = cornerHeights.w;
-
+float N(vec2 pos, vec4 coefs) {
     vec2 sPos = smoothstep(0.0, 1.0, pos);
-    return  a + (b - a) * sPos.x +
-                (c - a) * sPos.y +
-                (a - b - c + d) * sPos.x * sPos.y;
+    return  coefs.x + coefs.y * sPos.x +
+                      coefs.z * sPos.y +
+                      coefs.w * sPos.x * sPos.y;
 }
 
 float heightAt(vec2 pos) {
-    vec4 cornerHeights = heightsOfCorners(u_Transform[3].xz);
+    vec4 coefs = coefsOfN(u_Offset);
     mat2 R = rot(M_PI / 4.0);
 
     float h = 0;
@@ -51,7 +46,7 @@ float heightAt(vec2 pos) {
     vec2 rotatedP = pos;
 
     for (int i = 0; i < maxIter; ++i) {
-        h += N(powI * rotatedP, cornerHeights) / powI;
+        h += N(powI * rotatedP, coefs) / powI;
         powI *= 2;
         rotatedP = R * rotatedP;
     }

@@ -21,6 +21,7 @@ namespace OGLR
 		void unBind() const;
 
 		void setUniform1i(const std::string& name, int v1);
+        void setUniformVec2i(const std::string& name, int v1, int v2);
 		void setUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
 		void setUniformMat4f(const std::string& name, const glm::mat4& mat);
 
