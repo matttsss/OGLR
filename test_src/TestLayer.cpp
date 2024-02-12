@@ -32,7 +32,6 @@ void TestLayer::onRender() {
     bool newSettings = !(tSettingsNew == tSettingsOld);
     tSettingsOld = tSettingsNew;
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // TODO find somewhere better
 
 
     m_Renderer.setCamera(m_Camera);
