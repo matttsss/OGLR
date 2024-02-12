@@ -65,7 +65,7 @@ namespace OGLR
 
         for (Layer* layer : m_Layers)
         {
-            layer->onDettach();
+            layer->onDetach();
             delete layer;
         }
 

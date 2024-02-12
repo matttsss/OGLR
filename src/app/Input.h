@@ -2,8 +2,6 @@
 
 #include <utility>
 
-#include "Application.h"
-
 namespace OGLR
 {
     class Input

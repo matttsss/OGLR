@@ -24,6 +24,15 @@ namespace OGLR {
     class Buffer {
     public:
 
+        Buffer() = delete;
+        Buffer(Buffer&& other) noexcept
+            : m_RendererId(other.m_RendererId),
+              m_Count(other.m_Count) {
+            other.m_RendererId = 0;
+            std::cout << "Moved buffer n°" << m_RendererId << std::endl;
+        }
+        Buffer(const Buffer&) = delete;
+
         /**
          * Constructor for a buffer
          * @param data (const void*) Pointer to the data to but in the buffer

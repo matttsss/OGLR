@@ -10,7 +10,7 @@ public:
     void onAttach() override;
     void onRender() override;
     void onUpdate(float dt) override;
-    void onDettach() override;
+    void onDetach() override;
 
 
 private:

@@ -12,6 +12,9 @@ namespace OGLR
 	class Shader
 	{
 	public:
+
+        Shader(const Shader&) = delete;
+        Shader(Shader&& other) noexcept;
 		~Shader();
 
 		void bind() const;

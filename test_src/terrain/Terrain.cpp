@@ -1,7 +1,7 @@
 #include "Terrain.h"
 
-std::map<uint32_t, std::vector<TerrainVertex>> Terrain::terrainVertices;
-std::map<uint32_t, std::vector<uint32_t>> Terrain::terrainIndices;
+std::unordered_map<uint32_t, std::vector<TerrainVertex>> Terrain::terrainVertices;
+std::unordered_map<uint32_t, std::vector<uint32_t>> Terrain::terrainIndices;
 OGLR::Shader* Terrain::heightComputeShader;
 OGLR::Shader* Terrain::normalComputeShader;
 

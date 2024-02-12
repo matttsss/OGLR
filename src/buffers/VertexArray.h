@@ -9,7 +9,10 @@ namespace OGLR
 	class VertexArray
 	{
 	public:
+
 		VertexArray();
+        VertexArray(VertexArray&& other) noexcept;
+        VertexArray(const VertexArray&) = delete;
 		~VertexArray();
 
         template <UsageType UT>

@@ -19,6 +19,9 @@ namespace OGLR
             X4B = GL_RGBA8
         };
 
+        Texture() = delete;
+        Texture(const Texture&) = delete;
+
         /***
          * Builds a texture interpreting data as a file path if width and height are both 0
          * Or interprets data as a pointer to the data itself if width and height are not 0

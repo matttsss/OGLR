@@ -7,7 +7,7 @@ namespace OGLR
     public:
 
         virtual void onAttach() = 0;
-        virtual void onDettach() = 0;
+        virtual void onDetach() = 0;
 
         virtual void onUpdate(float deltaMs) = 0;
         virtual void onRender() = 0;

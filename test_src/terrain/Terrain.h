@@ -1,7 +1,7 @@
 #pragma once
 
 #include "glm/glm.hpp"
-#include <map>
+#include <unordered_map>
 
 #include "buffers/Buffer.h"
 #include "renderer/MeshComponent.h"
@@ -53,8 +53,8 @@ private:
     };
 
     // Maps resolution to vertex/indices
-    static std::map<uint32_t, std::vector<TerrainVertex>> terrainVertices;
-    static std::map<uint32_t, std::vector<uint32_t>> terrainIndices;
+    static std::unordered_map<uint32_t, std::vector<TerrainVertex>> terrainVertices;
+    static std::unordered_map<uint32_t, std::vector<uint32_t>> terrainIndices;
 
     static OGLR::Shader* heightComputeShader;
     static OGLR::Shader* normalComputeShader;

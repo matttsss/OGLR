@@ -79,6 +79,7 @@ namespace OGLR
         m_Width(other.m_Width), m_Height(other.m_Height), m_BPP(other.m_BPP), m_Type(other.m_Type) {
         other.m_RendererID = 0;
         other.m_LocalBuffer = nullptr;
+        std::cout << "Moved texture n°" << m_RendererID << std::endl;
     }
 
 	Texture::~Texture()
