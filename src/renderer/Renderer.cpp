@@ -38,29 +38,32 @@ namespace OGLR
 
 		glDrawElements(GL_TRIANGLES, mesh->ib.getCount(), GL_UNSIGNED_INT, nullptr);
         mesh->unBind();
-
     }
 
     void Renderer::render(const Terrain &terrain) const {
-        Shader* shader = terrain.getShader();
+        Shader* shader = terrain.renderShader;
+        int32_t radius = (int32_t)terrain.settings.radius;
         TerrainBuffers& tb = Terrain::getBuffersForRes(terrain.settings.resolution);
-        const auto& textures = terrain.getTextures();
 
         shader->bind();
         tb.va.bind();
         tb.ib.bind();
 
-        textures[0].bind();
-        shader->setUniform1i("u_Texture0", 0);
+        shader->setUniform1i("u_NHMap", 0);
 
-        shader->setUniformMat4f("u_MVP", m_PVMatrix);
-        glDrawElements(GL_TRIANGLES, tb.ib.getCount(), GL_UNSIGNED_INT, nullptr);
+        for (int32_t i = -radius; i <= radius; ++i) {
+            for (int32_t j = -radius; j <= radius; ++j) {
+                const Texture& texture = terrain.getNHTextureAtPos({i, j});
+                texture.bind();
+                shader->setUniformMat4f("u_MVP", glm::translate(m_PVMatrix, {i, 0, j}));
+                glDrawElements(GL_TRIANGLES, tb.ib.getCount(), GL_UNSIGNED_INT, nullptr);
+            }
+        }
 
         Texture::unBind();
         Shader::unBind();
         VertexArray::unBind();
         Buffer<BufferType::Idx>::unBind();
-
     }
 
 }

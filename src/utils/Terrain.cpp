@@ -84,7 +84,7 @@ namespace OGLR {
 
 
     void Terrain::addShader(const std::string &vertexPath, const std::string &fragPath) {
-        m_RenderShader = Shader::FromGLSLTextFiles(vertexPath, fragPath);
+        renderShader = Shader::FromGLSLTextFiles(vertexPath, fragPath);
     }
 
     void Terrain::updateNHAtPos(const glm::ivec2 &tileIdx) {
