@@ -12,8 +12,8 @@ void TestLayer::onAttach()
             ->addShader("test_res/shaders/textured_simple.vert.glsl", "test_res/shaders/textured_simple.frag.glsl")
             ->addTexture("test_res/textures/tex_cube.png", OGLR::Texture::Type::X4B);
 
-    Terrain::initTerrain();
-    terrain = Terrain::buildTile(tSettingsNew);
+    OGLR::Terrain::initTerrain();
+    terrain = OGLR::Terrain::buildTile(tSettingsNew);
 
 }
 
@@ -62,6 +62,6 @@ void TestLayer::onUpdate(float dt)
 
 void TestLayer::onDetach()
 {
-    Terrain::destroyTerrain();
+    OGLR::Terrain::destroyTerrain();
     delete mesh;
 }

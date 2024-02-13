@@ -21,8 +21,8 @@ private:
     OGLR::MeshComponent* mesh = nullptr;
     OGLR::MeshComponent* terrain = nullptr;
 
-    TerrainSettings tSettingsOld;
-    TerrainSettings tSettingsNew;
+    OGLR::TerrainSettings tSettingsOld;
+    OGLR::TerrainSettings tSettingsNew;
     bool renderCube = false;
 
     float renderTimes[100];

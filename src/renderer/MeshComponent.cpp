@@ -133,4 +133,8 @@ namespace OGLR
         Shader::unBind();
     }
 
+    MeshComponent::MeshComponent(Buffer<BufferType::Vtx> &&vb, Buffer<BufferType::Idx> &&ib, VertexArray &&va) noexcept
+        : va(std::move(va)), vb(std::move(vb)), ib(std::move(ib)) {}
+
+
 }

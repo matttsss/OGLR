@@ -16,6 +16,7 @@ namespace OGLR
 	{
 
 		MeshComponent() = delete;
+        MeshComponent(Buffer<BufferType::Vtx>&& vb, Buffer<BufferType::Idx>&& ib, VertexArray&& va) noexcept;
 
         template <typename ... VT>
         MeshComponent(const std::vector<Vertex<VT...>>& vertices, const std::vector<uint32_t>& indices)
