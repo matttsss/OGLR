@@ -1,14 +1,11 @@
 #pragma once
 
-#include "../buffers/VertexArray.h"
-#include "../buffers/VertexBufferLayout.h"
 #include "MeshComponent.h"
-#include "Shader.h"
 #include "../utils/Camera.h"
+#include "../utils/Terrain.h"
 
 namespace OGLR
 {
-
 	class Renderer
 	{
 	public:
@@ -17,7 +14,8 @@ namespace OGLR
 
 		void setCamera(Camera& camera);
 
-		void render(const MeshComponent* mesh, const glm::mat4& modelTransform);
+		void render(const MeshComponent* mesh, const glm::mat4& modelTransform) const;
+        void render(const Terrain& terrain) const;
 
 	private:
 

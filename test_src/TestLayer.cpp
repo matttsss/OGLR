@@ -12,8 +12,7 @@ void TestLayer::onAttach()
             ->addShader("test_res/shaders/textured_simple.vert.glsl", "test_res/shaders/textured_simple.frag.glsl")
             ->addTexture("test_res/textures/tex_cube.png", OGLR::Texture::Type::X4B);
 
-    OGLR::Terrain::initTerrain();
-    terrain = OGLR::Terrain::buildTile(tSettingsNew);
+    terrain.addShader("test_res/shaders/terrain_shader.vert.glsl", "test_res/shaders/terrain_shader.frag.glsl");
 
 }
 
@@ -23,22 +22,19 @@ void TestLayer::onRender() {
         ImGui::Text("Average render time (ms): %f", avrgFrameTime);
         ImGui::Checkbox("Render cube", &renderCube);
 
-        ImGui::SliderInt("Mesh resolution", (int*)&tSettingsNew.resolution, 0, 512);
-        ImGui::SliderInt("Number of iterations", (int*)&tSettingsNew.iter, 0, 128);
-        ImGui::SliderAngle("Terrain offset angle", &tSettingsNew.angle, 0, 2 * 360);
+        ImGui::SliderInt("Mesh resolution", (int*)&tSettings.resolution, 0, 512);
+        ImGui::SliderInt("Number of iterations", (int*)&tSettings.iter, 0, 128);
+        ImGui::SliderAngle("Terrain offset angle", &tSettings.angle, 0, 2 * 360);
 
     ImGui::End();
-
-    bool newSettings = !(tSettingsNew == tSettingsOld);
-    tSettingsOld = tSettingsNew;
-
-
 
     m_Renderer.setCamera(m_Camera);
     if (renderCube)
         m_Renderer.render(mesh, glm::mat4(1.0f));
 
-    m_Renderer.render(terrain, glm::mat4(1.0f));
+    //m_Renderer.render(meshT, glm::mat4(1.0f));
+
+    m_Renderer.render(terrain);
 
     //ImGui::ShowDemoWindow(nullptr);
 }

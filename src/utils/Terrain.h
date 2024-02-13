@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include "buffers/Buffer.h"
+#include "renderer/Vertex.h"
 #include "renderer/MeshComponent.h"
 
 
@@ -31,42 +32,36 @@ namespace OGLR {
 
         TerrainBuffers() = delete;
         TerrainBuffers(const TerrainBuffers&) = delete;
-        TerrainBuffers(TerrainBuffers&& other) noexcept;
+        TerrainBuffers(TerrainBuffers&&) = delete;
         TerrainBuffers(Buffer<OGLR::BufferType::Vtx>&& vb, Buffer<OGLR::BufferType::Idx>&& ib, VertexArray&& va);
     };
 
     class Terrain {
     public:
 
-        /**
-         * Initialises builder and compute shader,
-         * needs to be called once a valid context is present
-         */
-        static void initTerrain();
+        Terrain(const TerrainSettings& settings);
 
         /***
          * Closes the resources used by the terrain
          */
         static void destroyTerrain();
 
-        /***
-         * Builds a terrain with the given resolution and seed
-         * @param resolution (int) Number of subdivisions per axis
-         * @param seed (int) Seed for random generator
-         * @return (OGLR::MeshComponent*) Pointer to the newly created terrain
-         */
-        static OGLR::MeshComponent *buildTile(const TerrainSettings &settings);
+        void updateNHAtPos(const glm::ivec2& tileIdx);
+
+        void addShader(const std::string& vertexPath, const std::string& fragPath);
+        inline Shader* getShader() const {return m_RenderShader; }
+        inline const std::vector<Texture>& getTextures() const { return m_NHMaps; }
 
         static TerrainBuffers& getBuffersForRes(uint32_t resolution);
-        static TerrainBuffers* extractBuffersForRes(uint32_t resolution);
+
+        TerrainSettings settings;
 
     private:
 
-        static std::unordered_map<uint32_t, TerrainBuffers> s_Buffers;
+        std::vector<Texture> m_NHMaps;
+        Shader* m_RenderShader = nullptr;
 
-        // Maps resolution to vertex/indices
-        static std::unordered_map<uint32_t, std::vector<TerrainVertex>> terrainVertices;
-        static std::unordered_map<uint32_t, std::vector<uint32_t>> terrainIndices;
+        static std::unordered_map<uint32_t, TerrainBuffers> s_Buffers;
 
         static OGLR::Shader *s_HeightComputeShader;
         static OGLR::Shader *s_NormalComputeShader;
