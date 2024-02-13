@@ -26,10 +26,10 @@ namespace OGLR {
 
         Buffer() = delete;
         Buffer(Buffer&& other) noexcept
-            : m_RendererId(other.m_RendererId),
+            : m_RendererID(other.m_RendererID),
               m_Count(other.m_Count) {
-            other.m_RendererId = 0;
-            std::cout << "Moved buffer n°" << m_RendererId << std::endl;
+            other.m_RendererID = 0;
+            std::cout << "Moved buffer n°" << m_RendererID << std::endl;
         }
         Buffer(const Buffer&) = delete;
 
@@ -39,8 +39,8 @@ namespace OGLR {
          * @param size (GLuint) Size in bytes of the buffer
          */
         Buffer(const void* data, GLuint size):
-                m_RendererId(0), m_Count(size) {
-            glCreateBuffers(1, &m_RendererId);
+                m_RendererID(0), m_Count(size) {
+            glCreateBuffers(1, &m_RendererID);
 
             bind();
             glBufferData(BT, size, data, UT);
@@ -52,21 +52,21 @@ namespace OGLR {
          * Releases allocated resources
          */
         ~Buffer(){
-            glDeleteBuffers(1, &m_RendererId);
+            glDeleteBuffers(1, &m_RendererID);
         }
 
         /**
          * Binds the buffer to the GPU
          */
         void bind() const {
-            glBindBuffer(BT, m_RendererId);
+            glBindBuffer(BT, m_RendererID);
         }
 
         /**
          * Unbinds the buffer from the GPU
          */
-        void unBind() const {
-            glBindBuffer(BT, m_RendererId);
+        static void unBind() {
+            glBindBuffer(BT, 0);
         }
 
         /**
@@ -95,7 +95,7 @@ namespace OGLR {
 
 
     private:
-        GLuint m_RendererId;
+        GLuint m_RendererID;
         uint32_t m_Count;
 
     };

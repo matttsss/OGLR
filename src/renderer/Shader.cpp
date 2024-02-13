@@ -46,7 +46,7 @@ namespace OGLR
 		glUseProgram(m_RendererID);
 	}
 
-	void Shader::unBind() const
+	void Shader::unBind()
 	{
 		glUseProgram(0);
 	}
@@ -107,6 +107,8 @@ namespace OGLR
             shader->loadComputeFromFile(firstShaderPath);
         else
 		    shader->loadFromGLSLTextFiles(firstShaderPath, secondShaderPath);
+
+        Shader::unBind();
 		return shader;
 	}
 	

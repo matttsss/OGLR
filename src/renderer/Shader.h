@@ -18,7 +18,7 @@ namespace OGLR
 		~Shader();
 
 		void bind() const;
-		void unBind() const;
+		static void unBind();
 
 		void setUniform1i(const std::string& name, int v1);
         void setUniformVec2i(const std::string& name, int v1, int v2);

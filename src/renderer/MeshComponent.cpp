@@ -127,12 +127,10 @@ namespace OGLR
     }
 
     void MeshComponent::unBind() const {
-        for (const Texture& tex : textures)
-            tex.unBind();
-
-        ib.unBind();
-        va.unBind();
-        shader->unBind();
+        Texture::unBind();
+        Buffer<BufferType::Idx>::unBind();
+        VertexArray::unBind();
+        Shader::unBind();
     }
 
 }

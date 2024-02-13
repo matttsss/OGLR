@@ -103,7 +103,7 @@ namespace OGLR
 		glBindTexture(GL_TEXTURE_2D, m_RendererID);
 	}
 
-	void Texture::unBind() const
+	void Texture::unBind()
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}

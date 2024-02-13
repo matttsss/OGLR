@@ -25,11 +25,13 @@ namespace OGLR
             VertexBufferLayout vbl;
             (vbl.addAttr<VT>(), ...);
 
-            vb.bind();
-            ib.bind();
-
             va.bind();
-            va.bindAttributes(vb, vbl);
+            vb.bind();
+            va.bindAttributes(vbl);
+
+            VertexArray::unBind();
+            Buffer<BufferType::Vtx>::unBind();
+
         }
 
 

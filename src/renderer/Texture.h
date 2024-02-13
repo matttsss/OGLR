@@ -36,7 +36,7 @@ namespace OGLR
 
 		void bind(GLuint slot = 0) const;
         void bindAsImage(uint32_t slot, GLuint accessType) const;
-		void unBind() const;
+		static void unBind();
 
         inline uint32_t getRendererID() const { return m_RendererID; }
 		inline uint32_t getWidth() const { return m_Width; }
