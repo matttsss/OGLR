@@ -27,6 +27,7 @@ namespace OGLR
 
             va.bind();
             vb.bind();
+
             va.bindAttributes(vbl);
 
             VertexArray::unBind();

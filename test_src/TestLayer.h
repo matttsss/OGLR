@@ -1,6 +1,6 @@
 #include "OGLR.h"
 
-#include "terrain/Terrain.h"
+#include "utils/Terrain.h"
 
 class TestLayer : public OGLR::Layer
 {

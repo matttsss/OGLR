@@ -9,15 +9,16 @@ set(CMAKE_CXX_STANDARD 17)
 
 
 add_library(${PROJECT_NAME}
+        ext/stb_image/stb_image.cpp
         src/renderer/MeshComponent.cpp
         src/renderer/Renderer.cpp
         src/renderer/Shader.cpp
         src/renderer/Texture.cpp
         src/buffers/VertexArray.cpp
         src/buffers/VertexBufferLayout.cpp
-        ext/stb_image/stb_image.cpp
         src/utils/debug.cpp
         src/utils/Camera.cpp
+        src/utils/Terrain.cpp
         src/app/Application.cpp
         src/app/Input.cpp
 )
@@ -25,7 +26,6 @@ add_library(${PROJECT_NAME}
 add_executable(${PROJECT_NAME}_TEST
         test_src/main.cpp
         test_src/TestLayer.cpp
-        test_src/terrain/Terrain.cpp
 )
 
 # Copies the resource folder to the target directory for compatibility
