@@ -13,7 +13,7 @@ namespace OGLR {
     typedef Vertex<glm::vec2, glm::vec2, glm::vec3> TerrainVertex;
 
     struct TerrainSettings {
-        uint32_t radius = 0;
+        uint32_t radius = 4;
         uint32_t resolution = 256;
         uint32_t iter = 1;
         float angle = 0;
@@ -50,9 +50,10 @@ namespace OGLR {
 
         void addShader(const std::string& vertexPath, const std::string& fragPath);
 
+        void updateNHMap();
         void updateNHAtPos(const glm::ivec2& tileIdx);
         inline const Texture& getNHTextureAtPos(const glm::ivec2& tileIdx) const {
-            return m_NHMaps[tileIdx.y * settings.radius + tileIdx.x];
+            return m_NHMaps.at((tileIdx.x + settings.radius) * (2*settings.radius + 1) + (tileIdx.y + settings.radius));
         }
 
         static TerrainBuffers& getBuffersForRes(uint32_t resolution);

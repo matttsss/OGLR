@@ -15,7 +15,7 @@ namespace OGLR {
         if (!s_NormalComputeShader)
             s_NormalComputeShader = Shader::FromGLSLTextFiles("test_res/shaders/compute_normal.glsl");
 
-        updateNHAtPos({0, 0});
+        updateNHMap();
     }
 
     void Terrain::destroyTerrain() {
@@ -85,6 +85,15 @@ namespace OGLR {
 
     void Terrain::addShader(const std::string &vertexPath, const std::string &fragPath) {
         renderShader = Shader::FromGLSLTextFiles(vertexPath, fragPath);
+    }
+
+    void Terrain::updateNHMap() {
+        int32_t radius = (int32_t) settings.radius;
+        m_NHMaps.clear();
+        m_NHMaps.reserve((2*radius + 1) * (2*radius + 1));
+        for (int32_t i = -radius; i <= radius; ++i)
+            for (int32_t j = -radius; j <= radius; ++j)
+                updateNHAtPos({i, j});
     }
 
     void Terrain::updateNHAtPos(const glm::ivec2 &tileIdx) {
