@@ -16,6 +16,7 @@ namespace OGLR {
             s_NormalComputeShader = Shader::FromGLSLTextFiles("test_res/shaders/compute_normal.glsl");
 
         updateNHMap();
+        updateBuffersForRes(settings.resolution);
     }
 
     void Terrain::destroyTerrain() {
@@ -25,61 +26,8 @@ namespace OGLR {
 
 
     TerrainBuffers& Terrain::getBuffersForRes(uint32_t resolution) {
-        if (s_Buffers.count(resolution)) return s_Buffers.at(resolution);
-
-        uint32_t pointsNb = resolution * resolution;
-        uint32_t indexNb = 3 * 2 * pointsNb;
-        std::vector<TerrainVertex> vertices = std::vector<TerrainVertex>(pointsNb);
-        std::vector<uint32_t> indices = std::vector<uint32_t>(indexNb);
-
-        for (uint32_t i = 0; i < resolution; ++i) {
-            for (uint32_t j = 0; j < resolution; ++j) {
-                float x = ((float) i) / resolution;
-                float z = ((float) j) / resolution;
-
-                uint32_t vertIdx = resolution * j + i;
-
-                vertices.at(vertIdx) = TerrainVertex(
-                        {x, z},
-                        {x, z},
-                        {.7f, .7f, .7f}
-                );
-
-                if (i < resolution - 1 && j < resolution - 1) {
-                    indices.push_back(vertIdx);
-                    indices.push_back(resolution * (j + 1) + i);
-                    indices.push_back(resolution * (j + 1) + i + 1);
-                    indices.push_back(vertIdx);
-                    indices.push_back(resolution * (j + 1) + i + 1);
-                    indices.push_back(resolution * j + i + 1);
-                }
-
-            }
-        }
-
-        s_Buffers.emplace(std::piecewise_construct,
-                          std::forward_as_tuple(resolution),
-                          std::forward_as_tuple(
-                                  Buffer<BufferType::Vtx>(vertices.data(), vertices.size() * sizeof(TerrainVertex)),
-                                  Buffer<BufferType::Idx>(indices.data(), indices.size() * sizeof(uint32_t)),
-                                  VertexArray()));
-
-        TerrainBuffers& tb = s_Buffers.at(resolution);
-
-        VertexBufferLayout vbl;
-        vbl.addAttr<glm::vec2>();
-        vbl.addAttr<glm::vec2>();
-        vbl.addAttr<glm::vec3>();
-
-        tb.vb.bind();
-        tb.va.bind();
-
-        tb.va.bindAttributes(vbl);
-
-        Buffer<BufferType::Vtx>::unBind();
-        VertexArray::unBind();
-
-        return tb;
+        updateBuffersForRes(resolution);
+        return s_Buffers.at(resolution);
     }
 
 
@@ -133,6 +81,74 @@ namespace OGLR {
         Shader::unBind();
 
         m_NHMaps.emplace_back(std::move(NHMap));
+    }
+
+    void Terrain::updateWithSettings(const TerrainSettings &otherSettings) {
+        if (settings == otherSettings) return;
+
+        uint32_t oldRadius = settings.radius;
+        settings = otherSettings;
+
+        // if (settings.radius > oldRadius) TODO find better condition
+            updateNHMap();
+
+        updateBuffersForRes(settings.resolution);
+    }
+
+    void Terrain::updateBuffersForRes(uint32_t resolution) {
+        if (s_Buffers.count(resolution)) return;
+
+        uint32_t pointsNb = resolution * resolution;
+        uint32_t indexNb = 3 * 2 * pointsNb;
+        std::vector<TerrainVertex> vertices = std::vector<TerrainVertex>(pointsNb);
+        std::vector<uint32_t> indices = std::vector<uint32_t>(indexNb);
+
+        for (uint32_t i = 0; i < resolution; ++i) {
+            for (uint32_t j = 0; j < resolution; ++j) {
+                float x = ((float) i) / resolution;
+                float z = ((float) j) / resolution;
+
+                uint32_t vertIdx = resolution * j + i;
+
+                vertices.at(vertIdx) = TerrainVertex(
+                        {x, z},
+                        {x, z},
+                        {.7f, .7f, .7f}
+                );
+
+                if (i < resolution - 1 && j < resolution - 1) {
+                    indices.push_back(vertIdx);
+                    indices.push_back(resolution * (j + 1) + i);
+                    indices.push_back(resolution * (j + 1) + i + 1);
+                    indices.push_back(vertIdx);
+                    indices.push_back(resolution * (j + 1) + i + 1);
+                    indices.push_back(resolution * j + i + 1);
+                }
+
+            }
+        }
+
+        s_Buffers.emplace(std::piecewise_construct,
+                          std::forward_as_tuple(resolution),
+                          std::forward_as_tuple(
+                                  Buffer<BufferType::Vtx>(vertices.data(), vertices.size() * sizeof(TerrainVertex)),
+                                  Buffer<BufferType::Idx>(indices.data(), indices.size() * sizeof(uint32_t)),
+                                  VertexArray()));
+
+        TerrainBuffers& tb = s_Buffers.at(resolution);
+
+        VertexBufferLayout vbl;
+        vbl.addAttr<glm::vec2>();
+        vbl.addAttr<glm::vec2>();
+        vbl.addAttr<glm::vec3>();
+
+        tb.vb.bind();
+        tb.va.bind();
+
+        tb.va.bindAttributes(vbl);
+
+        Buffer<BufferType::Vtx>::unBind();
+        VertexArray::unBind();
     }
 
 

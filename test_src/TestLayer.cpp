@@ -22,6 +22,7 @@ void TestLayer::onRender() {
         ImGui::Text("Average render time (ms): %f", avrgFrameTime);
         ImGui::Checkbox("Render cube", &renderCube);
 
+        ImGui::SliderInt("Tile radius", (int*)&tSettings.radius, 0, 10);
         ImGui::SliderInt("Mesh resolution", (int*)&tSettings.resolution, 0, 512);
         ImGui::SliderInt("Number of iterations", (int*)&tSettings.iter, 0, 128);
         ImGui::SliderAngle("Terrain offset angle", &tSettings.angle, 0, 2 * 360);
@@ -32,8 +33,7 @@ void TestLayer::onRender() {
     if (renderCube)
         m_Renderer.render(mesh, glm::mat4(1.0f));
 
-    //m_Renderer.render(meshT, glm::mat4(1.0f));
-
+    terrain.updateWithSettings(tSettings);
     m_Renderer.render(terrain);
 
     //ImGui::ShowDemoWindow(nullptr);

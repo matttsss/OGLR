@@ -50,8 +50,8 @@ namespace OGLR {
 
         void addShader(const std::string& vertexPath, const std::string& fragPath);
 
-        void updateNHMap();
-        void updateNHAtPos(const glm::ivec2& tileIdx);
+        void updateWithSettings(const TerrainSettings& settings);
+
         inline const Texture& getNHTextureAtPos(const glm::ivec2& tileIdx) const {
             return m_NHMaps.at((tileIdx.x + settings.radius) * (2*settings.radius + 1) + (tileIdx.y + settings.radius));
         }
@@ -62,8 +62,12 @@ namespace OGLR {
         Shader* renderShader = nullptr;
 
     private:
+
+        void updateNHMap();
+        void updateNHAtPos(const glm::ivec2& tileIdx);
         std::vector<Texture> m_NHMaps;
 
+        static void updateBuffersForRes(uint32_t resolution);
         static std::unordered_map<uint32_t, TerrainBuffers> s_Buffers;
 
         static OGLR::Shader *s_HeightComputeShader;
