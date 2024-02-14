@@ -33,7 +33,6 @@ namespace OGLR
               m_SecondPath(std::move(other.m_SecondPath)),
               m_UniformLocationCache(std::move(other.m_UniformLocationCache)) {
         other.m_RendererID = 0;
-        std::cout << "Moved shader n°" << m_RendererID << std::endl;
     }
 
 	Shader::~Shader()

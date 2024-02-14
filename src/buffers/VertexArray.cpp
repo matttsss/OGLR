@@ -12,7 +12,6 @@ namespace OGLR
     VertexArray::VertexArray(VertexArray &&other) noexcept
         : m_RendererID(other.m_RendererID) {
         other.m_RendererID = 0;
-        std::cout << "Moved vertex array n°" << m_RendererID << std::endl;
     }
 
     VertexArray::~VertexArray()

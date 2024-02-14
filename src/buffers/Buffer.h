@@ -29,7 +29,6 @@ namespace OGLR {
             : m_RendererID(other.m_RendererID),
               m_Count(other.m_Count) {
             other.m_RendererID = 0;
-            std::cout << "Moved buffer n°" << m_RendererID << std::endl;
         }
         Buffer(const Buffer&) = delete;
 

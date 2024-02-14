@@ -6,7 +6,7 @@
 
 void TestLayer::onAttach()
 {
-    m_Camera.setPerspectiveProjection(glm::radians(50.f), 1.6f, 0.1f, 10.f);
+    m_Camera.setPerspectiveProjection(glm::radians(50.f), 1.6f, 0.1f, 20.f);
 
     mesh = OGLR::MeshComponent::loadFromObjFile("test_res/models/tex_cube.obj")
             ->addShader("test_res/shaders/textured_simple.vert.glsl", "test_res/shaders/textured_simple.frag.glsl")
@@ -22,8 +22,8 @@ void TestLayer::onRender() {
         ImGui::Text("Average render time (ms): %f", avrgFrameTime);
         ImGui::Checkbox("Render cube", &renderCube);
 
-        ImGui::SliderInt("Tile radius", (int*)&tSettings.radius, 0, 10);
-        ImGui::SliderInt("Mesh resolution", (int*)&tSettings.resolution, 0, 512);
+        ImGui::InputInt("Tile radius", (int*)&tSettings.radius);
+        ImGui::InputInt("Mesh resolution", (int*)&tSettings.resolution);
         ImGui::SliderInt("Number of iterations", (int*)&tSettings.iter, 0, 128);
         ImGui::SliderAngle("Terrain offset angle", &tSettings.angle, 0, 2 * 360);
 

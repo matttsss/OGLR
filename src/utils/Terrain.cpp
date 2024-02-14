@@ -112,7 +112,6 @@ namespace OGLR {
 
                 vertices.at(vertIdx) = TerrainVertex(
                         {x, z},
-                        {x, z},
                         {.7f, .7f, .7f}
                 );
 
@@ -138,7 +137,6 @@ namespace OGLR {
         TerrainBuffers& tb = s_Buffers.at(resolution);
 
         VertexBufferLayout vbl;
-        vbl.addAttr<glm::vec2>();
         vbl.addAttr<glm::vec2>();
         vbl.addAttr<glm::vec3>();
 

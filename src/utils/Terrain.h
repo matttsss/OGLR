@@ -10,7 +10,7 @@
 
 namespace OGLR {
 
-    typedef Vertex<glm::vec2, glm::vec2, glm::vec3> TerrainVertex;
+    typedef Vertex<glm::vec2, glm::vec3> TerrainVertex;
 
     struct TerrainSettings {
         uint32_t radius = 4;
