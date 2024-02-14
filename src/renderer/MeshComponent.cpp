@@ -109,7 +109,7 @@ namespace OGLR
 
 
     MeshComponent *MeshComponent::addShader(const std::string &vertPath, const std::string &fragPath) {
-        shader = Shader::FromGLSLTextFiles(vertPath, fragPath);
+        shader = Shader::fromGLSLTextFiles(vertPath, fragPath);
         return this;
     }
 

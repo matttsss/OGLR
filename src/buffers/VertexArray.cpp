@@ -1,5 +1,7 @@
 #include "VertexArray.h"
 
+#include <glm/glm.hpp>
+
 namespace OGLR
 {
 
@@ -46,5 +48,6 @@ namespace OGLR
 	{
 		glBindVertexArray(0);
 	}
+
 
 }

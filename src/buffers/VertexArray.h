@@ -2,6 +2,9 @@
 
 #include "Buffer.h"
 #include "VertexBufferLayout.h"
+#include "../renderer/Vertex.h"
+
+#include <type_traits>
 
 namespace OGLR
 {
@@ -21,6 +24,17 @@ namespace OGLR
          * @param bufferLayout (VertexBufferLayout) Layout of the VB
          */
 		void bindAttributes(const VertexBufferLayout& bufferLayout) const;
+
+        template<typename A>
+        void addAttrib(uint32_t idx, uint32_t stride, uint32_t& offset) const;
+
+        //template<typename  V>
+        //void bindAttributes() const {
+        //    [this]<typename...Ts>(std::__type_identity<Vertex<Ts...>>){
+        //        uint32_t i, offset = 0;
+        //        (addAttrib<Ts>(i++, sizeof(Vertex<Ts ...>), offset), ...);
+        //    }(std::__type_identity<V>());
+        //}
 
 		void bind() const;
 		static void unBind();

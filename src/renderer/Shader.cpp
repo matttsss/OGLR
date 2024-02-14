@@ -50,97 +50,33 @@ namespace OGLR
 		glUseProgram(0);
 	}
 
-
-	GLuint Shader::CompileShader(GLenum type, const std::string& source)
-	{
-		GLuint shader = glCreateShader(type);
-
-		const GLchar* sourceCStr = source.c_str();
-		glShaderSource(shader, 1, &sourceCStr, nullptr);
-
-		glCompileShader(shader);
-
-		GLint isCompiled = 0;
-		glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
-		if (isCompiled == GL_FALSE)
-		{
-			GLint maxLength = 0;
-			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
-
-			std::vector<GLchar> infoLog(maxLength);
-			glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
-
-			glDeleteShader(shader);
-
-			std::cout << "Error while compiling shader " << source << ": \n" << infoLog.data() << std::endl;
-		}
-
-		return shader;
-	}
-
-	Shader* Shader::FromGLSLTextFiles(const std::string& firstShaderPath, const std::string& secondShaderPath)
+	Shader* Shader::fromGLSLTextFiles(const std::string& firstShaderPath, const std::string& secondShaderPath)
 	{
 		Shader* shader = new Shader();
         shader->m_FirstPath = firstShaderPath;
         shader->m_SecondPath = secondShaderPath;
         if (secondShaderPath.empty())
-            shader->loadComputeFromFile(firstShaderPath);
+            shader->loadComputeFromFile();
         else
-		    shader->loadFromGLSLTextFiles(firstShaderPath, secondShaderPath);
+		    shader->loadFromGLSLTextFiles();
 
         Shader::unBind();
 		return shader;
 	}
 
-    void Shader::loadComputeFromFile(const std::string &computeShaderPath) {
-        std::string computeSource = ReadFileAsString(computeShaderPath);
-
-        GLuint program = glCreateProgram();
-
-        std::cout << "Compiling compute shader: " << computeShaderPath << std::endl;
-        GLuint computeShader = CompileShader(GL_COMPUTE_SHADER, computeSource);
-        glAttachShader(program, computeShader);
-
-        glLinkProgram(program);
-
-        GLint isLinked = 0;
-        glGetProgramiv(program, GL_LINK_STATUS, (int*)&isLinked);
-        if (isLinked == GL_FALSE)
-        {
-            GLint maxLength = 0;
-            glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
-
-            std::vector<GLchar> infoLog(maxLength);
-            glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
-
-            glDeleteProgram(program);
-
-            glDeleteShader(computeShader);
-
-            std::cerr << "Error while compiling shader : " << infoLog.data() << std::endl;
-            exit(1);
-        }
-
-        glDetachShader(program, computeShader);
-        glDeleteShader(computeShader);
-
-        m_RendererID = program;
-    }
-
-
-    void Shader::loadFromGLSLTextFiles(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
+    void Shader::loadFromGLSLTextFiles()
 	{
-		std::string vertexSource = ReadFileAsString(vertexShaderPath);
-		std::string fragmentSource = ReadFileAsString(fragmentShaderPath);
+		std::string vertexSource = ReadFileAsString(m_FirstPath);
+		std::string fragmentSource = ReadFileAsString(m_SecondPath);
 
 		GLuint program = glCreateProgram();
 
-        std::cout << "Compiling vertex shader: " << vertexShaderPath << std::endl;
-		GLuint vertexShader = CompileShader(GL_VERTEX_SHADER, vertexSource);
+        std::cout << "Compiling vertex shader: " << m_FirstPath << std::endl;
+		GLuint vertexShader = compileShader(GL_VERTEX_SHADER, vertexSource);
 		glAttachShader(program, vertexShader);
 
-        std::cout << "Compiling fragment shader: " << fragmentShaderPath << std::endl;
-        GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentSource);
+        std::cout << "Compiling fragment shader: " << m_SecondPath << std::endl;
+        GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentSource);
 		glAttachShader(program, fragmentShader);
 
 		glLinkProgram(program);
@@ -171,5 +107,69 @@ namespace OGLR
 
 		m_RendererID = program;
 	}
+
+
+    void Shader::loadComputeFromFile() {
+        std::string computeSource = ReadFileAsString(m_FirstPath);
+
+        GLuint program = glCreateProgram();
+
+        std::cout << "Compiling compute shader: " << m_FirstPath << std::endl;
+        GLuint computeShader = compileShader(GL_COMPUTE_SHADER, computeSource);
+        glAttachShader(program, computeShader);
+
+        glLinkProgram(program);
+
+        GLint isLinked = 0;
+        glGetProgramiv(program, GL_LINK_STATUS, (int*)&isLinked);
+        if (isLinked == GL_FALSE)
+        {
+            GLint maxLength = 0;
+            glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+
+            std::vector<GLchar> infoLog(maxLength);
+            glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
+
+            glDeleteProgram(program);
+
+            glDeleteShader(computeShader);
+
+            std::cerr << "Error while compiling shader : " << infoLog.data() << std::endl;
+            exit(1);
+        }
+
+        glDetachShader(program, computeShader);
+        glDeleteShader(computeShader);
+
+        m_RendererID = program;
+    }
+
+
+    GLuint Shader::compileShader(GLenum type, const std::string& source)
+    {
+        GLuint shader = glCreateShader(type);
+
+        const GLchar* sourceCStr = source.c_str();
+        glShaderSource(shader, 1, &sourceCStr, nullptr);
+
+        glCompileShader(shader);
+
+        GLint isCompiled = 0;
+        glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
+        if (isCompiled == GL_FALSE)
+        {
+            GLint maxLength = 0;
+            glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+
+            std::vector<GLchar> infoLog(maxLength);
+            glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
+
+            glDeleteShader(shader);
+
+            std::cout << "Error while compiling shader " << source << ": \n" << infoLog.data() << std::endl;
+        }
+
+        return shader;
+    }
 
 }

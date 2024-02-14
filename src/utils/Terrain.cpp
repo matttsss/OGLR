@@ -11,9 +11,9 @@ namespace OGLR {
             : settings(*settings.clamp()) {
 
         if (!s_HeightComputeShader)
-            s_HeightComputeShader = Shader::FromGLSLTextFiles("test_res/shaders/compute_height.glsl");
+            s_HeightComputeShader = Shader::fromGLSLTextFiles("test_res/shaders/compute_height.glsl");
         if (!s_NormalComputeShader)
-            s_NormalComputeShader = Shader::FromGLSLTextFiles("test_res/shaders/compute_normal.glsl");
+            s_NormalComputeShader = Shader::fromGLSLTextFiles("test_res/shaders/compute_normal.glsl");
 
         updateNHMap();
         updateBuffersForRes(settings.resolution);

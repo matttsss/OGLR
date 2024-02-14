@@ -74,7 +74,7 @@ namespace OGLR {
          * @param size (GLuint) Size in bytes of the new buffer
          */
         void setData(const void* data, GLuint size) const {
-            if (UT == UsageType::Static)
+            if constexpr (UT == UsageType::Static)
                 std::cout << "Warning, dynamically modifying a static buffer, reconsider type if necessary." << std::endl;
 
             bind();
@@ -88,7 +88,7 @@ namespace OGLR {
          * @return (GLsizei) Number of indices
          */
         GLsizei getCount() const {
-            static_assert(BT ==  BufferType::Idx, "Cannot get count on a non-index buffer");
+            static_assert(BT == BufferType::Idx, "Cannot get count on a non-index buffer");
             return m_Count / sizeof(GLuint);
         }
 

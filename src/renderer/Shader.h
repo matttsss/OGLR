@@ -35,16 +35,16 @@ namespace OGLR
          * make a compute shader
          * @return (Shader*)
          */
-		static Shader* FromGLSLTextFiles(const std::string& firstShaderPath, const std::string& secondShaderPath = "");
+		static Shader* fromGLSLTextFiles(const std::string& firstShaderPath, const std::string& secondShaderPath = "");
 
 	private:
 		Shader() = default;
 
 		GLint getUniformLocation(const std::string& name);
 
-		void loadFromGLSLTextFiles(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
-        void loadComputeFromFile(const std::string& computeShaderPath);
-		GLuint CompileShader(GLenum type, const std::string& source);
+		void loadFromGLSLTextFiles();
+        void loadComputeFromFile();
+		static GLuint compileShader(GLenum type, const std::string& source);
 
 	private:
 
