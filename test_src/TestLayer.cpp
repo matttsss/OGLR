@@ -28,7 +28,7 @@ void TestLayer::onRender() {
 
         ImGui::InputInt("Tile radius", (int*)&tSettings.radius);
         ImGui::InputInt("Mesh resolution", (int*)&tSettings.resolution);
-        ImGui::SliderInt("Number of iterations", (int*)&tSettings.iter, 0, 128);
+        ImGui::SliderInt("Number of octaves", (int*)&tSettings.nbOctaves, 0, 128);
         ImGui::SliderAngle("Terrain offset angle", &tSettings.angle, 0, 2 * 360);
 
     ImGui::End();

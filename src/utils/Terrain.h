@@ -15,20 +15,20 @@ namespace OGLR {
     struct TerrainSettings {
         uint32_t radius = 20;
         uint32_t resolution = 64;
-        uint32_t iter = 1;
+        uint32_t nbOctaves = 1;
         float angle = 0;
 
         TerrainSettings* clamp() {
-                radius = glm::clamp(radius, (uint32_t)0, (uint32_t) 64);
-                resolution = glm::clamp(resolution, (uint32_t)2, (uint32_t) 512);
-                iter = glm::clamp(iter, (uint32_t) 1, (uint32_t) 128);
-                return this;
+            radius = glm::clamp(radius, (uint32_t)0, (uint32_t) 64);
+            resolution = glm::clamp(resolution, (uint32_t)2, (uint32_t) 512);
+            nbOctaves = glm::clamp(nbOctaves, (uint32_t) 1, (uint32_t) 128);
+            return this;
         }
 
         bool operator==(const TerrainSettings &other) const {
             return radius     == other.radius     &&
                    resolution == other.resolution &&
-                   iter       == other.iter       &&
+                   nbOctaves  == other.nbOctaves  &&
                    angle      == other.angle;
         }
     };
