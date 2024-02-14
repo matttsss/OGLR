@@ -135,14 +135,10 @@ namespace OGLR {
 
         TerrainBuffers& tb = s_Buffers.at(resolution);
 
-        VertexBufferLayout vbl;
-        vbl.addAttr<glm::vec2>();
-        vbl.addAttr<glm::vec3>();
-
         tb.vb.bind();
         tb.va.bind();
 
-        tb.va.bindAttributes(vbl);
+        tb.va.bindAttributes<TerrainVertex>();
 
         Buffer<BufferType::Vtx>::unBind();
         VertexArray::unBind();

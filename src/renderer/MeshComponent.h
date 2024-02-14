@@ -2,15 +2,16 @@
 
 #include "../buffers/Buffer.h"
 #include "../buffers/VertexArray.h"
-#include "../buffers/VertexBufferLayout.h"
 
 #include "Vertex.h"
 #include "Texture.h"
 #include "Shader.h"
-#include "glm/gtc/type_ptr.hpp"
+
+#include <vector>
 
 namespace OGLR
 {
+    typedef OGLR::Vertex<glm::vec3, glm::vec3, glm::vec3, glm::vec2> ObjVertex;
 
 	struct MeshComponent
 	{
@@ -23,13 +24,11 @@ namespace OGLR
             : va(), vb(vertices.data(), vertices.size() * sizeof(Vertex<VT...>)),
                   ib(indices.data(), indices.size() * sizeof(GLuint))
         {
-            VertexBufferLayout vbl;
-            (vbl.addAttr<VT>(), ...);
 
             va.bind();
             vb.bind();
 
-            va.bindAttributes(vbl);
+            va.bindAttributes<ObjVertex>();
 
             VertexArray::unBind();
             Buffer<BufferType::Vtx>::unBind();

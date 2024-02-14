@@ -1,7 +1,5 @@
 #include "VertexArray.h"
 
-#include <glm/glm.hpp>
-
 namespace OGLR
 {
 
@@ -19,23 +17,6 @@ namespace OGLR
     VertexArray::~VertexArray()
     {
         glDeleteVertexArrays(1, &m_RendererID);
-    }
-
-
-    void VertexArray::bindAttributes(const VertexBufferLayout &bufferLayout) const {
-
-        const auto& elements = bufferLayout.getAttributes();
-        uint32_t offset = 0;
-
-        for (int i = 0; i < elements.size(); ++i)
-        {
-            const auto& element = elements[i];
-            glEnableVertexAttribArray(i);
-            glVertexAttribPointer(i, element.count, element.type, element.normalised, bufferLayout.getStride(),
-                                  reinterpret_cast<const void *>(offset));
-            offset += element.count * VertexBufferLayout::VertexAttribute::getSizeOfType(element.type);
-        }
-
     }
 
 

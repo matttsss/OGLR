@@ -4,15 +4,12 @@
 #include <unordered_map>
 #include <tiny_obj_loader.h>
 
-typedef OGLR::Vertex<glm::vec3, glm::vec3, glm::vec3, glm::vec2> ObjVertex;
-
-
 namespace std
 {
     template<>
-    struct hash<ObjVertex>
+    struct hash<OGLR::ObjVertex>
     {
-        size_t operator()(ObjVertex const &vertex) const
+        size_t operator()(OGLR::ObjVertex const &vertex) const
         {
             return reinterpret_cast<size_t>(vertex.data);
         }

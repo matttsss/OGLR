@@ -15,7 +15,6 @@ add_library(${PROJECT_NAME}
         src/renderer/Shader.cpp
         src/renderer/Texture.cpp
         src/buffers/VertexArray.cpp
-        src/buffers/VertexBufferLayout.cpp
         src/utils/debug.cpp
         src/utils/Camera.cpp
         src/utils/Terrain.cpp
