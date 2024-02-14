@@ -13,10 +13,17 @@ namespace OGLR {
     typedef Vertex<glm::vec2, glm::vec3> TerrainVertex;
 
     struct TerrainSettings {
-        uint32_t radius = 4;
-        uint32_t resolution = 256;
+        uint32_t radius = 20;
+        uint32_t resolution = 64;
         uint32_t iter = 1;
         float angle = 0;
+
+        TerrainSettings* clamp() {
+                radius = glm::clamp(radius, (uint32_t)0, (uint32_t) 64);
+                resolution = glm::clamp(resolution, (uint32_t)2, (uint32_t) 512);
+                iter = glm::clamp(iter, (uint32_t) 1, (uint32_t) 128);
+                return this;
+        }
 
         bool operator==(const TerrainSettings &other) const {
             return radius     == other.radius     &&
@@ -41,16 +48,19 @@ namespace OGLR {
     class Terrain {
     public:
 
-        Terrain(const TerrainSettings& settings);
+        Terrain() = delete;
+        Terrain(Terrain&&) = delete;
+        Terrain(const Terrain&) = delete;
+        Terrain(TerrainSettings& settings);
+        ~Terrain();
+
 
         /***
          * Closes the resources used by the terrain
          */
         static void destroyTerrain();
 
-        void addShader(const std::string& vertexPath, const std::string& fragPath);
-
-        void updateWithSettings(const TerrainSettings& settings);
+        void updateWithSettings(TerrainSettings& settings);
 
         inline const Texture& getNHTextureAtPos(const glm::ivec2& tileIdx) const {
             return m_NHMaps.at((tileIdx.x + settings.radius) * (2*settings.radius + 1) + (tileIdx.y + settings.radius));

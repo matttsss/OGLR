@@ -7,8 +7,8 @@ namespace OGLR {
     OGLR::Shader *Terrain::s_HeightComputeShader;
     OGLR::Shader *Terrain::s_NormalComputeShader;
 
-    Terrain::Terrain(const TerrainSettings &settings)
-            : settings(settings) {
+    Terrain::Terrain(TerrainSettings &settings)
+            : settings(*settings.clamp()) {
 
         if (!s_HeightComputeShader)
             s_HeightComputeShader = Shader::FromGLSLTextFiles("test_res/shaders/compute_height.glsl");
@@ -19,21 +19,32 @@ namespace OGLR {
         updateBuffersForRes(settings.resolution);
     }
 
+    Terrain::~Terrain() {
+        delete renderShader;
+    }
+
     void Terrain::destroyTerrain() {
         delete s_HeightComputeShader;
         delete s_NormalComputeShader;
     }
 
 
+    void Terrain::updateWithSettings(TerrainSettings &otherSettings) {
+        if (settings == *otherSettings.clamp()) return;
+
+        settings = otherSettings;
+
+        // if (settings.radius > oldRadius) TODO find better condition
+        updateNHMap();
+
+        updateBuffersForRes(settings.resolution);
+    }
+
     TerrainBuffers& Terrain::getBuffersForRes(uint32_t resolution) {
         updateBuffersForRes(resolution);
         return s_Buffers.at(resolution);
     }
 
-
-    void Terrain::addShader(const std::string &vertexPath, const std::string &fragPath) {
-        renderShader = Shader::FromGLSLTextFiles(vertexPath, fragPath);
-    }
 
     void Terrain::updateNHMap() {
         int32_t radius = (int32_t) settings.radius;
@@ -81,18 +92,6 @@ namespace OGLR {
         Shader::unBind();
 
         m_NHMaps.emplace_back(std::move(NHMap));
-    }
-
-    void Terrain::updateWithSettings(const TerrainSettings &otherSettings) {
-        if (settings == otherSettings) return;
-
-        uint32_t oldRadius = settings.radius;
-        settings = otherSettings;
-
-        // if (settings.radius > oldRadius) TODO find better condition
-            updateNHMap();
-
-        updateBuffersForRes(settings.resolution);
     }
 
     void Terrain::updateBuffersForRes(uint32_t resolution) {

@@ -12,7 +12,7 @@ void TestLayer::onAttach()
             ->addShader("test_res/shaders/textured_simple.vert.glsl", "test_res/shaders/textured_simple.frag.glsl")
             ->addTexture("test_res/textures/tex_cube.png", OGLR::Texture::Type::X4B);
 
-    terrain.addShader("test_res/shaders/terrain_shader.vert.glsl", "test_res/shaders/terrain_shader.frag.glsl");
+    terrain.renderShader = OGLR::Shader::FromGLSLTextFiles("test_res/shaders/terrain_shader.vert.glsl", "test_res/shaders/terrain_shader.frag.glsl");
 
 }
 
@@ -21,6 +21,10 @@ void TestLayer::onRender() {
 
         ImGui::Text("Average render time (ms): %f", avrgFrameTime);
         ImGui::Checkbox("Render cube", &renderCube);
+        if (renderCube)
+        {
+            ImGui::SliderFloat3("Cube position", &transform[3].x, -5, 5);
+        }
 
         ImGui::InputInt("Tile radius", (int*)&tSettings.radius);
         ImGui::InputInt("Mesh resolution", (int*)&tSettings.resolution);
@@ -31,7 +35,7 @@ void TestLayer::onRender() {
 
     m_Renderer.setCamera(m_Camera);
     if (renderCube)
-        m_Renderer.render(mesh, glm::mat4(1.0f));
+        m_Renderer.render(mesh, transform);
 
     terrain.updateWithSettings(tSettings);
     m_Renderer.render(terrain);

@@ -21,6 +21,7 @@ private:
     bool renderCube = false;
     OGLR::TerrainSettings tSettings;
 
+    glm::mat4 transform {1.0};
     OGLR::MeshComponent* mesh = nullptr;
     OGLR::Terrain terrain {tSettings};
 

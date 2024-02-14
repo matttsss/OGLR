@@ -6,8 +6,7 @@ layout(local_size_x = 8,  local_size_y = 8) in;
 uniform ivec2 u_Offset;
 
 layout(r32f, binding = 0) writeonly uniform image2D u_HeightMap;
-
-const int maxIter = 5;
+const int maxIter = 1;
 
 mat2 rot(float a) {
     float s = sin(a);
@@ -21,11 +20,11 @@ float discreteHeightAt(vec2 pos) {
 }
 
 // Returns heights of the cardinal corners in trigonometric order
-vec4 coefsOfN(ivec2 translation) {
-    float a = discreteHeightAt(vec2(0, 0) + translation);
-    float b = discreteHeightAt(vec2(0, 1) + translation);
-    float c = discreteHeightAt(vec2(1, 1) + translation);
-    float d = discreteHeightAt(vec2(1, 0) + translation);
+vec4 coefsOfN() {
+    float a = discreteHeightAt(u_Offset - ivec2(0, 0));
+    float b = discreteHeightAt(u_Offset - ivec2(1, 0));
+    float c = discreteHeightAt(u_Offset - ivec2(0, 1));
+    float d = discreteHeightAt(u_Offset - ivec2(1, 1));
 
     return vec4(a, b - a, c - a, a - b - c + d);
 }
@@ -38,7 +37,7 @@ float N(vec2 pos, vec4 coefs) {
 }
 
 float heightAt(vec2 pos) {
-    vec4 coefs = coefsOfN(u_Offset);
+    vec4 coefs = coefsOfN();
     mat2 R = rot(M_PI / 4.0);
 
     float h = 0;
