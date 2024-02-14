@@ -43,7 +43,7 @@ namespace OGLR
     void Renderer::render(const Terrain &terrain) const {
         Shader* shader = terrain.renderShader;
         int32_t radius = (int32_t)terrain.settings.radius;
-        TerrainBuffers& tb = Terrain::getBuffersForRes(terrain.settings.resolution);
+        const TerrainBuffers& tb = Terrain::getBuffersForRes(terrain.settings.resolution);
 
         shader->bind();
         tb.va.bind();

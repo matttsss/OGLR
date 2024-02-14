@@ -40,7 +40,7 @@ namespace OGLR {
         updateBuffersForRes(settings.resolution);
     }
 
-    TerrainBuffers& Terrain::getBuffersForRes(uint32_t resolution) {
+    const TerrainBuffers& Terrain::getBuffersForRes(uint32_t resolution) {
         updateBuffersForRes(resolution);
         return s_Buffers.at(resolution);
     }

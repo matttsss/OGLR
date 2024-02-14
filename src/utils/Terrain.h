@@ -55,18 +55,34 @@ namespace OGLR {
         ~Terrain();
 
 
-        /***
-         * Closes the resources used by the terrain
+        /**
+         * Closes the static resources used by the terrain
          */
         static void destroyTerrain();
 
+        /**
+         * Updates the terrain with the new settings
+         * @param settings (Terrain&) New settings for the terrain,
+         *  values will be clamped for performance reasons
+         */
         void updateWithSettings(TerrainSettings& settings);
 
+        /**
+         * Provides the normal/height map texture for the given tile coordinates
+         * @param tileIdx (const glm::ivec2&) Integer coordinates of the queried tile
+         * @return (const Texture&) Reference to the texture
+         */
         inline const Texture& getNHTextureAtPos(const glm::ivec2& tileIdx) const {
             return m_NHMaps.at((tileIdx.x + settings.radius) * (2*settings.radius + 1) + (tileIdx.y + settings.radius));
         }
 
-        static TerrainBuffers& getBuffersForRes(uint32_t resolution);
+
+        /**
+         * Provides the buffers needed to render a flat tile with the given resolution
+         * @param resolution (uint32_t) Queried resolution
+         * @return (const TerrainBuffers&) Buffers for the resolution
+         */
+        static const TerrainBuffers& getBuffersForRes(uint32_t resolution);
 
         TerrainSettings settings;
         Shader* renderShader = nullptr;
