@@ -4,16 +4,13 @@ namespace OGLR {
 
     std::unordered_map<uint32_t, TerrainBuffers> Terrain::s_Buffers;
 
-    OGLR::Shader *Terrain::s_HeightComputeShader;
-    OGLR::Shader *Terrain::s_NormalComputeShader;
+    OGLR::Shader *Terrain::s_NHComputeShader;
 
     Terrain::Terrain(TerrainSettings &settings)
             : settings(*settings.clamp()) {
 
-        if (!s_HeightComputeShader)
-            s_HeightComputeShader = Shader::fromGLSLTextFiles("test_res/shaders/compute_height.glsl");
-        if (!s_NormalComputeShader)
-            s_NormalComputeShader = Shader::fromGLSLTextFiles("test_res/shaders/compute_normal.glsl");
+        if (!s_NHComputeShader)
+            s_NHComputeShader = Shader::fromGLSLTextFiles("test_res/shaders/compute_NHMap.glsl");
 
         updateNHMap();
         updateBuffersForRes(settings.resolution);
@@ -24,8 +21,7 @@ namespace OGLR {
     }
 
     void Terrain::destroyTerrain() {
-        delete s_HeightComputeShader;
-        delete s_NormalComputeShader;
+        delete s_NHComputeShader;
     }
 
 
@@ -56,40 +52,20 @@ namespace OGLR {
     }
 
     void Terrain::updateNHAtPos(const glm::ivec2 &tileIdx) {
-
         uint32_t resolution = settings.resolution;
-
-        Texture height(nullptr, OGLR::Texture::Type::X1f, resolution, resolution);
         Texture NHMap(nullptr, OGLR::Texture::Type::X4f, resolution, resolution);
 
-        // Launch computations
-        s_HeightComputeShader->bind();
+        // Launch computation
+        s_NHComputeShader->bind();
 
-        height.bind();
-        height.bindAsImage(0, GL_WRITE_ONLY);
+        NHMap.bind();
+        NHMap.bindAsImage(0, GL_WRITE_ONLY);
 
-        s_HeightComputeShader->setUniform("u_HeightMap", 0);
-        s_HeightComputeShader->setUniform("u_Offset", tileIdx);
-
-        glDispatchCompute((resolution + 7) / 8, (resolution + 7) / 8, 1);
-        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-
-
-
-        s_NormalComputeShader->bind();
-
-        height.bind(0);
-        height.bindAsImage(0, GL_READ_ONLY);
-
-        NHMap.bind(1);
-        NHMap.bindAsImage(1, GL_WRITE_ONLY);
-
-        s_NormalComputeShader->setUniform("u_HeightMap", 0);
-        s_NormalComputeShader->setUniform("u_NHMap", 1);
+        s_NHComputeShader->setUniform("u_NHMap", 0);
+        s_NHComputeShader->setUniform("u_Offset", tileIdx);
 
         glDispatchCompute((resolution + 7) / 8, (resolution + 7) / 8, 1);
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-        Shader::unBind();
 
         m_NHMaps.emplace_back(std::move(NHMap));
     }

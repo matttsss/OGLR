@@ -7,16 +7,16 @@ uniform mat4 u_MVP;
 layout (binding = 0) uniform sampler2D u_NHMap; // normal / height map
 
 out vec3 v_Color;
-out vec3 v_Normal;
+out vec2 v_TexCoor;
 
 void main()
 {
-    vec4 nhValue = texture(u_NHMap, a_Position);
+    float height = texture(u_NHMap, a_Position).w;
 
-    vec4 localPos = vec4(a_Position.x, nhValue.w, a_Position.y, 1.0);
+    vec4 localPos = vec4(a_Position.x, height, a_Position.y, 1.0);
     //vec4 localPos = vec4(a_Position.x, 0.0, a_Position.y, 1.0);
 
     gl_Position = u_MVP * localPos;
     v_Color = a_Color;
-    v_Normal = nhValue.xyz;
+    v_TexCoor = a_Position;
 }

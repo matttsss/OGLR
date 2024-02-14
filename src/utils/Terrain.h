@@ -96,8 +96,7 @@ namespace OGLR {
         static void updateBuffersForRes(uint32_t resolution);
         static std::unordered_map<uint32_t, TerrainBuffers> s_Buffers;
 
-        static OGLR::Shader *s_HeightComputeShader;
-        static OGLR::Shader *s_NormalComputeShader;
+        static OGLR::Shader *s_NHComputeShader;
 
     };
 

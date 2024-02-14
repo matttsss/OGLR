@@ -5,8 +5,8 @@ layout(local_size_x = 8,  local_size_y = 8) in;
 
 uniform ivec2 u_Offset;
 
-layout(r32f, binding = 0) writeonly uniform image2D u_HeightMap;
-const int maxIter = 1;
+layout(rgba32f, binding = 0) writeonly uniform image2D u_NHMap;
+const int maxIter = 5;
 
 mat2 rot(float a) {
     float s = sin(a);
@@ -30,27 +30,48 @@ vec4 coefsOfN() {
 }
 
 float N(vec2 pos, vec4 coefs) {
-    vec2 sPos = smoothstep(0.0, 1.0, pos);
+    const vec2 sPos = smoothstep(0.0, 1.0, pos);
     return  coefs.x + coefs.y * sPos.x +
                       coefs.z * sPos.y +
                       coefs.w * sPos.x * sPos.y;
 }
 
-float heightAt(vec2 pos) {
-    vec4 coefs = coefsOfN();
-    mat2 R = rot(M_PI / 4.0);
+vec2 dN(vec2 pos, vec4 coefs) {
+    const vec2 dS = 6 * pos * (1 - pos);
+    return dS * (coefs.yz + coefs.w * smoothstep(0, 1, pos).yx);
+}
+
+float F(vec2 pos) {
+    const vec4 coefs = coefsOfN();
+    const mat2 Rot = rot(M_PI / 4.0);
 
     float h = 0;
     float powI = 1;
-    vec2 rotatedP = pos;
+    mat2 R = mat2(1, 0, 0, 1);
 
     for (int i = 0; i < maxIter; ++i) {
-        h += N(powI * rotatedP, coefs) / powI;
+        h += N(powI * R * pos, coefs) / powI;
+        R = R * Rot;
         powI *= 2;
-        rotatedP = R * rotatedP;
+    }
+    return h;
+}
+
+vec2 dF(vec2 pos) {
+    const vec4 coefs = coefsOfN();
+    const mat2 Rot = rot(M_PI / 4.0);
+
+    float powI = 1;
+    vec2 grad = vec2(0);
+    mat2 R = mat2(1, 0, 0, 1);
+
+    for (int i = 0; i < maxIter; ++i) {
+        grad += R * dN(powI * R * pos, coefs);
+        R = R * Rot;
+        powI *= 2;
     }
 
-    return h;
+    return grad;
 }
 
 void main()
@@ -58,11 +79,15 @@ void main()
 
     // Check validity of shader instance
     ivec2 vertexId = ivec2(gl_GlobalInvocationID.xy);
-    ivec2 tileSize = imageSize(u_HeightMap);
+    ivec2 tileSize = imageSize(u_NHMap);
     if (vertexId.x >= tileSize.x || vertexId.y >= tileSize.y)
         return;
 
     vec2 vertexPosInPlane = vec2(vertexId) / vec2(tileSize);
-    imageStore(u_HeightMap, vertexId, vec4(heightAt(vertexPosInPlane), 0, 0, 0));
+    float height = F(vertexPosInPlane);
+    vec2 grad = dF(vertexPosInPlane);
+
+    vec3 normal = normalize(vec3(-grad.x, 1, -grad.y));
+    imageStore(u_NHMap, vertexId, vec4(normal, height));
 
 }
