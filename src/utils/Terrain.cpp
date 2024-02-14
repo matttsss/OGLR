@@ -68,8 +68,8 @@ namespace OGLR {
         height.bind();
         height.bindAsImage(0, GL_WRITE_ONLY);
 
-        s_HeightComputeShader->setUniform1i("u_HeightMap", 0);
-        s_HeightComputeShader->setUniformVec2i("u_Offset", tileIdx.x, tileIdx.y);
+        s_HeightComputeShader->setUniform("u_HeightMap", 0);
+        s_HeightComputeShader->setUniform("u_Offset", tileIdx);
 
         glDispatchCompute((resolution + 7) / 8, (resolution + 7) / 8, 1);
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
@@ -84,8 +84,8 @@ namespace OGLR {
         NHMap.bind(1);
         NHMap.bindAsImage(1, GL_WRITE_ONLY);
 
-        s_NormalComputeShader->setUniform1i("u_HeightMap", 0);
-        s_NormalComputeShader->setUniform1i("u_NHMap", 1);
+        s_NormalComputeShader->setUniform("u_HeightMap", 0);
+        s_NormalComputeShader->setUniform("u_NHMap", 1);
 
         glDispatchCompute((resolution + 7) / 8, (resolution + 7) / 8, 1);
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);

@@ -21,6 +21,7 @@ add_library(${PROJECT_NAME}
         src/utils/Terrain.cpp
         src/app/Application.cpp
         src/app/Input.cpp
+        src/renderer/Shader_Unif_Impl.cpp
 )
 
 add_executable(${PROJECT_NAME}_TEST

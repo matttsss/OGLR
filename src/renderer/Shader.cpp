@@ -50,25 +50,6 @@ namespace OGLR
 		glUseProgram(0);
 	}
 
-	void Shader::setUniform4f(const std::string& name, float v0, float v1, float v2, float v3)
-	{
-		glUniform4f(getUniformLocation(name), v0, v1, v2, v3);
-	}
-
-	void Shader::setUniformMat4f(const std::string& name, const glm::mat4& mat)
-	{
-		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &mat[0][0]);
-	}
-
-	void Shader::setUniform1i(const std::string& name, int v1)
-	{
-		glUniform1i(getUniformLocation(name), v1);
-	}
-
-    void Shader::setUniformVec2i(const std::string& name, int v1, int v2)
-    {
-        glUniform2i(getUniformLocation(name), v1, v2);
-    }
 
 	GLuint Shader::CompileShader(GLenum type, const std::string& source)
 	{
@@ -109,20 +90,6 @@ namespace OGLR
 
         Shader::unBind();
 		return shader;
-	}
-	
-	GLint Shader::getUniformLocation(const std::string& name)
-	{
-		if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
-			return m_UniformLocationCache[name];
-
-		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
-		if (location == -1)
-			std::cout << "Warning: uniform '" << name << "' is not defined... " << std::endl;
-		
-		m_UniformLocationCache[name] = location;
-
-		return location;
 	}
 
     void Shader::loadComputeFromFile(const std::string &computeShaderPath) {

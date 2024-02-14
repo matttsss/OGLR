@@ -120,7 +120,7 @@ namespace OGLR
 
         for (uint32_t i = 0; i < textures.size(); ++i){
             textures[i].bind(i);
-            shader->setUniform1i("u_Texture" + std::to_string(i), i);
+            shader->setUniform("u_Texture" + std::to_string(i), i);
         }
 
 

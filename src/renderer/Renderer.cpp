@@ -34,7 +34,7 @@ namespace OGLR
 	void Renderer::render(const MeshComponent* mesh, const glm::mat4& modelTransform) const
 	{
 		mesh->bind();
-        mesh->shader->setUniformMat4f("u_MVP", m_PVMatrix * modelTransform);
+        mesh->shader->setUniform("u_MVP", m_PVMatrix * modelTransform);
 
 		glDrawElements(GL_TRIANGLES, mesh->ib.getCount(), GL_UNSIGNED_INT, nullptr);
         mesh->unBind();
@@ -49,13 +49,13 @@ namespace OGLR
         tb.va.bind();
         tb.ib.bind();
 
-        shader->setUniform1i("u_NHMap", 0);
+        shader->setUniform("u_NHMap", 0);
 
         for (int32_t i = -radius; i <= radius; ++i) {
             for (int32_t j = -radius; j <= radius; ++j) {
                 const Texture& texture = terrain.getNHTextureAtPos({i, j});
                 texture.bind();
-                shader->setUniformMat4f("u_MVP", glm::translate(m_PVMatrix, {i, 0, j}));
+                shader->setUniform("u_MVP", glm::translate(m_PVMatrix, {i, 0, j}));
                 glDrawElements(GL_TRIANGLES, tb.ib.getCount(), GL_UNSIGNED_INT, nullptr);
             }
         }
