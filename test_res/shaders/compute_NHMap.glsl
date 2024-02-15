@@ -10,12 +10,14 @@ layout(rgba32f, binding = 0) writeonly uniform image2D u_NHMap;
 layout (std140) uniform u_TerrainSettings {
     uint octaves;
     float angle;
+    vec2 pad0;
 };
 
 layout (std140) uniform u_ChunkSettings {
-    uint resolution;
-    vec2 centerPos;
+    vec2 center;
     vec2 scale;
+    uint resolution;
+    vec3 pad1;
 };
 
 mat2 rot(float a) {

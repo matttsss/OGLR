@@ -9,23 +9,25 @@ struct Vertex {
     vec4 color;
 };
 
-layout (std140, binding = 0) buffer Vertices {
+layout (std430, binding = 0) buffer Vertices {
     Vertex vertices[];
 };
 
-layout (std140, binding = 1) buffer Indices {
+layout (std430, binding = 1) buffer Indices {
     uint indices[][3];
 };
 
-layout (std140, binding = 2) uniform TerrainSettings {
+layout (std140, binding = 2) uniform u_TerrainSettings {
     uint octaves;
     float angle;
+    vec2 pad0;
 };
 
-layout (std140, binding = 3) uniform ChunkSettings {
-    uint resolution;
+layout (std140, binding = 3) uniform u_ChunkSettings {
     vec2 centerPos;
     vec2 scale;
+    uint resolution;
+    vec3 pad1;
 };
 
 
@@ -105,7 +107,7 @@ void main() {
         return;
 
     // =========== Vertex Positon and Normal ================
-    vec2 dUV = scale / res;
+    vec2 dUV = scale / resolution;
     vec2 localPlanePos = vertexId * dUV - 0.5 * scale;
     vec2 worldPlanePos = localPlanePos + center;
 

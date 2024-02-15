@@ -19,6 +19,7 @@ namespace OGLR {
     struct TerrainSeed {
         GLuint octaves = 1;
         GLfloat angle = 0;
+        glm::vec2 pad {0};
 
         bool operator==(const TerrainSeed &other) const {
             return octaves == other.octaves  &&
@@ -32,9 +33,10 @@ namespace OGLR {
     };
 
     struct ChunkSettings {
-        GLuint resolution = 64;
         glm::vec2 centerPos {0};
         glm::vec2 scale {1};
+        GLuint resolution = 64;
+        glm::vec3 pad {0};
 
         bool operator==(const ChunkSettings &other) const {
             return resolution == other.resolution &&

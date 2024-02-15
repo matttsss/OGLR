@@ -71,6 +71,7 @@ namespace OGLR {
         s_NHComputeShader->bind();
 
         s_NHComputeShader->setUniformBlock("u_TerrainSettings", m_SeedUBO);
+        s_NHComputeShader->setUniformBlock("u_ChunkSettings", m_ChunkUBO);
 
         NHMap.bind();
         NHMap.bindAsImage(0, GL_WRITE_ONLY);
