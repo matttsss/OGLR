@@ -94,8 +94,39 @@ vec2 dF(vec2 pos, uint octaves, float rotAngle) {
     return grad;
 }
 
+uint lineariseCoord(ivec2 ids) {
+    return ids.y * resolution + ids.x;
+}
 
 void main() {
+    // Check validity of shader instance
+    ivec2 vertexId = ivec2(gl_GlobalInvocationID.xy);
+    if (vertexId.x >= resolution || vertexId.y >= resolution)
+        return;
 
+    // =========== Vertex Positon and Normal ================
+    vec2 dUV = scale / res;
+    vec2 localPlanePos = vertexId * dUV - 0.5 * scale;
+    vec2 worldPlanePos = localPlanePos + center;
 
+    float height = F(worldPlanePos, octaves, angle);
+    vec2 grad = dF(worldPlanePos, octaves, angle);
+    vec3 normal = normalise(vec3(-grad.x, 1, -grad.y));
+
+    uint vertIdx = lineariseCoord(vertexId);
+    vertices[vertexId].pos = vec4(localPlanePos.x, height, localPlanePos.y, 1.0);
+    vertices[vertexId].normal = vec4(normal, 0.0);
+    vertices[vertexId].color = vec4(0.7, 0.7, 0.7, 1.0);
+
+    // =============== Indices ==================
+    if (vertexId.x < resolution - 1 && vertexId.y < resolution - 1) {
+        uint indexIdx = 6 * vertexIdx;
+        indices[indexIdx + 0] = vertIdx;
+        indices[indexIdx + 1] = lineariseCoord(vertId + ivec2(0, 1));
+        indices[indexIdx + 2] = lineariseCoord(vertId + ivec2(1, 1));
+
+        indices[indexIdx + 3] = vertIdx;
+        indices[indexIdx + 4] = lineariseCoord(vertId + ivec2(1, 1));
+        indices[indexIdx + 5] = lineariseCoord(vertId + ivec2(1, 0));
+    }
 }
