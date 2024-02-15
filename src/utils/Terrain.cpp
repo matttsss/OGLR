@@ -71,7 +71,12 @@ namespace OGLR {
         glDispatchCompute((resolution + 7) / 8, (resolution + 7) / 8, 1);
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
-        m_NHMaps.emplace_back(std::move(NHMap));
+        Shader::unBind();
+        UniformBuffer::unBind();
+        Texture::unBind();
+        m_NHMaps.emplace(std::piecewise_construct,
+                         std::forward_as_tuple(tileIdx),
+                         std::forward_as_tuple(std::move(NHMap)));
     }
 
     void Terrain::updateBuffersForRes(uint32_t resolution) {

@@ -1,6 +1,9 @@
 #pragma once
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/gtx/hash.hpp"
 #include "glm/glm.hpp"
+
 #include <unordered_map>
 
 #include "buffers/Buffer.h"
@@ -8,15 +11,16 @@
 #include "renderer/MeshComponent.h"
 
 
+
 namespace OGLR {
 
     typedef Vertex<glm::vec2, glm::vec3> TerrainVertex;
 
     struct TerrainSettings {
-        uint32_t radius = 20;
-        uint32_t resolution = 64;
-        uint32_t nbOctaves = 1;
-        float angle = 0;
+        GLuint radius = 20;
+        GLuint resolution = 64;
+        GLuint nbOctaves = 1;
+        GLfloat angle = 0;
 
         TerrainSettings* clamp() {
             radius = glm::clamp(radius, (uint32_t)0, (uint32_t) 64);
@@ -76,7 +80,7 @@ namespace OGLR {
          * @return (const Texture&) Reference to the texture
          */
         inline const Texture& getNHTextureAtPos(const glm::ivec2& tileIdx) const {
-            return m_NHMaps.at((tileIdx.x + settings.radius) * (2*settings.radius + 1) + (tileIdx.y + settings.radius));
+            return m_NHMaps.at(tileIdx);
         }
 
 
@@ -94,7 +98,7 @@ namespace OGLR {
 
         void updateNHMap();
         void updateNHAtPos(const glm::ivec2& tileIdx);
-        std::vector<Texture> m_NHMaps;
+        std::unordered_map<glm::ivec2, Texture> m_NHMaps;
 
         UniformBuffer m_Ubo;
 

@@ -42,29 +42,38 @@ namespace OGLR
 
     void Renderer::render(const Terrain &terrain) const {
         Shader* shader = terrain.renderShader;
-        int32_t radius = (int32_t)terrain.settings.radius;
+        uint32_t radius = terrain.settings.radius;
         const TerrainBuffers& tb = Terrain::getBuffersForRes(terrain.settings.resolution);
 
         shader->bind();
         tb.va.bind();
         tb.ib.bind();
 
-        shader->setUniform("u_NHMap", 0);
 
-        for (int32_t i = -radius; i <= radius; ++i) {
-            for (int32_t j = -radius; j <= radius; ++j) {
-                const Texture& texture = terrain.getNHTextureAtPos({i, j});
-                texture.bind();
-                shader->setUniform("u_MVP", glm::translate(m_PVMatrix, {i, 0, j}));
-                glDrawElements(GL_TRIANGLES, tb.ib.getCount(), GL_UNSIGNED_INT, nullptr);
-            }
-        }
+        //for (int32_t i = -radius; i <= radius; ++i) {
+        //    for (int32_t j = -radius; j <= radius; ++j) {
+        //        const Texture& texture = terrain.getNHTextureAtPos({i, j});
+        //        texture.bind();
+        //        shader->setUniform("u_MVP", glm::translate(m_PVMatrix, {i, 0, j}));
+        //        glDrawElements(GL_TRIANGLES, tb.ib.getCount(), GL_UNSIGNED_INT, nullptr);
+        //    }
+        //}
+
+        const Texture& texture = terrain.getNHTextureAtPos({0, 0});
+        texture.bind();
+
+        shader->setUniform("u_Radius", radius);
+        shader->setUniform("u_NHMap", 0);
+        shader->setUniform("u_MVP", m_PVMatrix);
+
+        GLsizei nbInstances = (2*radius + 1) * (2*radius + 1);
+        glDrawElementsInstanced(GL_TRIANGLES, tb.ib.getCount(), GL_UNSIGNED_INT, nullptr, nbInstances);
+
 
         Texture::unBind();
         Shader::unBind();
         VertexArray::unBind();
         sIndexBuffer ::unBind();
-        UniformBuffer::unBind();
     }
 
 }
