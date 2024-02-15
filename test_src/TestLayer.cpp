@@ -12,7 +12,7 @@ void TestLayer::onAttach()
             ->addShader("test_res/shaders/textured_simple.vert.glsl", "test_res/shaders/textured_simple.frag.glsl")
             ->addTexture("test_res/textures/tex_cube.png", OGLR::Texture::Type::X4B);
 
-    terrain.renderShader = OGLR::Shader::fromGLSLTextFiles("test_res/shaders/terrain_shader.vert.glsl", "test_res/shaders/terrain_shader.frag.glsl");
+    terrain.chunkRenderer = OGLR::Shader::fromGLSLTextFiles("test_res/shaders/terrain_chunk.vert.glsl", "test_res/shaders/terrain_chunk.frag.glsl");
 
 }
 

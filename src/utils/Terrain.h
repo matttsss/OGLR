@@ -14,7 +14,6 @@
 
 namespace OGLR {
 
-    typedef Vertex<glm::vec2, glm::vec3> TerrainVertex;
     typedef Vertex<glm::vec4, glm::vec4, glm::vec4> ChunkVertex;
 
     struct TerrainSeed {
@@ -35,8 +34,8 @@ namespace OGLR {
 
     struct ChunkSettings {
         glm::vec2 centerPos {0};
-        glm::vec2 scale {1};
-        GLuint resolution = 64;
+        glm::vec2 scale {1, 1};
+        GLuint resolution = 256;
         glm::vec3 pad {0};
 
         bool operator==(const ChunkSettings &other) const {
@@ -90,46 +89,17 @@ namespace OGLR {
         inline const Buffer& getChunkSettingsUBO() const { return m_ChunkUBO; }
         inline const Buffer& getSeedSettingsUBO()  const { return m_SeedUBO;  }
 
-        /**
-         * Provides the normal/height map texture for the given tile coordinates
-         * @param tileIdx (const glm::ivec2&) Integer coordinates of the queried tile
-         * @return (const Texture&) Reference to the texture
-         */
-        inline const Texture& getNHTextureAtPos(const glm::ivec2& tileIdx) const {
-            return m_NHMaps.at(tileIdx);
-        }
-
-
-        /**
-         * Provides the buffers needed to render a flat tile with the given resolution
-         * @param resolution (uint32_t) Queried resolution
-         * @return (const TerrainBuffers&) Buffers for the resolution
-         */
-        static const TerrainBuffers& getBuffersForRes(uint32_t resolution);
 
         TerrainSeed tSeed;
         ChunkSettings cSettings;
-        Shader* renderShader = nullptr;
 
-        Shader* m_ChunkRenderer = nullptr;
+        Shader* chunkRenderer = nullptr;
 
-        MeshComponent& generateChunk(const glm::ivec2& pos);
+        MeshComponent& getChunk(const glm::ivec2& chunkIdx);
 
     private:
-
-        void updateNHMap();
-        void updateNHAtPos(const glm::ivec2& tileIdx);
-        std::unordered_map<glm::ivec2, Texture> m_NHMaps;
-
-        static void updateBuffersForRes(uint32_t resolution);
-        static std::unordered_map<uint32_t, TerrainBuffers> s_Buffers;
-
-        static Shader *s_NHComputeShader;
-
-
-        std::unordered_map<glm::ivec2, MeshComponent> m_Chunks;
-
         Buffer m_SeedUBO, m_ChunkUBO;
+        std::unordered_map<glm::ivec2, MeshComponent> m_Chunks;
 
 
         static Shader* s_MeshMaker;
