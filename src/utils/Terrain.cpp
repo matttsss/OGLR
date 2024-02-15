@@ -7,7 +7,8 @@ namespace OGLR {
     OGLR::Shader *Terrain::s_NHComputeShader;
 
     Terrain::Terrain(TerrainSettings &settings)
-            : settings(*settings.clamp()), m_Ubo(&settings, sizeof(TerrainSettings)) {
+        : settings(*settings.clamp()),
+          m_Ubo(BufType::UBO, &settings, sizeof(TerrainSettings), UsageType::Dynamic) {
 
         if (!s_NHComputeShader)
             s_NHComputeShader = Shader::fromGLSLTextFiles("test_res/shaders/compute_NHMap.glsl");
@@ -29,7 +30,10 @@ namespace OGLR {
         if (settings == *otherSettings.clamp()) return;
 
         settings = otherSettings;
+
+        m_Ubo.bind();
         m_Ubo.setData(&settings, sizeof(TerrainSettings));
+        m_Ubo.unBind();
 
         // if (settings.radius > oldRadius) TODO find better condition
         updateNHMap();
@@ -72,7 +76,7 @@ namespace OGLR {
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
         Shader::unBind();
-        UniformBuffer::unBind();
+        m_Ubo.unBind();
         Texture::unBind();
         m_NHMaps.emplace(std::piecewise_construct,
                          std::forward_as_tuple(tileIdx),
@@ -114,8 +118,8 @@ namespace OGLR {
         s_Buffers.emplace(std::piecewise_construct,
                           std::forward_as_tuple(resolution),
                           std::forward_as_tuple(
-                                  sVertexBuffer(vertices.data(), vertices.size() * sizeof(TerrainVertex)),
-                                  sIndexBuffer(indices.data(), indices.size() * sizeof(uint32_t)),
+                                  Buffer(BufType::VBO, vertices.data(), vertices.size() * sizeof(TerrainVertex)),
+                                  Buffer(BufType::IBO, indices.data(), indices.size() * sizeof(uint32_t)),
                                   VertexArray()));
 
         TerrainBuffers& tb = s_Buffers.at(resolution);
@@ -125,12 +129,12 @@ namespace OGLR {
 
         tb.va.bindAttributes<TerrainVertex>();
 
-        Buffer<BufferType::Vtx>::unBind();
+        tb.vb.unBind();
         VertexArray::unBind();
     }
 
 
-    TerrainBuffers::TerrainBuffers(sVertexBuffer &&vb, sIndexBuffer &&ib, VertexArray &&va)
+    TerrainBuffers::TerrainBuffers(Buffer &&vb, Buffer &&ib, VertexArray &&va)
         : vb(std::move(vb)), ib(std::move(ib)), va(std::move(va)){}
 
 }

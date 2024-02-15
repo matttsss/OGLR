@@ -25,7 +25,7 @@ namespace OGLR
         template<typename T>
         void setUniform(const std::string& name, const T& val);
 
-        void setUniformBlock(const std::string& name, const UniformBuffer& ubo);
+        void setUniformBlock(const std::string& name, const Buffer& ubo);
 
 
 		GLuint getRendererID() const { return m_RendererID; }

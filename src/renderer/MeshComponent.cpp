@@ -119,22 +119,21 @@ namespace OGLR
         va.bind();
         ib.bind();
 
-        for (uint32_t i = 0; i < textures.size(); ++i){
+        for (uint32_t i = 0; i < textures.size(); ++i) {
             textures[i].bind(i);
             shader->setUniform("u_Texture" + std::to_string(i), i);
         }
-
 
     }
 
     void MeshComponent::unBind() const {
         Texture::unBind();
-        Buffer<BufferType::Idx>::unBind();
+        ib.unBind();
         VertexArray::unBind();
         Shader::unBind();
     }
 
-    MeshComponent::MeshComponent(Buffer<BufferType::Vtx> &&vb, Buffer<BufferType::Idx> &&ib, VertexArray &&va) noexcept
+    MeshComponent::MeshComponent(Buffer &&vb, Buffer &&ib, VertexArray &&va) noexcept
         : va(std::move(va)), vb(std::move(vb)), ib(std::move(ib)) {}
 
 

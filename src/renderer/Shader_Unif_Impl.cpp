@@ -46,7 +46,7 @@ namespace OGLR
         glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &val[0][0]);
     }
 
-    void Shader::setUniformBlock(const std::string &name, const UniformBuffer &ubo) {
+    void Shader::setUniformBlock(const std::string &name, const Buffer &ubo) {
         GLuint bindingPoint = getUniformBlockBindingPoint(name);
         glUniformBlockBinding(m_RendererID,
                               getUniformBlockIdx(name),

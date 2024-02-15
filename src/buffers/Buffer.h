@@ -6,8 +6,8 @@
 namespace OGLR {
 
     /// Indicates the type of the buffer
-    enum BufferType {
-        Idx = GL_ELEMENT_ARRAY_BUFFER, Vtx = GL_ARRAY_BUFFER, Unf = GL_UNIFORM_BUFFER
+    enum BufType {
+        IBO = GL_ELEMENT_ARRAY_BUFFER, VBO = GL_ARRAY_BUFFER, UBO = GL_UNIFORM_BUFFER, SSBO = GL_SHADER_STORAGE_BUFFER
     };
 
     /// Indicates how the buffer will be used
@@ -15,21 +15,12 @@ namespace OGLR {
         Static = GL_STATIC_DRAW, Dynamic = GL_DYNAMIC_DRAW
     };
 
-    /**
-     * Templated buffer class, it does not old data in main memory space
-     * @tparam BT (BufferType) Type of buffer
-     * @tparam UT (UsageType) Indicates how it will be used
-     */
-    template <BufferType BT, UsageType UT = UsageType::Static>
+
     class Buffer {
     public:
 
         Buffer() = delete;
-        Buffer(Buffer&& other) noexcept
-            : m_RendererID(other.m_RendererID),
-              m_Count(other.m_Count) {
-            other.m_RendererID = 0;
-        }
+        Buffer(Buffer&& other) noexcept;
         Buffer(const Buffer&) = delete;
 
         /**
@@ -37,51 +28,32 @@ namespace OGLR {
          * @param data (const void*) Pointer to the data to but in the buffer
          * @param size (GLuint) Size in bytes of the buffer
          */
-        Buffer(const void* data, GLuint size):
-                m_RendererID(0), m_Count(size) {
-            glCreateBuffers(1, &m_RendererID);
-
-            bind();
-            glBufferData(BT, size, data, UT);
-            unBind();
-        }
+        Buffer(BufType BT, const void* data, GLuint size, UsageType UT = UsageType::Static);
 
         /**
          * Destructor for the buffer,
          * Releases allocated resources
          */
-        ~Buffer(){
-            glDeleteBuffers(1, &m_RendererID);
-        }
+        ~Buffer();
 
         /**
          * Binds the buffer to the GPU
          */
-        void bind() const {
-            glBindBuffer(BT, m_RendererID);
-        }
+        void bind() const;
 
         /**
          * Unbinds the buffer from the GPU
          */
-        static void unBind() {
-            glBindBuffer(BT, 0);
-        }
+        void unBind() const;
 
         /**
          * Sets the data in the GPU buffer
          * @param data (const void*) Pointer to the data to set
          * @param size (GLuint) Size in bytes of the new buffer
          */
-        void setData(const void* data, GLuint size) const {
-            if constexpr (UT == UsageType::Static)
-                std::cout << "Warning, dynamically modifying a static buffer, reconsider type if necessary." << std::endl;
+        void setData(const void* data, GLuint size) const;
 
-            bind();
-            glBufferData(BT, size, data, UT);
-            unBind();
-
-        }
+        void castTo(BufType BT, UsageType UT = UsageType::Static);
 
         inline GLuint getRendererID() const { return m_RendererID; }
 
@@ -90,7 +62,7 @@ namespace OGLR {
          * @return (GLsizei) Number of indices
          */
         GLsizei getCount() const {
-            static_assert(BT == BufferType::Idx, "Cannot get count on a non-index buffer");
+            if (m_BT != BufType::IBO) throw std::runtime_error("Illegal call, wrong buffer type");
             return m_Count / sizeof(GLuint);
         }
 
@@ -99,11 +71,9 @@ namespace OGLR {
         GLuint m_RendererID;
         uint32_t m_Count;
 
+        BufType m_BT;
+        UsageType m_UT = UsageType::Static;
     };
-
-    typedef Buffer<BufferType::Vtx> sVertexBuffer;
-    typedef Buffer<BufferType::Idx> sIndexBuffer;
-    typedef Buffer<BufferType::Unf, UsageType::Dynamic> UniformBuffer;
 
 
 }

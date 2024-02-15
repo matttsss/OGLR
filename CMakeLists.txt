@@ -22,6 +22,7 @@ add_library(${PROJECT_NAME}
         src/app/Input.cpp
         src/renderer/Shader_Unif_Impl.cpp
         src/buffers/VertexArray_Attrib_Impl.cpp
+        src/buffers/Buffer.cpp
 )
 
 add_executable(${PROJECT_NAME}_TEST

@@ -16,12 +16,12 @@ namespace OGLR
 	{
 
 		MeshComponent() = delete;
-        MeshComponent(Buffer<BufferType::Vtx>&& vb, Buffer<BufferType::Idx>&& ib, VertexArray&& va) noexcept;
+        MeshComponent(Buffer&& vb, Buffer&& ib, VertexArray&& va) noexcept;
 
         template <typename ... VT>
         MeshComponent(const std::vector<Vertex<VT...>>& vertices, const std::vector<uint32_t>& indices)
-            : va(), vb(vertices.data(), vertices.size() * sizeof(Vertex<VT...>)),
-                  ib(indices.data(), indices.size() * sizeof(GLuint))
+            : va(), vb(BufType::VBO, vertices.data(), vertices.size() * sizeof(Vertex<VT...>)),
+                    ib(BufType::IBO, indices.data(), indices.size() * sizeof(GLuint))
         {
 
             va.bind();
@@ -30,8 +30,7 @@ namespace OGLR
             va.bindAttributes<Vertex<VT...>>();
 
             VertexArray::unBind();
-            Buffer<BufferType::Vtx>::unBind();
-
+            vb.unBind();
         }
 
 
@@ -51,8 +50,8 @@ namespace OGLR
 
 
 		VertexArray va;
-        sIndexBuffer ib;
-        sVertexBuffer vb;
+        Buffer ib;
+        Buffer vb;
 
 		Shader* shader = nullptr;
 		std::vector<Texture> textures;
