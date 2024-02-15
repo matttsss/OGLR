@@ -34,15 +34,15 @@ namespace OGLR {
     };
 
     struct TerrainBuffers {
-        Buffer<OGLR::BufferType::Vtx> vb;
-        Buffer<OGLR::BufferType::Idx> ib;
+        sVertexBuffer vb;
+        sIndexBuffer ib;
 
         VertexArray va;
 
         TerrainBuffers() = delete;
         TerrainBuffers(const TerrainBuffers&) = delete;
         TerrainBuffers(TerrainBuffers&&) = delete;
-        TerrainBuffers(Buffer<OGLR::BufferType::Vtx>&& vb, Buffer<OGLR::BufferType::Idx>&& ib, VertexArray&& va);
+        TerrainBuffers(sVertexBuffer&& vb, sIndexBuffer&& ib, VertexArray&& va);
     };
 
     class Terrain {
@@ -66,6 +66,9 @@ namespace OGLR {
          *  values will be clamped for performance reasons
          */
         void updateWithSettings(TerrainSettings& settings);
+
+
+        inline const UniformBuffer& getSettingsUBO() const { return m_Ubo; }
 
         /**
          * Provides the normal/height map texture for the given tile coordinates
@@ -92,6 +95,8 @@ namespace OGLR {
         void updateNHMap();
         void updateNHAtPos(const glm::ivec2& tileIdx);
         std::vector<Texture> m_NHMaps;
+
+        UniformBuffer m_Ubo;
 
         static void updateBuffersForRes(uint32_t resolution);
         static std::unordered_map<uint32_t, TerrainBuffers> s_Buffers;

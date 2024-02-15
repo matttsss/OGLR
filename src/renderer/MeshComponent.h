@@ -11,7 +11,6 @@
 
 namespace OGLR
 {
-    typedef OGLR::Vertex<glm::vec3, glm::vec3, glm::vec3, glm::vec2> ObjVertex;
 
 	struct MeshComponent
 	{
@@ -28,7 +27,7 @@ namespace OGLR
             va.bind();
             vb.bind();
 
-            va.bindAttributes<ObjVertex>();
+            va.bindAttributes<Vertex<VT...>>();
 
             VertexArray::unBind();
             Buffer<BufferType::Vtx>::unBind();
@@ -52,8 +51,8 @@ namespace OGLR
 
 
 		VertexArray va;
-        Buffer<BufferType::Vtx> vb;
-        Buffer<BufferType::Idx> ib;
+        sIndexBuffer ib;
+        sVertexBuffer vb;
 
 		Shader* shader = nullptr;
 		std::vector<Texture> textures;

@@ -7,7 +7,7 @@ namespace OGLR {
     OGLR::Shader *Terrain::s_NHComputeShader;
 
     Terrain::Terrain(TerrainSettings &settings)
-            : settings(*settings.clamp()) {
+            : settings(*settings.clamp()), m_Ubo(&settings, sizeof(TerrainSettings)) {
 
         if (!s_NHComputeShader)
             s_NHComputeShader = Shader::fromGLSLTextFiles("test_res/shaders/compute_NHMap.glsl");
@@ -29,6 +29,7 @@ namespace OGLR {
         if (settings == *otherSettings.clamp()) return;
 
         settings = otherSettings;
+        m_Ubo.setData(&settings, sizeof(TerrainSettings));
 
         // if (settings.radius > oldRadius) TODO find better condition
         updateNHMap();
@@ -56,7 +57,10 @@ namespace OGLR {
         Texture NHMap(nullptr, OGLR::Texture::Type::X4f, resolution, resolution);
 
         // Launch computation
+        m_Ubo.bind();
         s_NHComputeShader->bind();
+
+        s_NHComputeShader->setUniformBlock("u_TerrainSettings", m_Ubo);
 
         NHMap.bind();
         NHMap.bindAsImage(0, GL_WRITE_ONLY);
@@ -105,8 +109,8 @@ namespace OGLR {
         s_Buffers.emplace(std::piecewise_construct,
                           std::forward_as_tuple(resolution),
                           std::forward_as_tuple(
-                                  Buffer<BufferType::Vtx>(vertices.data(), vertices.size() * sizeof(TerrainVertex)),
-                                  Buffer<BufferType::Idx>(indices.data(), indices.size() * sizeof(uint32_t)),
+                                  sVertexBuffer(vertices.data(), vertices.size() * sizeof(TerrainVertex)),
+                                  sIndexBuffer(indices.data(), indices.size() * sizeof(uint32_t)),
                                   VertexArray()));
 
         TerrainBuffers& tb = s_Buffers.at(resolution);
@@ -121,7 +125,7 @@ namespace OGLR {
     }
 
 
-    TerrainBuffers::TerrainBuffers(Buffer<OGLR::BufferType::Vtx> &&vb, Buffer<OGLR::BufferType::Idx> &&ib, VertexArray &&va)
+    TerrainBuffers::TerrainBuffers(sVertexBuffer &&vb, sIndexBuffer &&ib, VertexArray &&va)
         : vb(std::move(vb)), ib(std::move(ib)), va(std::move(va)){}
 
 }

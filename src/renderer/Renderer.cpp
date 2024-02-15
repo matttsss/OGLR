@@ -63,7 +63,8 @@ namespace OGLR
         Texture::unBind();
         Shader::unBind();
         VertexArray::unBind();
-        Buffer<BufferType::Idx>::unBind();
+        sIndexBuffer ::unBind();
+        UniformBuffer::unBind();
     }
 
 }

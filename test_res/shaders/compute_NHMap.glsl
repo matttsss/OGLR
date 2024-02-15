@@ -6,7 +6,13 @@ layout(local_size_x = 8,  local_size_y = 8) in;
 uniform ivec2 u_Offset;
 
 layout(rgba32f, binding = 0) writeonly uniform image2D u_NHMap;
-const int maxIter = 5;
+
+layout(std140) uniform u_TerrainSettings {
+    uint radius;
+    uint resolution;
+    uint nbOctaves;
+    float offsetAngle;
+};
 
 mat2 rot(float a) {
     float s = sin(a);
@@ -43,13 +49,13 @@ vec2 dN(vec2 pos, vec4 coefs) {
 
 float F(vec2 pos) {
     const vec4 coefs = coefsOfN();
-    const mat2 Rot = rot(M_PI / 4.0);
+    const mat2 Rot = rot(offsetAngle);
 
     float h = 0;
     float powI = 1;
     mat2 R = mat2(1, 0, 0, 1);
 
-    for (int i = 0; i < maxIter; ++i) {
+    for (int i = 0; i < nbOctaves; ++i) {
         h += N(powI * R * pos, coefs) / powI;
         R = R * Rot;
         powI *= 2;
@@ -59,13 +65,13 @@ float F(vec2 pos) {
 
 vec2 dF(vec2 pos) {
     const vec4 coefs = coefsOfN();
-    const mat2 Rot = rot(M_PI / 4.0);
+    const mat2 Rot = rot(offsetAngle);
 
     float powI = 1;
     vec2 grad = vec2(0);
     mat2 R = mat2(1, 0, 0, 1);
 
-    for (int i = 0; i < maxIter; ++i) {
+    for (int i = 0; i < nbOctaves; ++i) {
         grad += R * dN(powI * R * pos, coefs);
         R = R * Rot;
         powI *= 2;

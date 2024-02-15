@@ -83,6 +83,8 @@ namespace OGLR {
 
         }
 
+        inline GLuint getRendererID() const { return m_RendererID; }
+
         /**
          * Returns the number of indices if this buffer is an index buffer
          * @return (GLsizei) Number of indices
@@ -98,5 +100,10 @@ namespace OGLR {
         uint32_t m_Count;
 
     };
+
+    typedef Buffer<BufferType::Vtx> sVertexBuffer;
+    typedef Buffer<BufferType::Idx> sIndexBuffer;
+    typedef Buffer<BufferType::Unf, UsageType::Dynamic> UniformBuffer;
+
 
 }

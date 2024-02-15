@@ -4,8 +4,9 @@
 #include <stdexcept>
 #include <unordered_map>
 
-#include "glm/glm.hpp"
 #include "GL/glew.h"
+
+#include "../buffers/Buffer.h"
 
 namespace OGLR
 {
@@ -24,6 +25,8 @@ namespace OGLR
         template<typename T>
         void setUniform(const std::string& name, const T& val);
 
+        void setUniformBlock(const std::string& name, const UniformBuffer& ubo);
+
 
 		GLuint getRendererID() const { return m_RendererID; }
 
@@ -41,6 +44,8 @@ namespace OGLR
 		Shader() = default;
 
 		GLint getUniformLocation(const std::string& name);
+		GLint getUniformBlockIdx(const std::string& name);
+		GLuint getUniformBlockBindingPoint(const std::string& name);
 
 		void loadFromGLSLTextFiles();
         void loadComputeFromFile();
@@ -50,7 +55,10 @@ namespace OGLR
 
 		GLuint m_RendererID;
         std::string m_FirstPath, m_SecondPath;
+
+        GLuint m_NxtAvailableBindingPt = 0;
 		std::unordered_map<std::string, GLint> m_UniformLocationCache;
+		std::unordered_map<std::string, GLuint> m_UniformBindingPoints;
 
 	};
 
