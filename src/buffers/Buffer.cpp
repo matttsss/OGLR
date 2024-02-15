@@ -42,5 +42,11 @@ namespace OGLR
         m_UT = UT;
     }
 
+    void Buffer::bindAsBufferBase(uint32_t index) const {
+        if (m_BT != BufType::IBO && m_BT != BufType::SSBO)
+            throw std::runtime_error("Binding a non-SSBO/UBO buffer");
+        glBindBufferBase(m_BT, index, m_RendererID);
+    }
+
 
 }

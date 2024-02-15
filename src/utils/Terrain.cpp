@@ -4,7 +4,8 @@ namespace OGLR {
 
     std::unordered_map<uint32_t, TerrainBuffers> Terrain::s_Buffers;
 
-    OGLR::Shader *Terrain::s_NHComputeShader;
+    Shader *Terrain::s_NHComputeShader;
+    Shader *Terrain::s_MeshMaker;
 
     Terrain::Terrain(const ChunkSettings& cSettings, const TerrainSeed &tSeed)
         : tSeed(tSeed), cSettings(cSettings),
@@ -14,16 +15,23 @@ namespace OGLR {
         if (!s_NHComputeShader)
             s_NHComputeShader = Shader::fromGLSLTextFiles("test_res/shaders/compute_NHMap.glsl");
 
+        if (!s_MeshMaker)
+            s_MeshMaker = Shader::fromGLSLTextFiles("test_res/shaders/compute_vertices.glsl");
+
+        m_ChunkRenderer = Shader::fromGLSLTextFiles("test_res/shaders/terrain_chunk.vert.glsl", "test_res/shaders/terrain_chunk.frag.glsl");
+
         updateNHMap();
         updateBuffersForRes(cSettings.resolution);
     }
 
     Terrain::~Terrain() {
         delete renderShader;
+        delete m_ChunkRenderer;
     }
 
     void Terrain::destroyTerrain() {
         delete s_NHComputeShader;
+        delete s_MeshMaker;
     }
 
 
@@ -42,6 +50,7 @@ namespace OGLR {
             m_SeedUBO.unBind();
         }
 
+        m_Chunks.clear();
         updateNHMap();
 
         updateBuffersForRes(cSettings.resolution);
@@ -138,6 +147,58 @@ namespace OGLR {
 
         tb.vb.unBind();
         VertexArray::unBind();
+    }
+
+    MeshComponent &Terrain::generateChunk(const glm::ivec2 &chunkIdx) {
+        if (m_Chunks.count(chunkIdx) != 0)
+            return m_Chunks.at(chunkIdx);
+
+        uint32_t resolution = cSettings.resolution;
+
+        Buffer idxSSBO {BufType::SSBO, nullptr,
+                        static_cast<GLuint>((resolution - 1) * (resolution - 1) * 6 * sizeof(uint32_t)),
+                        UsageType::Dynamic};
+        Buffer vertSSBO {BufType::SSBO, nullptr,
+                         static_cast<GLuint>(resolution * resolution * sizeof(ChunkVertex)),
+                         UsageType::Dynamic};
+
+        // Launch computation
+        s_MeshMaker->bind();
+        m_SeedUBO.bind();
+        s_MeshMaker->setUniformBlock("u_TerrainSettings", m_SeedUBO);
+
+        m_ChunkUBO.bind();
+        s_MeshMaker->setUniformBlock("u_ChunkSettings", m_ChunkUBO);
+
+        vertSSBO.bindAsBufferBase(0);
+        idxSSBO.bindAsBufferBase(1);
+
+        glDispatchCompute((resolution + 7) / 8, (resolution + 7) / 8, 1);
+        glMemoryBarrier(GL_ALL_BARRIER_BITS);
+
+        Shader::unBind();
+        m_ChunkUBO.unBind();
+
+        VertexArray va;
+        idxSSBO.castTo(BufType::IBO, UsageType::Static);
+        vertSSBO.castTo(BufType::VBO, UsageType::Static);
+
+        va.bind();
+        vertSSBO.bind();
+
+        va.bindAttributes<ChunkVertex>();
+
+        vertSSBO.unBind();
+        VertexArray::unBind();
+
+        m_Chunks.emplace(std::piecewise_construct,
+                         std::forward_as_tuple(chunkIdx),
+                         std::forward_as_tuple(std::move(vertSSBO), std::move(idxSSBO), std::move(va)));
+
+        MeshComponent& chunk = m_Chunks.at(chunkIdx);
+        //chunk.shader = m_ChunkRenderer;
+
+        return chunk;
     }
 
 

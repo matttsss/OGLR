@@ -4,6 +4,13 @@
 
 namespace OGLR
 {
+    template<>
+    void VertexArray::addAttrib<glm::vec4>(uint32_t idx, uint32_t stride, uint32_t& offset) const {
+        glEnableVertexAttribArray(idx);
+        glVertexAttribPointer(idx, 4, GL_FLOAT, GL_FALSE, (int32_t) stride,
+                              reinterpret_cast<const void *>(offset));
+        offset += sizeof(glm::vec4);
+    }
 
     template<>
     void VertexArray::addAttrib<glm::vec3>(uint32_t idx, uint32_t stride, uint32_t& offset) const {

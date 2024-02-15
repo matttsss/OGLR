@@ -15,7 +15,7 @@ namespace OGLR
 		void setCamera(Camera& camera);
 
 		void render(const MeshComponent* mesh, const glm::mat4& modelTransform) const;
-        void render(const Terrain& terrain) const;
+        void render(Terrain& terrain) const;
 
 	private:
 

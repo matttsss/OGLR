@@ -41,6 +41,8 @@ namespace OGLR {
          */
         void bind() const;
 
+        void bindAsBufferBase(uint32_t index) const;
+
         /**
          * Unbinds the buffer from the GPU
          */

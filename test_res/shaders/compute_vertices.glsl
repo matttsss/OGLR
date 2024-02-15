@@ -14,7 +14,7 @@ layout (std430, binding = 0) buffer Vertices {
 };
 
 layout (std430, binding = 1) buffer Indices {
-    uint indices[][3];
+    uint indices[];
 };
 
 layout (std140, binding = 2) uniform u_TerrainSettings {
@@ -24,7 +24,7 @@ layout (std140, binding = 2) uniform u_TerrainSettings {
 };
 
 layout (std140, binding = 3) uniform u_ChunkSettings {
-    vec2 centerPos;
+    vec2 center;
     vec2 scale;
     uint resolution;
     vec3 pad1;
@@ -113,22 +113,24 @@ void main() {
 
     float height = F(worldPlanePos, octaves, angle);
     vec2 grad = dF(worldPlanePos, octaves, angle);
-    vec3 normal = normalise(vec3(-grad.x, 1, -grad.y));
+    vec3 normal = normalize(vec3(-grad.x, 1, -grad.y));
 
     uint vertIdx = lineariseCoord(vertexId);
-    vertices[vertexId].pos = vec4(localPlanePos.x, height, localPlanePos.y, 1.0);
-    vertices[vertexId].normal = vec4(normal, 0.0);
-    vertices[vertexId].color = vec4(0.7, 0.7, 0.7, 1.0);
+    vertices[vertIdx].pos = vec4(localPlanePos.x, height, localPlanePos.y, 1.0);
+    //vertices[vertIdx].pos = vec4(vertexId.x, 0, vertexId.y, 1.0);
+    vertices[vertIdx].normal = vec4(normal, 0.0);
+    //vertices[vertIdx].normal = vec4(0, 1, 0, 0);
+    vertices[vertIdx].color = vec4(0.7, 0.7, 0.7, 1.0);
 
     // =============== Indices ==================
     if (vertexId.x < resolution - 1 && vertexId.y < resolution - 1) {
-        uint indexIdx = 6 * vertexIdx;
+        uint indexIdx = 6 * vertIdx;
         indices[indexIdx + 0] = vertIdx;
-        indices[indexIdx + 1] = lineariseCoord(vertId + ivec2(0, 1));
-        indices[indexIdx + 2] = lineariseCoord(vertId + ivec2(1, 1));
+        indices[indexIdx + 1] = vertIdx + resolution + 1;
+        indices[indexIdx + 2] = vertIdx + resolution;
 
         indices[indexIdx + 3] = vertIdx;
-        indices[indexIdx + 4] = lineariseCoord(vertId + ivec2(1, 1));
-        indices[indexIdx + 5] = lineariseCoord(vertId + ivec2(1, 0));
+        indices[indexIdx + 4] = vertIdx + 1;
+        indices[indexIdx + 5] = vertIdx + resolution + 1;
     }
 }

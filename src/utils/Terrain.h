@@ -15,6 +15,7 @@
 namespace OGLR {
 
     typedef Vertex<glm::vec2, glm::vec3> TerrainVertex;
+    typedef Vertex<glm::vec4, glm::vec4, glm::vec4> ChunkVertex;
 
     struct TerrainSeed {
         GLuint octaves = 1;
@@ -110,18 +111,29 @@ namespace OGLR {
         ChunkSettings cSettings;
         Shader* renderShader = nullptr;
 
+        Shader* m_ChunkRenderer = nullptr;
+
+        MeshComponent& generateChunk(const glm::ivec2& pos);
+
     private:
 
         void updateNHMap();
         void updateNHAtPos(const glm::ivec2& tileIdx);
         std::unordered_map<glm::ivec2, Texture> m_NHMaps;
 
-        Buffer m_SeedUBO, m_ChunkUBO;
-
         static void updateBuffersForRes(uint32_t resolution);
         static std::unordered_map<uint32_t, TerrainBuffers> s_Buffers;
 
-        static OGLR::Shader *s_NHComputeShader;
+        static Shader *s_NHComputeShader;
+
+
+        std::unordered_map<glm::ivec2, MeshComponent> m_Chunks;
+
+        Buffer m_SeedUBO, m_ChunkUBO;
+
+
+        static Shader* s_MeshMaker;
+
 
     };
 
