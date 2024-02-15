@@ -16,24 +16,36 @@ namespace OGLR {
 
     typedef Vertex<glm::vec2, glm::vec3> TerrainVertex;
 
-    struct TerrainSettings {
-        GLuint radius = 20;
-        GLuint resolution = 64;
-        GLuint nbOctaves = 1;
+    struct TerrainSeed {
+        GLuint octaves = 1;
         GLfloat angle = 0;
 
-        TerrainSettings* clamp() {
-            radius = glm::clamp(radius, (uint32_t)0, (uint32_t) 64);
-            resolution = glm::clamp(resolution, (uint32_t)2, (uint32_t) 512);
-            nbOctaves = glm::clamp(nbOctaves, (uint32_t) 1, (uint32_t) 128);
-            return this;
+        bool operator==(const TerrainSeed &other) const {
+            return octaves == other.octaves  &&
+                   angle   == other.angle;
         }
 
-        bool operator==(const TerrainSettings &other) const {
-            return radius     == other.radius     &&
-                   resolution == other.resolution &&
-                   nbOctaves  == other.nbOctaves  &&
-                   angle      == other.angle;
+        bool operator!=(const TerrainSeed &other) const {
+            return octaves != other.octaves  ||
+                   angle   != other.angle;
+        }
+    };
+
+    struct ChunkSettings {
+        GLuint resolution = 64;
+        glm::vec2 centerPos {0};
+        glm::vec2 scale {1};
+
+        bool operator==(const ChunkSettings &other) const {
+            return resolution == other.resolution &&
+                   centerPos  == other.centerPos  &&
+                   scale      == other.scale;
+        }
+
+        bool operator!=(const ChunkSettings &other) const {
+            return resolution != other.resolution ||
+                   centerPos  != other.centerPos  ||
+                   scale      != other.scale;
         }
     };
 
@@ -55,7 +67,7 @@ namespace OGLR {
         Terrain() = delete;
         Terrain(Terrain&&) = delete;
         Terrain(const Terrain&) = delete;
-        Terrain(TerrainSettings& settings);
+        Terrain(const ChunkSettings& cSettings, const TerrainSeed& tSeed);
         ~Terrain();
 
 
@@ -69,10 +81,11 @@ namespace OGLR {
          * @param settings (Terrain&) New settings for the terrain,
          *  values will be clamped for performance reasons
          */
-        void updateWithSettings(TerrainSettings& settings);
+        void updateSettings(const ChunkSettings& ocSettings, const TerrainSeed &otSeed);
 
 
-        inline const Buffer& getSettingsUBO() const { return m_Ubo; }
+        inline const Buffer& getChunkSettingsUBO() const { return m_ChunkUBO; }
+        inline const Buffer& getSeedSettingsUBO()  const { return m_SeedUBO;  }
 
         /**
          * Provides the normal/height map texture for the given tile coordinates
@@ -91,7 +104,8 @@ namespace OGLR {
          */
         static const TerrainBuffers& getBuffersForRes(uint32_t resolution);
 
-        TerrainSettings settings;
+        TerrainSeed tSeed;
+        ChunkSettings cSettings;
         Shader* renderShader = nullptr;
 
     private:
@@ -100,7 +114,7 @@ namespace OGLR {
         void updateNHAtPos(const glm::ivec2& tileIdx);
         std::unordered_map<glm::ivec2, Texture> m_NHMaps;
 
-        Buffer m_Ubo;
+        Buffer m_SeedUBO, m_ChunkUBO;
 
         static void updateBuffersForRes(uint32_t resolution);
         static std::unordered_map<uint32_t, TerrainBuffers> s_Buffers;

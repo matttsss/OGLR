@@ -7,11 +7,15 @@ uniform ivec2 u_Offset;
 
 layout(rgba32f, binding = 0) writeonly uniform image2D u_NHMap;
 
-layout(std140) uniform u_TerrainSettings {
-    uint radius;
+layout (std140) uniform u_TerrainSettings {
+    uint octaves;
+    float angle;
+};
+
+layout (std140) uniform u_ChunkSettings {
     uint resolution;
-    uint nbOctaves;
-    float offsetAngle;
+    vec2 centerPos;
+    vec2 scale;
 };
 
 mat2 rot(float a) {
@@ -49,13 +53,13 @@ vec2 dN(vec2 pos, vec4 coefs) {
 
 float F(vec2 pos) {
     const vec4 coefs = coefsOfN();
-    const mat2 Rot = rot(offsetAngle);
+    const mat2 Rot = rot(angle);
 
     float h = 0;
     float powI = 1;
     mat2 R = mat2(1, 0, 0, 1);
 
-    for (int i = 0; i < nbOctaves; ++i) {
+    for (int i = 0; i < octaves; ++i) {
         h += N(powI * R * pos, coefs) / powI;
         R = R * Rot;
         powI *= 2;
@@ -65,13 +69,13 @@ float F(vec2 pos) {
 
 vec2 dF(vec2 pos) {
     const vec4 coefs = coefsOfN();
-    const mat2 Rot = rot(offsetAngle);
+    const mat2 Rot = rot(angle);
 
     float powI = 1;
     vec2 grad = vec2(0);
     mat2 R = mat2(1, 0, 0, 1);
 
-    for (int i = 0; i < nbOctaves; ++i) {
+    for (int i = 0; i < octaves; ++i) {
         grad += R * dN(powI * R * pos, coefs);
         R = R * Rot;
         powI *= 2;

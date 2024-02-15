@@ -26,10 +26,12 @@ void TestLayer::onRender() {
             ImGui::SliderFloat3("Cube position", &transform[3].x, -5, 5);
         }
 
-        ImGui::InputInt("Tile radius", (int*)&tSettings.radius);
-        ImGui::InputInt("Mesh resolution", (int*)&tSettings.resolution);
-        ImGui::SliderInt("Number of octaves", (int*)&tSettings.nbOctaves, 0, 128);
-        ImGui::SliderFloat("Terrain offset angle", &tSettings.angle, 0, 2*glm::pi<float>());
+        ImGui::DragFloat2("Tile pos", (float*)&cSettings.centerPos);
+        ImGui::DragFloat2("Tile scale", (float*)&cSettings.scale);
+        ImGui::InputInt("Mesh resolution", (int*)&cSettings.resolution);
+
+        ImGui::SliderInt("Number of octaves", (int*)&tSeed.octaves, 1, 128);
+        ImGui::SliderFloat("Terrain offset angle", &tSeed.angle, 0, 2*glm::pi<float>());
 
     ImGui::End();
 
@@ -37,7 +39,7 @@ void TestLayer::onRender() {
     if (renderCube)
         m_Renderer.render(mesh, transform);
 
-    terrain.updateWithSettings(tSettings);
+    terrain.updateSettings(cSettings, tSeed);
     m_Renderer.render(terrain);
 
     //ImGui::ShowDemoWindow(nullptr);

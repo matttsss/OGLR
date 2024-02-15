@@ -19,11 +19,12 @@ private:
     OGLR::Camera m_Camera {2.0f * glm::vec3{0.0f, 1.0f, -1.0f},  {0.0f, -1.0f, 1.0f}};
 
     bool renderCube = false;
-    OGLR::TerrainSettings tSettings;
+    OGLR::TerrainSeed tSeed;
+    OGLR::ChunkSettings cSettings;
 
     glm::mat4 transform {1.0};
     OGLR::MeshComponent* mesh = nullptr;
-    OGLR::Terrain terrain {tSettings};
+    OGLR::Terrain terrain {cSettings, tSeed};
 
     float renderTimes[100];
     char16_t renderTimeIdx = 0;

@@ -6,15 +6,16 @@ namespace OGLR {
 
     OGLR::Shader *Terrain::s_NHComputeShader;
 
-    Terrain::Terrain(TerrainSettings &settings)
-        : settings(*settings.clamp()),
-          m_Ubo(BufType::UBO, &settings, sizeof(TerrainSettings), UsageType::Dynamic) {
+    Terrain::Terrain(const ChunkSettings& cSettings, const TerrainSeed &tSeed)
+        : tSeed(tSeed), cSettings(cSettings),
+          m_SeedUBO(BufType::UBO, &tSeed, sizeof(TerrainSeed), UsageType::Dynamic),
+          m_ChunkUBO(BufType::UBO, &cSettings, sizeof(ChunkSettings), UsageType::Dynamic) {
 
         if (!s_NHComputeShader)
             s_NHComputeShader = Shader::fromGLSLTextFiles("test_res/shaders/compute_NHMap.glsl");
 
         updateNHMap();
-        updateBuffersForRes(settings.resolution);
+        updateBuffersForRes(cSettings.resolution);
     }
 
     Terrain::~Terrain() {
@@ -26,19 +27,24 @@ namespace OGLR {
     }
 
 
-    void Terrain::updateWithSettings(TerrainSettings &otherSettings) {
-        if (settings == *otherSettings.clamp()) return;
+    void Terrain::updateSettings(const ChunkSettings& ocSettings, const TerrainSeed &otSeed) {
+        if (cSettings == ocSettings && tSeed == otSeed) return;
+        if (cSettings != ocSettings) {
+            cSettings = ocSettings;
+            m_ChunkUBO.bind();
+            m_ChunkUBO.setData(&cSettings, sizeof(ChunkSettings));
+            m_ChunkUBO.unBind();
+        }
+        if (tSeed != otSeed) {
+            tSeed = otSeed;
+            m_SeedUBO.bind();
+            m_SeedUBO.setData(&tSeed, sizeof(TerrainSeed));
+            m_SeedUBO.unBind();
+        }
 
-        settings = otherSettings;
-
-        m_Ubo.bind();
-        m_Ubo.setData(&settings, sizeof(TerrainSettings));
-        m_Ubo.unBind();
-
-        // if (settings.radius > oldRadius) TODO find better condition
         updateNHMap();
 
-        updateBuffersForRes(settings.resolution);
+        updateBuffersForRes(cSettings.resolution);
     }
 
     const TerrainBuffers& Terrain::getBuffersForRes(uint32_t resolution) {
@@ -48,7 +54,7 @@ namespace OGLR {
 
 
     void Terrain::updateNHMap() {
-        int32_t radius = (int32_t) settings.radius;
+        int32_t radius = 5;
         m_NHMaps.clear();
         m_NHMaps.reserve((2*radius + 1) * (2*radius + 1));
         for (int32_t i = -radius; i <= radius; ++i)
@@ -57,14 +63,14 @@ namespace OGLR {
     }
 
     void Terrain::updateNHAtPos(const glm::ivec2 &tileIdx) {
-        uint32_t resolution = settings.resolution;
+        uint32_t resolution = cSettings.resolution;
         Texture NHMap(nullptr, OGLR::Texture::Type::X4f, resolution, resolution);
 
         // Launch computation
-        m_Ubo.bind();
+        m_SeedUBO.bind();
         s_NHComputeShader->bind();
 
-        s_NHComputeShader->setUniformBlock("u_TerrainSettings", m_Ubo);
+        s_NHComputeShader->setUniformBlock("u_TerrainSettings", m_SeedUBO);
 
         NHMap.bind();
         NHMap.bindAsImage(0, GL_WRITE_ONLY);
@@ -76,7 +82,7 @@ namespace OGLR {
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
         Shader::unBind();
-        m_Ubo.unBind();
+        m_SeedUBO.unBind();
         Texture::unBind();
         m_NHMaps.emplace(std::piecewise_construct,
                          std::forward_as_tuple(tileIdx),
