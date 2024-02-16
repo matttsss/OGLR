@@ -41,17 +41,19 @@ namespace OGLR {
         m_Chunks.clear();
     }
 
-    MeshComponent &Terrain::getChunk(const glm::ivec2 &chunkIdx) {
+    void Terrain::updateChunkAt(const glm::ivec2 &chunkIdx) {
         if (m_Chunks.count(chunkIdx) != 0)
-            return m_Chunks.at(chunkIdx);
+            return;
+
+        std::cout << "Updating\n";
 
         uint32_t resolution = cSettings.resolution;
 
         Buffer idxSSBO {BufType::SSBO, nullptr,
-                        static_cast<GLuint>(resolution * resolution * 6 * sizeof(uint32_t)),
+                        (GLuint)(resolution * resolution * 6 * sizeof(uint32_t)),
                         UsageType::Dynamic};
         Buffer vertSSBO {BufType::SSBO, nullptr,
-                         static_cast<GLuint>((resolution + 1) * (resolution + 1) * sizeof(ChunkVertex)),
+                         (GLuint)((resolution + 1) * (resolution + 1) * sizeof(ChunkVertex)),
                          UsageType::Dynamic};
 
         // Launch computation
@@ -88,10 +90,18 @@ namespace OGLR {
         m_Chunks.emplace(std::piecewise_construct,
                          std::forward_as_tuple(chunkIdx),
                          std::forward_as_tuple(std::move(vertSSBO), std::move(idxSSBO), std::move(va)));
+    }
 
-        MeshComponent& chunk = m_Chunks.at(chunkIdx);
 
-        return chunk;
+
+    TerrainBuffers& Terrain::getChunk(const glm::ivec2 &chunkIdx) {
+        updateChunkAt(chunkIdx);
+        return m_Chunks.at(chunkIdx);
+    }
+
+    void Terrain::onUpdate(const glm::vec3 &posInWorld) {
+        glm::ivec2 tileIdx {(int)posInWorld.x / cSettings.scale.x, (int)posInWorld.z / cSettings.scale.y };
+        updateChunkAt(tileIdx);
     }
 
 

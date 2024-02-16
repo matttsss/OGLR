@@ -17,10 +17,10 @@ namespace OGLR {
     typedef Vertex<glm::vec4, glm::vec4, glm::vec4> ChunkVertex;
 
     struct TerrainSeed {
-        GLuint octaves = 6;
+        GLuint octaves = 9;
         GLfloat angle = 0.308;
-        GLfloat frequ = 1;
-        GLfloat zScale = 1;
+        GLfloat frequ = 15;
+        GLfloat zScale = 4;
 
         bool operator==(const TerrainSeed &other) const {
             return octaves == other.octaves &&
@@ -39,7 +39,7 @@ namespace OGLR {
 
     struct ChunkSettings {
         glm::vec2 centerPos {30};
-        glm::vec2 scale {25};
+        glm::ivec2 scale {10};
         GLuint resolution = 1024;
         glm::vec3 pad {0};
 
@@ -68,6 +68,19 @@ namespace OGLR {
         TerrainBuffers(Buffer&& vb, Buffer&& ib, VertexArray&& va);
     };
 
+    struct TerrainQTree {
+
+        TerrainQTree(const glm::vec2& min, const glm::vec2& max);
+
+
+
+    private:
+        glm::vec2 min {0}, max {0};
+
+        TerrainBuffers* buffers = nullptr;
+        TerrainQTree* children[4] {nullptr, nullptr, nullptr, nullptr};
+    };
+
     class Terrain {
     public:
 
@@ -85,12 +98,14 @@ namespace OGLR {
 
         /**
          * Updates the terrain with the new settings
-         * @param settings (Terrain&) New settings for the terrain,
-         *  values will be clamped for performance reasons
+         * @param ocSettings (const ChunkSettings&) New settings for the chunks
+         * @param otSeed     (const TerrainSeed&)   New settings for terrain seed
          */
         void updateSettings(const ChunkSettings& ocSettings, const TerrainSeed &otSeed);
 
+        void onUpdate(const glm::vec3& posInWorld);
 
+        inline const std::unordered_map<glm::ivec2, TerrainBuffers>& getChunks() const { return m_Chunks; }
         inline const Buffer& getChunkSettingsUBO() const { return m_ChunkUBO; }
         inline const Buffer& getSeedSettingsUBO()  const { return m_SeedUBO;  }
 
@@ -100,11 +115,12 @@ namespace OGLR {
 
         Shader* chunkRenderer = nullptr;
 
-        MeshComponent& getChunk(const glm::ivec2& chunkIdx);
+        void updateChunkAt(const glm::ivec2& chunkIdx);
+        TerrainBuffers& getChunk(const glm::ivec2& chunkIdx);
 
     private:
         Buffer m_SeedUBO, m_ChunkUBO;
-        std::unordered_map<glm::ivec2, MeshComponent> m_Chunks;
+        std::unordered_map<glm::ivec2, TerrainBuffers> m_Chunks;
 
 
         static Shader* s_MeshMaker;

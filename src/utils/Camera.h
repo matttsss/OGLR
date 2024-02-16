@@ -17,6 +17,7 @@ namespace OGLR
 
         void onUpdate(float dt);
 
+        const glm::vec3& getPosition() const { return position; }
         const glm::mat4& getProjection() const { return projectionMatrix; }
         const glm::mat4& getView();
 

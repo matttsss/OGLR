@@ -26,15 +26,10 @@ layout (std140, binding = 2) uniform u_TerrainSettings {
 
 layout (std140, binding = 3) uniform u_ChunkSettings {
     vec2 center;
-    vec2 scale;
+    ivec2 scale;
     uint resolution;
     vec3 pad1;
 };
-
-const mat4 colors = mat4(vec4(1, 0, 0, 1),
-                         vec4(0, 1, 0, 1),
-                         vec4(0, 0, 1, 1),
-                         vec4(1, 0.1, 1, 1));
 
 mat2 rot(float a) {
     float s = sin(a);
@@ -111,7 +106,7 @@ void main() {
         return;
 
     // =========== Vertex Positon and Normal ================
-    vec2 dUV = scale / resolution;
+    vec2 dUV = vec2(scale) / resolution;
     vec2 localPlanePos = vertexId * dUV - 0.5 * scale;
     vec2 worldPlanePos = localPlanePos + center;
 

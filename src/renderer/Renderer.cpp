@@ -41,10 +41,19 @@ namespace OGLR
     }
 
     void Renderer::render(Terrain &terrain) const {
-        MeshComponent& mesh = terrain.getChunk({0, 0});
-        mesh.shader = terrain.chunkRenderer;
-        render(&mesh, glm::mat4(1));
-        mesh.shader = nullptr;
+        Shader* shader = terrain.chunkRenderer;
+        shader->bind();
+
+        shader->setUniform("u_MVP", m_PVMatrix);
+
+        for (const auto& [offSet, tb] : terrain.getChunks()) {
+            tb.va.bind();
+            shader->setUniform("u_Offset", offSet * terrain.cSettings.scale);
+            glDrawElements(GL_TRIANGLES, tb.ib.getCount(), GL_UNSIGNED_INT, nullptr);
+        }
+
+        VertexArray::unBind();
+        Shader::unBind();
     }
 
 }
