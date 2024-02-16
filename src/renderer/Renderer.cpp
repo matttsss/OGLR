@@ -20,8 +20,8 @@ namespace OGLR
 
 
         // TODO sort culling
-        //glEnable(GL_CULL_FACE);
-        //glCullFace(GL_FRONT);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
 
     }
 

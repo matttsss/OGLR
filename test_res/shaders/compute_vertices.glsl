@@ -48,36 +48,38 @@ float discreteHeightAt(ivec2 pos) {
 
 vec4 coefsOfN(ivec2 tileID) {
     float a = discreteHeightAt(tileID + ivec2(0, 0));
-    float b = discreteHeightAt(tileID + ivec2(0, 1));
-    float c = discreteHeightAt(tileID + ivec2(1, 1));
-    float d = discreteHeightAt(tileID + ivec2(1, 0));
+    float b = discreteHeightAt(tileID + ivec2(1, 0));
+    float c = discreteHeightAt(tileID + ivec2(0, 1));
+    float d = discreteHeightAt(tileID + ivec2(1, 1));
 
     return vec4(a, b - a, c - a, a - b - c + d);
 }
 
-float N(vec2 fracPos, vec4 coefs) {
-    const vec2 sPos = smoothstep(0.0, 1.0, fracPos);
+float N(vec2 pos, vec4 coefs) {
+    const vec2 w = fract(pos);
+    const vec2 sPos = w * w * (3.0 - 2.0 * w);
     return coefs.x + coefs.y * sPos.x +
                      coefs.z * sPos.y +
                      coefs.w * sPos.x * sPos.y;
 }
 
-vec2 dN(vec2 fracPos, vec4 coefs) {
-    const vec2 dS = 6 * fracPos * (1 - fracPos);
-    return dS * (coefs.yz + coefs.w * smoothstep(0, 1, fracPos).yx);
+vec2 dN(vec2 pos, vec4 coefs) {
+    const vec2 w = fract(pos);
+    const vec2 dS = 6 * w * (1 - w);
+    const vec2 S = w * w * (3.0 - 2.0 * w);
+    return dS * (coefs.yz + coefs.w * S.yx);
 }
 
 float F(vec2 pos, uint octaves, float rotAngle) {
     const vec4 coefs = coefsOfN(ivec2(floor(pos)));
     const mat2 Rot = rot(rotAngle);
-    const vec2 fracPos = fract(pos);
 
     float h = 0;
     float powI = 1;
     mat2 R = mat2(1, 0, 0, 1);
 
     for (int i = 0; i < octaves; ++i) {
-        h += N(powI * R * fracPos, coefs) / powI;
+        h += N(powI * R * pos, coefs) / powI;
         R = R * Rot;
         powI *= 2;
     }
@@ -87,14 +89,13 @@ float F(vec2 pos, uint octaves, float rotAngle) {
 vec2 dF(vec2 pos, uint octaves, float rotAngle) {
     const vec4 coefs = coefsOfN(ivec2(floor(pos)));
     const mat2 Rot = rot(rotAngle);
-    const vec2 fracPos = fract(pos);
 
     float powI = 1;
     vec2 grad = vec2(0);
     mat2 R = mat2(1, 0, 0, 1);
 
     for (int i = 0; i < octaves; ++i) {
-        grad += R * dN(powI * R * fracPos, coefs);
+        grad += R * dN(powI * R * pos, coefs);
         R = R * Rot;
         powI *= 2;
     }
@@ -119,21 +120,8 @@ void main() {
 
     uint vertIdx = vertexId.y * (resolution + 1) + vertexId.x;
     vertices[vertIdx].pos = vec4(localPlanePos.x, height, localPlanePos.y, 1.0);
-    //vertices[vertIdx].pos = vec4(vertexId.x, 0, vertexId.y, 1.0);
     vertices[vertIdx].normal = vec4(normal, 0.0);
-    //vertices[vertIdx].normal = vec4(0, 1, 0, 0);
-
-    ivec2 tileIdx = ivec2(floor(worldPlanePos));
-    if (tileIdx == ivec2(0, 0))
-        vertices[vertIdx].color = colors[0];
-    else if (tileIdx == ivec2(-1, 0))
-        vertices[vertIdx].color = colors[1];
-    else if (tileIdx == ivec2(-1, -1))
-        vertices[vertIdx].color = colors[2];
-    else if (tileIdx == ivec2(0, -1))
-        vertices[vertIdx].color = colors[3];
-    else
-        vertices[vertIdx].color = vec4(0.7, 0.7, 0.7, 1.0);
+    vertices[vertIdx].color = vec4(0.7, 0.7, 0.7, 1.0);
 
     // =============== Indices ==================
     if (vertexId.x < resolution && vertexId.y < resolution) {
