@@ -17,25 +17,30 @@ namespace OGLR {
     typedef Vertex<glm::vec4, glm::vec4, glm::vec4> ChunkVertex;
 
     struct TerrainSeed {
-        GLuint octaves = 1;
-        GLfloat angle = 0;
-        glm::vec2 pad {0};
+        GLuint octaves = 6;
+        GLfloat angle = 0.308;
+        GLfloat frequ = 1;
+        GLfloat zScale = 1;
 
         bool operator==(const TerrainSeed &other) const {
-            return octaves == other.octaves  &&
-                   angle   == other.angle;
+            return octaves == other.octaves &&
+                   angle   == other.angle   &&
+                   frequ   == other.frequ   &&
+                   zScale  == other.zScale;
         }
 
         bool operator!=(const TerrainSeed &other) const {
-            return octaves != other.octaves  ||
-                   angle   != other.angle;
+            return octaves != other.octaves ||
+                   angle   != other.angle   ||
+                   frequ   != other.frequ   ||
+                   zScale  != other.zScale;
         }
     };
 
     struct ChunkSettings {
-        glm::vec2 centerPos {0};
-        glm::vec2 scale {1, 1};
-        GLuint resolution = 256;
+        glm::vec2 centerPos {30};
+        glm::vec2 scale {25};
+        GLuint resolution = 1024;
         glm::vec3 pad {0};
 
         bool operator==(const ChunkSettings &other) const {

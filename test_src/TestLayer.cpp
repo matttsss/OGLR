@@ -30,8 +30,10 @@ void TestLayer::onRender() {
         ImGui::DragFloat2("Tile scale", (float*)&cSettings.scale);
         ImGui::InputInt("Mesh resolution", (int*)&cSettings.resolution);
 
-        ImGui::SliderInt("Number of octaves", (int*)&tSeed.octaves, 1, 128);
+        ImGui::SliderInt("Number of octaves", (int*)&tSeed.octaves, 0, 15);
         ImGui::SliderFloat("Terrain offset angle", &tSeed.angle, 0, 2*glm::pi<float>());
+        ImGui::SliderFloat("Terrain frequency", &tSeed.frequ, 1, 20);
+        ImGui::SliderFloat("Terrain height scale", &tSeed.zScale, 0.1, 5);
 
     ImGui::End();
 

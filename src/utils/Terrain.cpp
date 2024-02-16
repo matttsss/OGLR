@@ -77,11 +77,13 @@ namespace OGLR {
 
         va.bind();
         vertSSBO.bind();
+        idxSSBO.bind();
 
         va.bindAttributes<ChunkVertex>();
 
-        vertSSBO.unBind();
         VertexArray::unBind();
+        vertSSBO.unBind();
+        idxSSBO.unBind();
 
         m_Chunks.emplace(std::piecewise_construct,
                          std::forward_as_tuple(chunkIdx),

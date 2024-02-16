@@ -20,7 +20,8 @@ layout (std430, binding = 1) buffer Indices {
 layout (std140, binding = 2) uniform u_TerrainSettings {
     uint octaves;
     float angle;
-    vec2 pad0;
+    float frequ;
+    float zScale;
 };
 
 layout (std140, binding = 3) uniform u_ChunkSettings {
@@ -55,23 +56,24 @@ vec4 coefsOfN(ivec2 tileID) {
     return vec4(a, b - a, c - a, a - b - c + d);
 }
 
-float N(vec2 pos, vec4 coefs) {
+float N(vec2 pos) {
     const vec2 w = fract(pos);
+    const vec4 coefs = coefsOfN(ivec2(floor(pos)));
     const vec2 sPos = w * w * (3.0 - 2.0 * w);
     return coefs.x + coefs.y * sPos.x +
                      coefs.z * sPos.y +
                      coefs.w * sPos.x * sPos.y;
 }
 
-vec2 dN(vec2 pos, vec4 coefs) {
+vec2 dN(vec2 pos) {
     const vec2 w = fract(pos);
+    const vec4 coefs = coefsOfN(ivec2(floor(pos)));
     const vec2 dS = 6 * w * (1 - w);
     const vec2 S = w * w * (3.0 - 2.0 * w);
     return dS * (coefs.yz + coefs.w * S.yx);
 }
 
 float F(vec2 pos, uint octaves, float rotAngle) {
-    const vec4 coefs = coefsOfN(ivec2(floor(pos)));
     const mat2 Rot = rot(rotAngle);
 
     float h = 0;
@@ -79,7 +81,7 @@ float F(vec2 pos, uint octaves, float rotAngle) {
     mat2 R = mat2(1, 0, 0, 1);
 
     for (int i = 0; i < octaves; ++i) {
-        h += N(powI * R * pos, coefs) / powI;
+        h += N(powI * R * pos) / powI;
         R = R * Rot;
         powI *= 2;
     }
@@ -87,7 +89,6 @@ float F(vec2 pos, uint octaves, float rotAngle) {
 }
 
 vec2 dF(vec2 pos, uint octaves, float rotAngle) {
-    const vec4 coefs = coefsOfN(ivec2(floor(pos)));
     const mat2 Rot = rot(rotAngle);
 
     float powI = 1;
@@ -95,7 +96,7 @@ vec2 dF(vec2 pos, uint octaves, float rotAngle) {
     mat2 R = mat2(1, 0, 0, 1);
 
     for (int i = 0; i < octaves; ++i) {
-        grad += R * dN(powI * R * pos, coefs);
+        grad += R * dN(powI * R * pos);
         R = R * Rot;
         powI *= 2;
     }
@@ -114,8 +115,8 @@ void main() {
     vec2 localPlanePos = vertexId * dUV - 0.5 * scale;
     vec2 worldPlanePos = localPlanePos + center;
 
-    float height = F(worldPlanePos, octaves, angle);
-    vec2 grad = dF(worldPlanePos, octaves, angle);
+    float height = zScale * F(worldPlanePos / frequ, octaves, angle);
+    vec2 grad = zScale * dF(worldPlanePos / frequ, octaves, angle) / frequ;
     vec3 normal = normalize(vec3(-grad.x, 1, -grad.y));
 
     uint vertIdx = vertexId.y * (resolution + 1) + vertexId.x;
