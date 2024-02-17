@@ -21,6 +21,14 @@ namespace OGLR
     }
 
     template<>
+    void VertexArray::addAttrib<glm::ivec3>(uint32_t idx, uint32_t stride, uint32_t& offset) const {
+        glEnableVertexAttribArray(idx);
+        glVertexAttribPointer(idx, 3, GL_INT, GL_FALSE, (int32_t) stride,
+                              reinterpret_cast<const void *>(offset));
+        offset += sizeof(glm::ivec3);
+    }
+
+    template<>
     void VertexArray::addAttrib<glm::vec2>(uint32_t idx, uint32_t stride, uint32_t& offset) const {
         glEnableVertexAttribArray(idx);
         glVertexAttribPointer(idx, 2, GL_FLOAT, GL_FALSE, (int32_t) stride,

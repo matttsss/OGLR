@@ -18,8 +18,11 @@ namespace OGLR
         void onUpdate(float dt);
 
         const glm::vec3& getPosition() const { return position; }
+        const glm::vec3& getAim() const { return aim; }
         const glm::mat4& getProjection() const { return projectionMatrix; }
         const glm::mat4& getView();
+
+        static constexpr glm::vec3 s_UP = {0.0f, 1.0f, 0.0f};
 
     private:
 

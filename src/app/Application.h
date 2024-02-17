@@ -27,6 +27,7 @@ namespace OGLR
         void run();
 
         static GLFWwindow* getWindow();
+        static std::pair<int32_t, int32_t> getFrameBufferSize();
 
 
     private:

@@ -45,7 +45,7 @@ namespace OGLR {
         if (m_Chunks.count(chunkIdx) != 0)
             return;
 
-        std::cout << "Updating at pos: [" << chunkIdx.x << ", " << chunkIdx.y << "]\n";
+        //std::cout << "Updating at pos: [" << chunkIdx.x << ", " << chunkIdx.y << "]\n";
 
         uint32_t resolution = cSettings.resolution;
 
@@ -110,7 +110,7 @@ namespace OGLR {
 
         for (int32_t i = -1; i <= 1; ++i)
             for (int32_t j = -1; j <= 1; ++j)
-                updateChunkAt(closestPoint + glm::ivec2(i, j));
+                updateChunkAt(closestPoint + cSettings.scale * glm::ivec2(i, j));
     }
 
 

@@ -37,12 +37,15 @@ void TestLayer::onRender() {
 
     ImGui::End();
 
-    m_Renderer.setCamera(m_Camera);
+    m_Renderer.beginFrame(m_Camera);
+
     if (renderCube)
         m_Renderer.render(mesh, transform);
 
     terrain.updateSettings(cSettings, tSeed);
     m_Renderer.render(terrain);
+
+    m_Renderer.endFrame();
 
     //ImGui::ShowDemoWindow(nullptr);
 }

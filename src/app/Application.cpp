@@ -136,5 +136,11 @@ namespace OGLR
         return s_Window;
     }
 
+    std::pair<int32_t, int32_t> Application::getFrameBufferSize() {
+        int32_t height = 0, width = 0;
+        glfwGetFramebufferSize(s_Window, &width, &height);
+        return {width, height};
+    }
+
 
 } // OGLR
