@@ -9,6 +9,8 @@ struct Vertex {
     vec4 color;
 };
 
+uniform ivec2 u_ChunkOffset;
+
 layout (std430, binding = 0) buffer Vertices {
     Vertex vertices[];
 };
@@ -25,7 +27,7 @@ layout (std140, binding = 2) uniform u_TerrainSettings {
 };
 
 layout (std140, binding = 3) uniform u_ChunkSettings {
-    vec2 center;
+    vec2 worldOffset;
     ivec2 scale;
     uint resolution;
     vec3 pad1;
@@ -108,7 +110,7 @@ void main() {
     // =========== Vertex Positon and Normal ================
     vec2 dUV = vec2(scale) / resolution;
     vec2 localPlanePos = vertexId * dUV - 0.5 * scale;
-    vec2 worldPlanePos = localPlanePos + center;
+    vec2 worldPlanePos = localPlanePos + worldOffset + u_ChunkOffset;
 
     float height = zScale * F(worldPlanePos / frequ, octaves, angle);
     vec2 grad = zScale * dF(worldPlanePos / frequ, octaves, angle) / frequ;

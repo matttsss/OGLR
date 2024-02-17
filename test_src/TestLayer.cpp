@@ -26,7 +26,7 @@ void TestLayer::onRender() {
             ImGui::SliderFloat3("Cube position", &transform[3].x, -5, 5);
         }
 
-        ImGui::DragFloat2("Tile pos", (float*)&cSettings.centerPos);
+        ImGui::DragFloat2("Tile pos", (float*)&cSettings.worldOffset);
         ImGui::DragInt2("Tile scale", (int*)&cSettings.scale, 1, 0);
         ImGui::InputInt("Mesh resolution", (int*)&cSettings.resolution);
 

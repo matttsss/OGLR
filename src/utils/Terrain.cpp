@@ -45,7 +45,7 @@ namespace OGLR {
         if (m_Chunks.count(chunkIdx) != 0)
             return;
 
-        std::cout << "Updating\n";
+        std::cout << "Updating at pos: [" << chunkIdx.x << ", " << chunkIdx.y << "]\n";
 
         uint32_t resolution = cSettings.resolution;
 
@@ -58,6 +58,9 @@ namespace OGLR {
 
         // Launch computation
         s_MeshMaker->bind();
+
+        s_MeshMaker->setUniform("u_ChunkOffset", chunkIdx);
+
         m_SeedUBO.bind();
         s_MeshMaker->setUniformBlock("u_TerrainSettings", m_SeedUBO);
 
@@ -100,8 +103,14 @@ namespace OGLR {
     }
 
     void Terrain::onUpdate(const glm::vec3 &posInWorld) {
-        glm::ivec2 tileIdx {(int)posInWorld.x / cSettings.scale.x, (int)posInWorld.z / cSettings.scale.y };
-        updateChunkAt(tileIdx);
+        glm::ivec2 planePos {posInWorld.x, posInWorld.z};
+        glm::ivec2 rem = planePos % cSettings.scale;
+        glm::ivec2 closestPoint {planePos.x - rem.x + (rem.x >= (cSettings.scale.x / 2) ? cSettings.scale.x : 0),
+                                 planePos.y - rem.y + (rem.y >= (cSettings.scale.y / 2) ? cSettings.scale.y : 0)};
+
+        for (int32_t i = -1; i <= 1; ++i)
+            for (int32_t j = -1; j <= 1; ++j)
+                updateChunkAt(closestPoint + glm::ivec2(i, j));
     }
 
 

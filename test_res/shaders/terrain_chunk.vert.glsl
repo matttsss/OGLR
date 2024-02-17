@@ -5,7 +5,6 @@ layout (location = 1) in vec4 a_Normal;
 layout (location = 2) in vec4 a_Color;
 
 uniform mat4 u_MVP;
-
 uniform ivec2 u_Offset;
 
 out vec4 v_Normal;

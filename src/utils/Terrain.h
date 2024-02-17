@@ -38,21 +38,21 @@ namespace OGLR {
     };
 
     struct ChunkSettings {
-        glm::vec2 centerPos {30};
+        glm::vec2 worldOffset {30};
         glm::ivec2 scale {10};
-        GLuint resolution = 1024;
+        GLuint resolution = 512;
         glm::vec3 pad {0};
 
         bool operator==(const ChunkSettings &other) const {
-            return resolution == other.resolution &&
-                   centerPos  == other.centerPos  &&
-                   scale      == other.scale;
+            return resolution  == other.resolution  &&
+                   worldOffset == other.worldOffset &&
+                   scale       == other.scale;
         }
 
         bool operator!=(const ChunkSettings &other) const {
-            return resolution != other.resolution ||
-                   centerPos  != other.centerPos  ||
-                   scale      != other.scale;
+            return resolution  != other.resolution  ||
+                   worldOffset != other.worldOffset ||
+                   scale       != other.scale;
         }
     };
 
@@ -124,8 +124,6 @@ namespace OGLR {
 
 
         static Shader* s_MeshMaker;
-
-
     };
 
 }

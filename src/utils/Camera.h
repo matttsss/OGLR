@@ -23,7 +23,7 @@ namespace OGLR
 
     private:
 
-        float mvmtSpeed = 5e-3;
+        float mvmtSpeed = 1e-2;
         float panSpeed = 1e-3;
 
         glm::mat4 projectionMatrix{ 1.f };

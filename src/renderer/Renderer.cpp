@@ -48,7 +48,7 @@ namespace OGLR
 
         for (const auto& [offSet, tb] : terrain.getChunks()) {
             tb.va.bind();
-            shader->setUniform("u_Offset", offSet * terrain.cSettings.scale);
+            shader->setUniform("u_Offset", offSet);
             glDrawElements(GL_TRIANGLES, tb.ib.getCount(), GL_UNSIGNED_INT, nullptr);
         }
 
