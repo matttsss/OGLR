@@ -4,8 +4,8 @@ Simple OpenGL renderer with terrain generator using Fractal Brownian Motion base
 
 
 
+https://github.com/matttsss/OGLR/assets/137495412/65ebe7df-5007-41e0-8b5f-56463c8977d2
 
-https://github.com/matttsss/OGLR/assets/137495412/877b9c0b-a7d7-4b01-98ff-499fddadba3d
 
 
 **TODO:**
