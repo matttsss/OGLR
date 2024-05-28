@@ -2,7 +2,11 @@
 
 Simple OpenGL renderer with terrain generator using Fractal Brownian Motion
 
-https://github.com/matttsss/OGLR/assets/137495412/d63a5b9e-8633-46ce-9a98-e6674ed3fc3d
+
+
+
+https://github.com/matttsss/OGLR/assets/137495412/877b9c0b-a7d7-4b01-98ff-499fddadba3d
+
 
 **TODO:**
 
@@ -17,6 +21,3 @@ https://github.com/matttsss/OGLR/assets/137495412/d63a5b9e-8633-46ce-9a98-e6674e
 
 - [ ] Water Rendering
 - [ ] Planet generation and camera orbit
-
-
-
