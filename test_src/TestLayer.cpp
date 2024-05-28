@@ -6,13 +6,13 @@
 
 void TestLayer::onAttach()
 {
-    m_Camera.setPerspectiveProjection(glm::radians(50.f), 1.6f, 0.1f, 50.f);
+    m_Camera.setPerspectiveProjection(glm::radians(50.f), 1.6f, 0.1f, 80.f);
 
-    mesh = OGLR::MeshComponent::loadFromObjFile("test_res/models/tex_cube.obj")
-            ->addShader("test_res/shaders/textured_simple.vert.glsl", "test_res/shaders/textured_simple.frag.glsl")
-            ->addTexture("test_res/textures/tex_cube.png", OGLR::Texture::Type::X4B);
+    mesh = OGLR::MeshComponent::loadFromObjFile("../test_res/models/tex_cube.obj")
+            ->addShader("../test_res/shaders/textured_simple.vert.glsl", "../test_res/shaders/textured_simple.frag.glsl")
+            ->addTexture("../test_res/textures/tex_cube.png", OGLR::Texture::Type::X4B);
 
-    terrain.chunkRenderer = OGLR::Shader::fromGLSLTextFiles("test_res/shaders/terrain_chunk.vert.glsl", "test_res/shaders/terrain_chunk.frag.glsl");
+    terrain.chunkRenderer = OGLR::Shader::fromGLSLTextFiles("../test_res/shaders/terrain_chunk.vert.glsl", "../test_res/shaders/terrain_chunk.frag.glsl");
 
 }
 
@@ -20,11 +20,11 @@ void TestLayer::onRender() {
     ImGui::Begin("Renderer settings");
 
         ImGui::Text("Average render time (ms): %f", avrgFrameTime);
-        ImGui::Checkbox("Render cube", &renderCube);
-        if (renderCube)
-        {
-            ImGui::SliderFloat3("Cube position", &transform[3].x, -5, 5);
-        }
+        //ImGui::Checkbox("Render cube", &renderCube);
+        //if (renderCube)
+        //{
+        //    ImGui::SliderFloat3("Cube position", &transform[3].x, -5, 5);
+        //}
 
         ImGui::DragFloat2("Tile pos", (float*)&cSettings.worldOffset);
         ImGui::DragInt2("Tile scale", (int*)&cSettings.scale, 1, 0);

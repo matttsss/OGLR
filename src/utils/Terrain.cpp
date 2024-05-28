@@ -10,7 +10,7 @@ namespace OGLR {
           m_ChunkUBO(BufType::UBO, &cSettings, sizeof(ChunkSettings), UsageType::Dynamic) {
 
         if (!s_MeshMaker)
-            s_MeshMaker = Shader::fromGLSLTextFiles("test_res/shaders/compute_vertices.glsl");
+            s_MeshMaker = Shader::fromGLSLTextFiles("../test_res/shaders/compute_vertices.glsl");
 
     }
 
@@ -70,7 +70,7 @@ namespace OGLR {
         vertSSBO.bindAsBufferBase(0);
         idxSSBO.bindAsBufferBase(1);
 
-        glDispatchCompute(ceilf32((float)(resolution + 1) / 8), ceilf32((float)(resolution + 1) / 8), 1);
+        glDispatchCompute(ceilf((float)(resolution + 1) / 8), ceilf((float)(resolution + 1) / 8), 1);
         glMemoryBarrier(GL_ALL_BARRIER_BITS);
 
         Shader::unBind();
