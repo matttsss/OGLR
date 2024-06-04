@@ -3,9 +3,7 @@
 Simple OpenGL renderer with terrain generator using Fractal Brownian Motion based on [TheCherno](https://www.youtube.com/@thecherno)'s application layering design and Dear ImGui.
 
 
-
-https://github.com/matttsss/OGLR/assets/137495412/65ebe7df-5007-41e0-8b5f-56463c8977d2
-
+https://github.com/matttsss/OGLR/assets/137495412/22fa0c9e-4908-459a-881d-c13becd47922
 
 
 **TODO:**
