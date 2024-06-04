@@ -10,7 +10,7 @@ namespace OGLR {
           m_ChunkUBO(BufType::UBO, &cSettings, sizeof(ChunkSettings), UsageType::Dynamic) {
 
         if (!s_MeshMaker)
-            s_MeshMaker = Shader::fromGLSLTextFiles("../test_res/shaders/compute_vertices.glsl");
+            s_MeshMaker = Shader::fromGLSLTextFiles("../test_res/shaders/compute_vertices_real.glsl");
 
     }
 

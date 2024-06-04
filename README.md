@@ -12,6 +12,7 @@ https://github.com/matttsss/OGLR/assets/137495412/65ebe7df-5007-41e0-8b5f-56463c
 
 - [x] Chunk generation
 - [x] Background Shader
+- [x] Add Inigo Quilez's [trick for erosion](https://iquilezles.org/articles/morenoise/)
 - [ ] WireFrame view / Subdivision (Geometry shader)
 - [ ] Height Color Gradient
 - [ ] Terrain quadtree generation
