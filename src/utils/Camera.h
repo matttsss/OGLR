@@ -14,6 +14,7 @@ namespace OGLR
         : position(position), aim(aim) {}
 
         void setPerspectiveProjection(float fovy, float aspect, float near, float far);
+        void setSpeed(float movementSpeed, float panningSpeed) { mvmtSpeed = movementSpeed; panSpeed = panningSpeed; }
 
         void onUpdate(float dt);
 

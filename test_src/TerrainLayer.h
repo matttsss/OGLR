@@ -2,7 +2,7 @@
 
 #include "utils/Terrain.h"
 
-class TestLayer : public OGLR::Layer
+class TerrainLayer : public OGLR::Layer
 {
 
 public:

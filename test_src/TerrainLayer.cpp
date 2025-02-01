@@ -1,10 +1,10 @@
-#include "TestLayer.h"
+#include "TerrainLayer.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
 #include "utils/Terrain.h"
 
-void TestLayer::onAttach()
+void TerrainLayer::onAttach()
 {
     m_Camera.setPerspectiveProjection(glm::radians(50.f), 1.6f, 0.1f, 80.f);
 
@@ -16,7 +16,7 @@ void TestLayer::onAttach()
 
 }
 
-void TestLayer::onRender() {
+void TerrainLayer::onRender() {
     ImGui::Begin("Renderer settings");
 
         ImGui::Text("Average render time (ms): %f", avrgFrameTime);
@@ -50,7 +50,7 @@ void TestLayer::onRender() {
     //ImGui::ShowDemoWindow(nullptr);
 }
 
-void TestLayer::onUpdate(float dt)
+void TerrainLayer::onUpdate(float dt)
 {
 
     m_Camera.onUpdate(dt);
@@ -68,7 +68,7 @@ void TestLayer::onUpdate(float dt)
 
 }
 
-void TestLayer::onDetach()
+void TerrainLayer::onDetach()
 {
     OGLR::Terrain::destroyTerrain();
     delete mesh;

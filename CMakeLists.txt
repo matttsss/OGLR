@@ -27,7 +27,8 @@ add_library(${PROJECT_NAME}
 
 add_executable(${PROJECT_NAME}_TEST
         test_src/main.cpp
-        test_src/TestLayer.cpp
+        test_src/TerrainLayer.cpp
+        test_src/ParticleLayer.cpp
 )
 
 # Copies the resource folder to the target directory for compatibility
