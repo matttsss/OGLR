@@ -13,10 +13,17 @@ public:
 
 private:
 
+    struct ParticleSettings {
+        glm::vec4 camPos;
+        float pointSize = 55000.f;
+        float nearPlane = 1e-4f;
+    } m_pSettings;
+
     OGLR::Renderer m_Renderer {};
     OGLR::Camera m_Camera {0.0f * glm::vec3{0.0f, 1.0f, -1.0f},  {0.0f, -1.0f, 1.0f}};
 
     OGLR::Buffer* vb;
+    OGLR::Buffer* ubo;
     OGLR::VertexArray va;
     OGLR::Shader* shader;
 

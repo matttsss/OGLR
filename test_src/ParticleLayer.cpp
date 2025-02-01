@@ -2,8 +2,9 @@
 
 void ParticleLayer::onAttach() {
     m_Camera.setSpeed(1e-3, 1e-3);
-    m_Camera.setPerspectiveProjection(glm::radians(50.f), 1.6f, 0.0001f, 800.f);
+    m_Camera.setPerspectiveProjection(glm::radians(50.f), 1.6f, 1e-4f, 800.f);
 
+    ubo = new OGLR::Buffer(OGLR::BufType::UBO, &m_pSettings, sizeof(ParticleSettings), OGLR::UsageType::Dynamic);
 
     std::vector<PointVertex> vb_temp;
 
@@ -29,11 +30,17 @@ void ParticleLayer::onAttach() {
 }
 
 void ParticleLayer::onRender() {
-
+    ImGui::Begin("Particle settings");
+        ImGui::SliderFloat("point size", &m_pSettings.pointSize, 1.f, 60000.f);
+    ImGui::End();
 
     m_Renderer.beginFrame(m_Camera);
 
+    ubo->bind();
+    ubo->setData(&m_pSettings, sizeof(ParticleSettings));
+
     shader->bind();
+    shader->setUniformBlock("u_ParticleSettings", *ubo);
     shader->setUniform("u_MVP", m_Camera.getProjection() * m_Camera.getView());
 
     vb->bind();
@@ -51,12 +58,13 @@ void ParticleLayer::onRender() {
 
 void ParticleLayer::onUpdate(float dt) {
     m_Camera.onUpdate(dt);
-
+    m_pSettings.camPos = glm::vec4(m_Camera.getPosition(), 1.f);
 }
 
 void ParticleLayer::onDetach() {
 
     delete vb;
+    delete ubo;
     delete shader;
 
 }
