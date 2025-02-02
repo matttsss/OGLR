@@ -77,9 +77,9 @@ namespace OGLR
     void Renderer::endFrame() {
 
         // Set UBO values
-        std::pair<int32_t, int32_t> frameBuffSize = Application::getFrameBufferSize();
-        m_BGSettings.frameBuffWidth = frameBuffSize.first;
-        m_BGSettings.frameBuffHeight = frameBuffSize.second;
+        glm::ivec2 frameBuffSize = Application::getFrameBufferSize();
+        m_BGSettings.frameBuffWidth = frameBuffSize.x;
+        m_BGSettings.frameBuffHeight = frameBuffSize.y;
         m_BGSettings.aim = p_Camera->getAim();
         m_BGSettings.uBase = glm::normalize(glm::cross(m_BGSettings.aim, Camera::s_UP));
         m_BGSettings.vBase = glm::normalize(glm::cross(m_BGSettings.uBase, m_BGSettings.aim));

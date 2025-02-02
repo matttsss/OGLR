@@ -3,6 +3,7 @@
 void ParticleLayer::onAttach() {
     m_Camera.setSpeed(1e-3, 1e-3);
     m_Camera.setPerspectiveProjection(glm::radians(50.f), 1.6f, 1e-4f, 800.f);
+    m_pSettings.viewport_size = OGLR::Application::getFrameBufferSize();
 
     ubo = new OGLR::Buffer(OGLR::BufType::UBO, &m_pSettings, sizeof(ParticleSettings), OGLR::UsageType::Dynamic);
 
@@ -31,7 +32,7 @@ void ParticleLayer::onAttach() {
 
 void ParticleLayer::onRender() {
     ImGui::Begin("Particle settings");
-        ImGui::SliderFloat("point size", &m_pSettings.pointSize, 1.f, 60000.f);
+        ImGui::SliderFloat("point size", &m_pSettings.pointSize, 1e-3f, 0.2f);
     ImGui::End();
 
     m_Renderer.beginFrame(m_Camera);
@@ -41,7 +42,8 @@ void ParticleLayer::onRender() {
 
     shader->bind();
     shader->setUniformBlock("u_ParticleSettings", *ubo);
-    shader->setUniform("u_MVP", m_Camera.getProjection() * m_Camera.getView());
+    shader->setUniform("u_proj", m_Camera.getProjection());
+    shader->setUniform("u_view", m_Camera.getView());
 
     vb->bind();
     va.bind();

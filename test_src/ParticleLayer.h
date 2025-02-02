@@ -15,7 +15,8 @@ private:
 
     struct ParticleSettings {
         glm::vec4 camPos;
-        float pointSize = 55000.f;
+        glm::ivec2 viewport_size;
+        float pointSize = 3e-3f;
         float nearPlane = 1e-4f;
     } m_pSettings;
 
