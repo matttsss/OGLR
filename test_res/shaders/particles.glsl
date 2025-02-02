@@ -1,4 +1,5 @@
 #version 450
+#define M_PI 3.14159265358979323846
 
 layout (local_size_x = 1) in;
 
@@ -8,7 +9,7 @@ struct Vertex {
     vec4 color;
 };
 
-uniform float u_time;
+uniform float u_dt;
 uniform uint u_nb_particles;
 uniform float u_radius;
 
@@ -18,8 +19,12 @@ layout (std430, binding = 0) buffer Vertices {
 };
 
 float kernel(float dist) {
-    dist = min(dist, u_radius);
-    return 4 * pow(u_radius - dist, 3.f) / pow(u_radius, 4);
+    if (dist >= u_radius)
+        return 0.0;
+
+    float x = u_radius - dist;
+    const float volume = M_PI * pow(u_radius, 6) / 15.f;
+    return x * x * x / volume;
 }
 
 float densityAt(vec3 pos) {
@@ -41,7 +46,7 @@ void main() {
     // =========== Vertex Positon and Speed ================
 
     Vertex vertex = vertices[vertexId];
-    vertex.speed = vec4(0.f, -vertex.pos.x * sin(u_time), 0.f, 0.0);
+    vertex.speed = vec4(0.f, 0.f, 0.f, 0.f);
     vertex.color = vec4(densityAt(vertex.pos.xyz), 0.0, 0.0, 1.0);
 
     vertices[vertexId] = vertex;

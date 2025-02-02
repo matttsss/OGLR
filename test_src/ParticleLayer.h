@@ -12,12 +12,14 @@ public:
 
 
 private:
+    using PointVertex = OGLR::Vertex<glm::vec4, glm::vec4, glm::vec4>;
+
+    std::vector<PointVertex> spawn_cube(GLuint resolution, glm::vec3 center = {0, 0, 0});
+    std::vector<PointVertex> spawn_disk(GLuint resolution, glm::vec3 center = {0, 0, 0});
 
     struct ParticleSettings {
-        glm::vec4 camPos;
         glm::ivec2 viewport_size;
         float pointSize = 3e-3f;
-        float nearPlane = 1e-4f;
     } m_pSettings;
 
     OGLR::Renderer m_Renderer {};
@@ -29,11 +31,8 @@ private:
     OGLR::Shader* render_shader;
     OGLR::Shader* compute_shader;
 
-    GLuint resolution = 10;
-    GLuint nb_particles = resolution * resolution * resolution;
-    float time = 0;
-
-    using PointVertex = OGLR::Vertex<glm::vec4, glm::vec4, glm::vec4>;
+    float kernel_radius = 0.5f;
+    GLuint nb_particles = 0;
 
 };
 
