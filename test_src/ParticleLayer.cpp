@@ -1,6 +1,7 @@
 #include "ParticleLayer.h"
 
 void ParticleLayer::onAttach() {
+    time = 0;
     m_Camera.setSpeed(1e-3, 1e-3);
     m_Camera.setPerspectiveProjection(glm::radians(50.f), 1.6f, 1e-4f, 800.f);
     m_pSettings.viewport_size = OGLR::Application::getFrameBufferSize();
@@ -11,23 +12,25 @@ void ParticleLayer::onAttach() {
 
     glEnable(GL_PROGRAM_POINT_SIZE);
 
-    for (uint32_t i = 0; i < 100; ++i) {
-        for (uint32_t j = 0; j < 100; ++j) {
-            vb_temp.emplace_back(glm::vec4(i / 100.f, 0.f, j / 100.f, 1.f), glm::vec4(1.f));
+    for (uint32_t i = 0; i < resolution; ++i) {
+        for (uint32_t j = 0; j < resolution; ++j) {
+            for (uint32_t k = 0; k < resolution; ++k) {
+                vb_temp.emplace_back(glm::vec4((float)i / resolution, (float)k / resolution, (float)j / resolution, 1.f), glm::vec4(0.f), glm::vec4(1.f));
+            }
         }
     }
 
-    vb = new OGLR::Buffer(OGLR::BufType::VBO, vb_temp.data(), vb_temp.size() * PointVertex::N);
-    vb->bind();
+    particles = new OGLR::Buffer(OGLR::BufType::VBO, vb_temp.data(), vb_temp.size() * PointVertex::N);
+    particles->bind();
     va.bind();
 
     va.bindAttributes<PointVertex>();
 
-    vb->unBind();
+    particles->unBind();
     OGLR::VertexArray::unBind();
 
-    shader = OGLR::Shader::fromGLSLTextFiles("../test_res/shaders/particles.vert.glsl", "../test_res/shaders/particles.frag.glsl");
-
+    compute_shader = OGLR::Shader::fromGLSLTextFiles("../test_res/shaders/particles.glsl");
+    render_shader = OGLR::Shader::fromGLSLTextFiles("../test_res/shaders/particles.vert.glsl", "../test_res/shaders/particles.frag.glsl");
 }
 
 void ParticleLayer::onRender() {
@@ -40,18 +43,18 @@ void ParticleLayer::onRender() {
     ubo->bind();
     ubo->setData(&m_pSettings, sizeof(ParticleSettings));
 
-    shader->bind();
-    shader->setUniformBlock("u_ParticleSettings", *ubo);
-    shader->setUniform("u_proj", m_Camera.getProjection());
-    shader->setUniform("u_view", m_Camera.getView());
+    render_shader->bind();
+    render_shader->setUniformBlock("u_ParticleSettings", *ubo);
+    render_shader->setUniform("u_proj", m_Camera.getProjection());
+    render_shader->setUniform("u_view", m_Camera.getView());
 
-    vb->bind();
+    particles->bind();
     va.bind();
 
-    glDrawArrays(GL_POINTS, 0, 10000);
+    glDrawArrays(GL_POINTS, 0, resolution * resolution * resolution);
 
     OGLR::VertexArray::unBind();
-    vb->unBind();
+    particles->unBind();
     OGLR::Shader::unBind();
 
     m_Renderer.endFrame();
@@ -59,14 +62,30 @@ void ParticleLayer::onRender() {
 }
 
 void ParticleLayer::onUpdate(float dt) {
+    time += dt * 1e-3f;
+
+    compute_shader->bind();
+    compute_shader->setUniform("u_time", time);
+    compute_shader->setUniform<GLuint>("u_nb_particles", nb_particles);
+    compute_shader->setUniform("u_radius", 0.5f);
+
+    particles->castTo(OGLR::BufType::SSBO, OGLR::UsageType::Dynamic);
+    particles->bindAsBufferBase(0);
+
+    glDispatchCompute(nb_particles, 1, 1);
+    glMemoryBarrier(GL_ALL_BARRIER_BITS);
+
+    OGLR::Shader::unBind();
+    particles->unBind();
+    particles->castTo(OGLR::BufType::VBO, OGLR::UsageType::Dynamic);
+
     m_Camera.onUpdate(dt);
     m_pSettings.camPos = glm::vec4(m_Camera.getPosition(), 1.f);
 }
 
 void ParticleLayer::onDetach() {
-
-    delete vb;
+    delete particles;
     delete ubo;
-    delete shader;
-
+    delete render_shader;
+    delete compute_shader;
 }

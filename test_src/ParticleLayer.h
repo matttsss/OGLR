@@ -21,18 +21,19 @@ private:
     } m_pSettings;
 
     OGLR::Renderer m_Renderer {};
-    OGLR::Camera m_Camera {0.0f * glm::vec3{0.0f, 1.0f, -1.0f},  {0.0f, -1.0f, 1.0f}};
+    OGLR::Camera m_Camera {1.0f * glm::vec3{0.0f, 1.0f, -1.0f},  {0.0f, -1.0f, 1.0f}};
 
-    OGLR::Buffer* vb;
+    OGLR::Buffer* particles;
     OGLR::Buffer* ubo;
     OGLR::VertexArray va;
-    OGLR::Shader* shader;
+    OGLR::Shader* render_shader;
+    OGLR::Shader* compute_shader;
 
-    float renderTimes[100];
-    char16_t renderTimeIdx = 0;
-    float avrgFrameTime = 0;
+    GLuint resolution = 10;
+    GLuint nb_particles = resolution * resolution * resolution;
+    float time = 0;
 
-    using PointVertex = OGLR::Vertex<glm::vec4, glm::vec4>;
+    using PointVertex = OGLR::Vertex<glm::vec4, glm::vec4, glm::vec4>;
 
 };
 

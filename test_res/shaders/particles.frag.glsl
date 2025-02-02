@@ -6,5 +6,6 @@ void main()
         discard;
     }
 
-    gl_FragColor = vec4(gl_PointCoord.x, gl_PointCoord.y, 0.0, 1.0);
+    //gl_FragColor = vec4(gl_PointCoord.x, gl_PointCoord.y, 0.0, 1.0);
+    gl_FragColor = gl_Color;
 }
