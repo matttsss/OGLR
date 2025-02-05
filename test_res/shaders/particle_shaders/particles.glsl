@@ -22,34 +22,34 @@ layout (std430, binding = 1) buffer Vertices_Out {
     Vertex vertices_out[];
 };
 
-vec4 kernel_and_grad(vec3 ref_pos, vec3 pos) {
+layout (std430, binding = 2) buffer Densities {
+    readonly float densities[];
+};
+
+vec3 kernel_grad(vec3 ref_pos, vec3 pos) {
     vec3 v_diff = ref_pos - pos;
     float dist = length(v_diff);
 
-    if (dist >= u_radius)
-        return vec4(0.0);
+    if (dist >= u_radius || dist < 1e-6)
+        return vec3(0.0);
 
     const float volume = M_PI * pow(u_radius, 6) / 15.f;
 
-    // Compute kernel value
     float x = u_radius - dist;
-    float val = x * x * x;
-
-    // Compute kernel gradient
     vec3 grad = 3.f * v_diff * x * x / dist;
 
-    return 1 * vec4(grad, val) / volume;
+    return grad / volume;
 }
 
-vec4 density_and_grad(uint idx) {
+vec3 density_grad(uint idx) {
     const vec3 pos = vertices_in[idx].pos.xyz;
 
-    vec4 res = vec4(0.0);
+    vec3 res = vec3(0.0);
     for (uint i = 0; i < u_nb_particles; i++) {
         if (i == idx)
             continue;
 
-        res += kernel_and_grad(pos, vertices_in[i].pos.xyz);
+        res += kernel_grad(pos, vertices_in[i].pos.xyz) / densities[i];
     }
 
     return res;
@@ -63,10 +63,10 @@ void main() {
         return;
 
     // =========== Vertex Positon and Speed ================
-
     Vertex vertex = vertices_in[vertexId];
+    vec3 grad = density_grad(vertexId);
 
-    vertex.speed.y += -9.81f * u_dt;
+    vertex.speed.xyz += grad * u_dt;
     vertex.pos.xyz += vertex.speed.xyz * u_dt;
 
     if (vertex.pos.x < -1.0 || vertex.pos.x > 1.0) {

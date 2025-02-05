@@ -17,6 +17,9 @@ private:
     std::vector<PointVertex> spawn_cube(GLuint resolution, glm::vec3 center = {0, 0, 0});
     std::vector<PointVertex> spawn_disk(GLuint resolution, glm::vec3 center = {0, 0, 0});
 
+    void compute_densities();
+    void update_particles(float dt);
+
     struct ParticleSettings {
         glm::ivec2 viewport_size;
         float pointSize = 3e-3f;
@@ -27,14 +30,17 @@ private:
 
     OGLR::Buffer* ubo;
     OGLR::Shader* render_shader;
-    OGLR::Shader* compute_shader;
+    OGLR::Shader* densities_shader;
+    OGLR::Shader* update_particles_shader;
 
     uint8_t current_buffer = 0;
     OGLR::VertexArray va;
+    OGLR::Buffer* densities;
     OGLR::Buffer* particles[2];
 
     float kernel_radius = 0.5f;
     GLuint nb_particles = 0;
+    bool paused = true;
 
 };
 

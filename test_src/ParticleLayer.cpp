@@ -8,7 +8,7 @@ void ParticleLayer::onAttach() {
     glEnable(GL_PROGRAM_POINT_SIZE);
     ubo = new OGLR::Buffer(OGLR::BufType::UBO, &m_pSettings, sizeof(ParticleSettings), OGLR::UsageType::Dynamic);
 
-    std::vector<PointVertex> vb_temp = spawn_cube(10, {0, 0, 0});
+    std::vector<PointVertex> vb_temp = spawn_cube(50, {0, 0, 0});
 
     {   // Initialize first buffer
         particles[0] = new OGLR::Buffer(OGLR::BufType::VBO, vb_temp.data(), vb_temp.size() * PointVertex::N);
@@ -25,14 +25,20 @@ void ParticleLayer::onAttach() {
         OGLR::VertexArray::unBind();
     }
 
-    compute_shader = OGLR::Shader::fromGLSLTextFiles("../test_res/shaders/particles.glsl");
-    render_shader = OGLR::Shader::fromGLSLTextFiles("../test_res/shaders/particles.vert.glsl", "../test_res/shaders/particles.frag.glsl");
+    std::cout << "nb_particles: " << nb_particles << std::endl;
+    densities = new OGLR::Buffer(OGLR::BufType::SSBO, nullptr, sizeof(GLfloat) * nb_particles, OGLR::UsageType::Dynamic);
+
+    update_particles_shader = OGLR::Shader::fromGLSLTextFiles("../test_res/shaders/particle_shaders/particles.glsl");
+    densities_shader = OGLR::Shader::fromGLSLTextFiles("../test_res/shaders/particle_shaders/compute_particle_densities.glsl");
+    render_shader = OGLR::Shader::fromGLSLTextFiles("../test_res/shaders/particle_shaders/particles.vert.glsl",
+                                                    "../test_res/shaders/particle_shaders/particles.frag.glsl");
 }
 
 void ParticleLayer::onRender() {
     ImGui::Begin("Particle settings");
         ImGui::SliderFloat("point size", &m_pSettings.pointSize, 1e-3f, 0.2f);
         ImGui::SliderFloat("kernel radius", &kernel_radius, 1e-3f, 2.f);
+        ImGui::Checkbox("Paused", &paused);
     ImGui::End();
 
     m_Renderer.beginFrame(m_Camera);
@@ -59,30 +65,19 @@ void ParticleLayer::onRender() {
 }
 
 void ParticleLayer::onUpdate(float dt) {
+    particles[0]->castTo(OGLR::BufType::SSBO, OGLR::UsageType::Dynamic);
+    particles[1]->castTo(OGLR::BufType::SSBO, OGLR::UsageType::Dynamic);
 
-    compute_shader->bind();
-    compute_shader->setUniform<GLfloat>("u_dt", dt * 1e-3f);
-    compute_shader->setUniform<GLuint>("u_nb_particles", nb_particles);
-    compute_shader->setUniform<GLfloat>("u_radius", kernel_radius);
-
-    uint8_t next_buffer = (current_buffer + 1) % 2;
-
-    particles[current_buffer]->castTo(OGLR::BufType::SSBO, OGLR::UsageType::Dynamic);
-    particles[current_buffer]->bindAsBufferBase(0);
-    particles[next_buffer]->castTo(OGLR::BufType::SSBO, OGLR::UsageType::Dynamic);
-    particles[next_buffer]->bindAsBufferBase(1);
-
-    glDispatchCompute(nb_particles, 1, 1);
-    glMemoryBarrier(GL_ALL_BARRIER_BITS);
-
-    OGLR::Shader::unBind();
-    particles[current_buffer]->unBind();
-    particles[current_buffer]->castTo(OGLR::BufType::VBO, OGLR::UsageType::Dynamic);
-    particles[next_buffer]->unBind();
-    particles[next_buffer]->castTo(OGLR::BufType::VBO, OGLR::UsageType::Dynamic);
+    if (!paused) {
+        compute_densities();
+        update_particles(dt);
+    }
 
     m_Camera.onUpdate(dt);
-    current_buffer = next_buffer;
+    current_buffer = (current_buffer + 1) % 2;
+
+    particles[0]->castTo(OGLR::BufType::VBO, OGLR::UsageType::Dynamic);
+    particles[1]->castTo(OGLR::BufType::VBO, OGLR::UsageType::Dynamic);
 }
 
 void ParticleLayer::onDetach() {
@@ -90,24 +85,64 @@ void ParticleLayer::onDetach() {
     delete particles[1];
     delete ubo;
     delete render_shader;
-    delete compute_shader;
+    delete densities_shader;
+    delete update_particles_shader;
 }
 
+
+void ParticleLayer::compute_densities() {
+    densities_shader->bind();
+    densities_shader->setUniform<GLfloat>("u_radius", kernel_radius);
+    densities_shader->setUniform<GLuint>("u_nb_particles", nb_particles);
+
+    particles[current_buffer]->bindAsBufferBase(0);
+    densities->bindAsBufferBase(1);
+
+    glDispatchCompute(nb_particles, 1, 1);
+    glMemoryBarrier(GL_ALL_BARRIER_BITS);
+
+    OGLR::Shader::unBind();
+    densities->unBind();
+    particles[current_buffer]->unBind();
+}
+
+void ParticleLayer::update_particles(float dt) {
+    update_particles_shader->bind();
+    update_particles_shader->setUniform<GLfloat>("u_dt", dt * 1e-3f);
+    update_particles_shader->setUniform<GLuint>("u_nb_particles", nb_particles);
+    update_particles_shader->setUniform<GLfloat>("u_radius", kernel_radius);
+
+    uint8_t next_buffer = (current_buffer + 1) % 2;
+
+    particles[current_buffer]->bindAsBufferBase(0);
+    particles[next_buffer]->bindAsBufferBase(1);
+    densities->bindAsBufferBase(2);
+
+    glDispatchCompute(nb_particles, 1, 1);
+    glMemoryBarrier(GL_ALL_BARRIER_BITS);
+
+    OGLR::Shader::unBind();
+    particles[current_buffer]->unBind();
+    particles[next_buffer]->unBind();
+}
+
+
 std::vector<ParticleLayer::PointVertex> ParticleLayer::spawn_cube(GLuint resolution, glm::vec3 center) {
-    std::vector<PointVertex> vb_temp(resolution * resolution * resolution);
+    std::vector<PointVertex> vb_temp;
 
     for (uint32_t i = 0; i < resolution; ++i) {
         for (uint32_t j = 0; j < resolution; ++j) {
-            for (uint32_t k = 0; k < 1; ++k) {
-                glm::vec4 spawn_pos = glm::vec4((float)i / resolution , (float)k / resolution, (float)j / resolution, 1.f);
+            //for (uint32_t k = 0; k < 1; ++k) {
+                glm::vec4 spawn_pos = glm::vec4((float)i / resolution , (float)0 / resolution, (float)j / resolution, 1.f);
                           spawn_pos += glm::vec4(center, 0.f);
                           spawn_pos -= glm::vec4(0.5f, 0.5f, 0.5f, 0.f);
 
                 vb_temp.emplace_back(spawn_pos, glm::vec4(0.f), glm::vec4(1.f));
-            }
+            //}
         }
     }
 
+    vb_temp.emplace_back(glm::vec4(center, 1.f), glm::vec4(0.f), glm::vec4(1.f));
     nb_particles = vb_temp.size();
 
     return vb_temp;
