@@ -25,13 +25,15 @@ private:
     OGLR::Renderer m_Renderer {};
     OGLR::Camera m_Camera {1.0f * glm::vec3{0.0f, 1.0f, -1.0f},  {0.0f, -1.0f, 1.0f}};
 
-    OGLR::Buffer* particles;
     OGLR::Buffer* ubo;
-    OGLR::VertexArray va;
     OGLR::Shader* render_shader;
     OGLR::Shader* compute_shader;
 
-    float kernel_radius = 0.5f;
+    uint8_t current_buffer = 0;
+    OGLR::VertexArray va[2];
+    OGLR::Buffer* particles[2];
+
+    float kernel_radius = 0.000001f;
     GLuint nb_particles = 0;
 
 };

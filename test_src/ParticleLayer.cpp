@@ -8,16 +8,29 @@ void ParticleLayer::onAttach() {
     glEnable(GL_PROGRAM_POINT_SIZE);
     ubo = new OGLR::Buffer(OGLR::BufType::UBO, &m_pSettings, sizeof(ParticleSettings), OGLR::UsageType::Dynamic);
 
-    std::vector<PointVertex> vb_temp = spawn_cube(15, {0, 0, 0});
+    std::vector<PointVertex> vb_temp = spawn_cube(10, {0, 0, 0});
 
-    particles = new OGLR::Buffer(OGLR::BufType::VBO, vb_temp.data(), vb_temp.size() * PointVertex::N);
-    particles->bind();
-    va.bind();
+    {   // Initialize first buffer
+        particles[0] = new OGLR::Buffer(OGLR::BufType::VBO, vb_temp.data(), vb_temp.size() * PointVertex::N);
+        particles[0]->bind();
+        va[0].bind();
 
-    va.bindAttributes<PointVertex>();
+        va[0].bindAttributes<PointVertex>();
 
-    particles->unBind();
-    OGLR::VertexArray::unBind();
+        particles[0]->unBind();
+        OGLR::VertexArray::unBind();
+    }
+
+    {   // Initialize second buffer
+        particles[1] = new OGLR::Buffer(OGLR::BufType::VBO, vb_temp.data(), vb_temp.size() * PointVertex::N);
+        particles[1]->bind();
+        va[1].bind();
+
+        va[1].bindAttributes<PointVertex>();
+
+        particles[1]->unBind();
+        OGLR::VertexArray::unBind();
+    }
 
     compute_shader = OGLR::Shader::fromGLSLTextFiles("../test_res/shaders/particles.glsl");
     render_shader = OGLR::Shader::fromGLSLTextFiles("../test_res/shaders/particles.vert.glsl", "../test_res/shaders/particles.frag.glsl");
@@ -39,13 +52,13 @@ void ParticleLayer::onRender() {
     render_shader->setUniform("u_proj", m_Camera.getProjection());
     render_shader->setUniform("u_view", m_Camera.getView());
 
-    particles->bind();
-    va.bind();
+    particles[current_buffer]->bind();
+    va[current_buffer].bind();
 
     glDrawArrays(GL_POINTS, 0, nb_particles);
 
     OGLR::VertexArray::unBind();
-    particles->unBind();
+    particles[current_buffer]->unBind();
     OGLR::Shader::unBind();
 
     m_Renderer.endFrame();
@@ -55,25 +68,33 @@ void ParticleLayer::onRender() {
 void ParticleLayer::onUpdate(float dt) {
 
     compute_shader->bind();
-    compute_shader->setUniform("u_dt", dt);
+    compute_shader->setUniform<GLfloat>("u_dt", dt * 1e-3f);
     compute_shader->setUniform<GLuint>("u_nb_particles", nb_particles);
-    compute_shader->setUniform("u_radius", kernel_radius);
+    compute_shader->setUniform<GLfloat>("u_radius", kernel_radius);
 
-    particles->castTo(OGLR::BufType::SSBO, OGLR::UsageType::Dynamic);
-    particles->bindAsBufferBase(0);
+    uint8_t next_buffer = (current_buffer + 1) % 2;
+
+    particles[current_buffer]->castTo(OGLR::BufType::SSBO, OGLR::UsageType::Dynamic);
+    particles[current_buffer]->bindAsBufferBase(0);
+    particles[next_buffer]->castTo(OGLR::BufType::SSBO, OGLR::UsageType::Dynamic);
+    particles[next_buffer]->bindAsBufferBase(1);
 
     glDispatchCompute(nb_particles, 1, 1);
     glMemoryBarrier(GL_ALL_BARRIER_BITS);
 
     OGLR::Shader::unBind();
-    particles->unBind();
-    particles->castTo(OGLR::BufType::VBO, OGLR::UsageType::Dynamic);
+    particles[current_buffer]->unBind();
+    particles[current_buffer]->castTo(OGLR::BufType::VBO, OGLR::UsageType::Dynamic);
+    particles[next_buffer]->unBind();
+    particles[next_buffer]->castTo(OGLR::BufType::VBO, OGLR::UsageType::Dynamic);
 
     m_Camera.onUpdate(dt);
+    current_buffer = next_buffer;
 }
 
 void ParticleLayer::onDetach() {
-    delete particles;
+    delete particles[0];
+    delete particles[1];
     delete ubo;
     delete render_shader;
     delete compute_shader;
@@ -84,7 +105,7 @@ std::vector<ParticleLayer::PointVertex> ParticleLayer::spawn_cube(GLuint resolut
 
     for (uint32_t i = 0; i < resolution; ++i) {
         for (uint32_t j = 0; j < resolution; ++j) {
-            for (uint32_t k = 0; k < resolution; ++k) {
+            for (uint32_t k = 0; k < 1; ++k) {
                 glm::vec4 spawn_pos = glm::vec4((float)i / resolution , (float)k / resolution, (float)j / resolution, 1.f);
                           spawn_pos += glm::vec4(center, 0.f);
                           spawn_pos -= glm::vec4(0.5f, 0.5f, 0.5f, 0.f);

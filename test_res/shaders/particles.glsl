@@ -14,26 +14,45 @@ uniform uint u_nb_particles;
 uniform float u_radius;
 
 
-layout (std430, binding = 0) buffer Vertices {
-    Vertex vertices[];
+layout (std430, binding = 0) buffer Vertices_In {
+    Vertex vertices_in[];
 };
 
-float kernel(float dist) {
-    if (dist >= u_radius)
-        return 0.0;
+layout (std430, binding = 1) buffer Vertices_Out {
+    Vertex vertices_out[];
+};
 
-    float x = u_radius - dist;
+vec4 kernel_and_grad(vec3 ref_pos, vec3 pos) {
+    vec3 v_diff = ref_pos - pos;
+    float dist = length(v_diff);
+
+    if (dist >= u_radius)
+        return vec4(0.0);
+
     const float volume = M_PI * pow(u_radius, 6) / 15.f;
-    return x * x * x / volume;
+
+    // Compute kernel value
+    float x = u_radius - dist;
+    float val = x * x * x;
+
+    // Compute kernel gradient
+    vec3 grad = 3.f * v_diff * x * x / dist;
+
+    return 1 * vec4(grad, val) / volume;
 }
 
-float densityAt(vec3 pos) {
-    float density = 0.0;
+vec4 density_and_grad(uint idx) {
+    const vec3 pos = vertices_in[idx].pos.xyz;
+
+    vec4 res = vec4(0.0);
     for (uint i = 0; i < u_nb_particles; i++) {
-        float dist = distance(vertices[i].pos.xyz, pos);
-        density += kernel(dist);
+        if (i == idx)
+            continue;
+
+        res += kernel_and_grad(pos, vertices_in[i].pos.xyz);
     }
-    return density;
+
+    return res;
 }
 
 
@@ -45,9 +64,23 @@ void main() {
 
     // =========== Vertex Positon and Speed ================
 
-    Vertex vertex = vertices[vertexId];
-    vertex.speed = vec4(0.f, 0.f, 0.f, 0.f);
-    vertex.color = vec4(densityAt(vertex.pos.xyz), 0.0, 0.0, 1.0);
+    Vertex vertex = vertices_in[vertexId];
 
-    vertices[vertexId] = vertex;
+    vertex.speed.y += -9.81f * u_dt;
+    vertex.pos.xyz += vertex.speed.xyz * u_dt;
+
+    if (vertex.pos.x < -1.0 || vertex.pos.x > 1.0) {
+        vertex.speed.x *= -1.0;
+        vertex.pos.x = clamp(vertex.pos.x, -1.0, 1.0);
+    }
+    if (vertex.pos.y < -1.0 || vertex.pos.y > 1.0) {
+        vertex.speed.y *= -1.0;
+        vertex.pos.y = clamp(vertex.pos.y, -1.0, 1.0);
+    }
+    if (vertex.pos.z < -1.0 || vertex.pos.z > 1.0) {
+        vertex.speed.z *= -1.0;
+        vertex.pos.z = clamp(vertex.pos.z, -1.0, 1.0);
+    }
+
+    vertices_out[vertexId] = vertex;
 }
