@@ -30,10 +30,10 @@ private:
     OGLR::Shader* compute_shader;
 
     uint8_t current_buffer = 0;
-    OGLR::VertexArray va[2];
+    OGLR::VertexArray va;
     OGLR::Buffer* particles[2];
 
-    float kernel_radius = 0.000001f;
+    float kernel_radius = 0.5f;
     GLuint nb_particles = 0;
 
 };

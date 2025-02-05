@@ -12,21 +12,14 @@ void ParticleLayer::onAttach() {
 
     {   // Initialize first buffer
         particles[0] = new OGLR::Buffer(OGLR::BufType::VBO, vb_temp.data(), vb_temp.size() * PointVertex::N);
-        particles[0]->bind();
-        va[0].bind();
-
-        va[0].bindAttributes<PointVertex>();
-
-        particles[0]->unBind();
-        OGLR::VertexArray::unBind();
     }
 
-    {   // Initialize second buffer
+    {   // Initialize second buffer and vertex array
         particles[1] = new OGLR::Buffer(OGLR::BufType::VBO, vb_temp.data(), vb_temp.size() * PointVertex::N);
         particles[1]->bind();
-        va[1].bind();
+        va.bind();
 
-        va[1].bindAttributes<PointVertex>();
+        va.bindAttributes<PointVertex>();
 
         particles[1]->unBind();
         OGLR::VertexArray::unBind();
@@ -53,7 +46,7 @@ void ParticleLayer::onRender() {
     render_shader->setUniform("u_view", m_Camera.getView());
 
     particles[current_buffer]->bind();
-    va[current_buffer].bind();
+    va.bind();
 
     glDrawArrays(GL_POINTS, 0, nb_particles);
 
