@@ -12,10 +12,10 @@ public:
 
 
 private:
-    using PointVertex = OGLR::Vertex<glm::vec4, glm::vec4, glm::vec4>;
+    using PointVertex = OGLR::Vertex<glm::vec4, glm::vec4>;
 
-    std::vector<PointVertex> spawn_cube(GLuint resolution, glm::vec3 center = {0, 0, 0});
-    std::vector<PointVertex> spawn_disk(GLuint resolution, glm::vec3 center = {0, 0, 0});
+    std::vector<PointVertex> spawn_cube(GLuint resolution, const glm::vec3& center = {0, 0, 0});
+    std::vector<PointVertex> spawn_disk(GLuint resolution, const glm::vec3& center = {0, 0, 0});
 
     void compute_densities();
     void update_particles(float dt);

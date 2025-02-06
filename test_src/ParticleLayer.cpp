@@ -8,7 +8,7 @@ void ParticleLayer::onAttach() {
     glEnable(GL_PROGRAM_POINT_SIZE);
     ubo = new OGLR::Buffer(OGLR::BufType::UBO, &m_pSettings, sizeof(ParticleSettings), OGLR::UsageType::Dynamic);
 
-    std::vector<PointVertex> vb_temp = spawn_cube(50, {0, 0, 0});
+    const std::vector<PointVertex> vb_temp = spawn_cube(50, {0, 0, 0});
 
     {   // Initialize first buffer
         particles[0] = new OGLR::Buffer(OGLR::BufType::VBO, vb_temp.data(), vb_temp.size() * PointVertex::N);
@@ -127,7 +127,7 @@ void ParticleLayer::update_particles(float dt) {
 }
 
 
-std::vector<ParticleLayer::PointVertex> ParticleLayer::spawn_cube(GLuint resolution, glm::vec3 center) {
+std::vector<ParticleLayer::PointVertex> ParticleLayer::spawn_cube(GLuint resolution, const glm::vec3& center) {
     std::vector<PointVertex> vb_temp;
 
     for (uint32_t i = 0; i < resolution; ++i) {
@@ -137,19 +137,19 @@ std::vector<ParticleLayer::PointVertex> ParticleLayer::spawn_cube(GLuint resolut
                           spawn_pos += glm::vec4(center, 0.f);
                           spawn_pos -= glm::vec4(0.5f, 0.5f, 0.5f, 0.f);
 
-                vb_temp.emplace_back(spawn_pos, glm::vec4(0.f), glm::vec4(1.f));
+                vb_temp.emplace_back(spawn_pos, glm::vec4(0.f));
             //}
         }
     }
 
-    vb_temp.emplace_back(glm::vec4(center, 1.f), glm::vec4(0.f), glm::vec4(1.f));
+    vb_temp.emplace_back(glm::vec4(center, 1.f), glm::vec4(0.f));
     nb_particles = vb_temp.size();
 
     return vb_temp;
 }
 
-std::vector<ParticleLayer::PointVertex> ParticleLayer::spawn_disk(GLuint resolution, glm::vec3 center) {
-    std::vector<PointVertex> vb_temp(resolution * resolution);
+std::vector<ParticleLayer::PointVertex> ParticleLayer::spawn_disk(GLuint resolution, const glm::vec3& center) {
+    std::vector<PointVertex> vb_temp;
 
     for (uint32_t i = 0; i < resolution; ++i) {
         for (uint32_t j = 0; j < resolution; ++j) {
@@ -159,7 +159,7 @@ std::vector<ParticleLayer::PointVertex> ParticleLayer::spawn_disk(GLuint resolut
             spawn_pos += glm::vec2(center.x, center.z);
             spawn_pos -= glm::vec2(0.5f);
 
-            vb_temp.emplace_back(glm::vec4(spawn_pos.x, center.y - 0.5f, spawn_pos.y, 1.f), glm::vec4(0.f), glm::vec4(1.f));
+            vb_temp.emplace_back(glm::vec4(spawn_pos.x, center.y - 0.5f, spawn_pos.y, 1.f), glm::vec4(0.f));
         }
     }
 

@@ -6,7 +6,6 @@ layout (local_size_x = 1) in;
 struct Vertex {
     vec4 pos;
     vec4 speed;
-    vec4 color;
 };
 
 uniform float u_dt;
