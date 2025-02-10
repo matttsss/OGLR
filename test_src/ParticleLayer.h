@@ -17,8 +17,8 @@ private:
     std::vector<PointVertex> spawn_cube(GLuint resolution, const glm::vec3& center = {0, 0, 0});
     std::vector<PointVertex> spawn_disk(GLuint resolution, const glm::vec3& center = {0, 0, 0});
 
-    void compute_densities();
-    void update_particles(float dt);
+    void compute_densities() const;
+    void update_particles(float dt) const;
 
     struct ParticleSettings {
         glm::ivec2 viewport_size;
@@ -39,6 +39,8 @@ private:
     OGLR::Buffer* particles[2];
 
     float kernel_radius = 0.5f;
+    float pressure_mul = 1e-3f;
+    float pressure_target = 1.f;
     GLuint nb_particles = 0;
     bool paused = true;
 

@@ -36,8 +36,10 @@ void ParticleLayer::onAttach() {
 
 void ParticleLayer::onRender() {
     ImGui::Begin("Particle settings");
-        ImGui::SliderFloat("point size", &m_pSettings.pointSize, 1e-3f, 0.2f);
-        ImGui::SliderFloat("kernel radius", &kernel_radius, 1e-3f, 2.f);
+        ImGui::SliderFloat("Pressure multiplier", &pressure_mul, 1e-3f, 0.5f);
+        ImGui::SliderFloat("Target pressure", &pressure_target, 0.0f, 1.0f);
+        ImGui::SliderFloat("Point size", &m_pSettings.pointSize, 1e-3f, 0.2f);
+        ImGui::SliderFloat("Kernel radius", &kernel_radius, 1e-3f, 2.f);
         ImGui::Checkbox("Paused", &paused);
     ImGui::End();
 
@@ -90,7 +92,7 @@ void ParticleLayer::onDetach() {
 }
 
 
-void ParticleLayer::compute_densities() {
+void ParticleLayer::compute_densities() const {
     densities_shader->bind();
     densities_shader->setUniform<GLfloat>("u_radius", kernel_radius);
     densities_shader->setUniform<GLuint>("u_nb_particles", nb_particles);
@@ -106,11 +108,13 @@ void ParticleLayer::compute_densities() {
     particles[current_buffer]->unBind();
 }
 
-void ParticleLayer::update_particles(float dt) {
+void ParticleLayer::update_particles(float dt) const {
     update_particles_shader->bind();
     update_particles_shader->setUniform<GLfloat>("u_dt", dt * 1e-3f);
     update_particles_shader->setUniform<GLuint>("u_nb_particles", nb_particles);
     update_particles_shader->setUniform<GLfloat>("u_radius", kernel_radius);
+    update_particles_shader->setUniform<GLfloat>("u_pressure_multiplier", pressure_mul);
+    update_particles_shader->setUniform<GLfloat>("u_pressure_target", pressure_target);
 
     uint8_t next_buffer = (current_buffer + 1) % 2;
 
