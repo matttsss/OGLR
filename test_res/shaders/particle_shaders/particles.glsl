@@ -77,21 +77,20 @@ void main() {
     // =========== Vertex Positon and Speed ================
     Vertex vertex = vertices_in[vertexId];
     vec3 pressure_force = pressure_force(vertexId);
-    vec3 gravity_force = vec3(0.f, -9.81f, 0.f);
+    vec3 gravity_force = vec3(0.f, 0.f, 0.f);
+    vec3 acceleration = (pressure_force + gravity_force) / densities[vertexId];
 
-    vec3 total_force = pressure_force + gravity_force;
-
-    vertex.speed.xyz += (total_force / densities[vertexId]) * u_dt;
+    vertex.speed.xyz += acceleration * u_dt;
     vertex.pos.xyz += vertex.speed.xyz * u_dt;
 
     if (vertex.pos.x < -1.0 || vertex.pos.x > 1.0) {
         vertex.speed.x *= -1.0;
         vertex.pos.x = clamp(vertex.pos.x, -1.0, 1.0);
     }
-    if (vertex.pos.y < -1.0) {
+    if (vertex.pos.y < -1.0 || vertex.pos.y > 1.0) {
         vertex.speed.y *= -1.0;
-        //vertex.pos.y = clamp(vertex.pos.y, -1.0, 1.0);
-        vertex.pos.y = max(vertex.pos.y, -1.0);
+        vertex.pos.y = clamp(vertex.pos.y, -1.0, 1.0);
+        //vertex.pos.y = max(vertex.pos.y, -1.0);
     }
     if (vertex.pos.z < -1.0 || vertex.pos.z > 1.0) {
         vertex.speed.z *= -1.0;

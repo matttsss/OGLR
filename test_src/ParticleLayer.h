@@ -38,9 +38,9 @@ private:
     OGLR::Buffer* densities;
     OGLR::Buffer* particles[2];
 
-    float kernel_radius = 0.5f;
-    float pressure_mul = 1e-3f;
-    float pressure_target = 1.f;
+    float kernel_radius = 0.035f;
+    float pressure_mul = 1.f;
+    float pressure_target = 2.75f;
     GLuint nb_particles = 0;
     bool paused = true;
 
