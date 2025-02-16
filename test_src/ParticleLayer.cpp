@@ -3,10 +3,11 @@
 void ParticleLayer::onAttach() {
     m_Camera.setSpeed(1e-3, 1e-3);
     m_Camera.setPerspectiveProjection(glm::radians(50.f), 1.6f, 1e-4f, 800.f);
-    m_pSettings.viewport_size = OGLR::Application::getFrameBufferSize();
+    m_render_settings.viewport_size = OGLR::Application::getFrameBufferSize();
 
     glEnable(GL_PROGRAM_POINT_SIZE);
-    ubo = new OGLR::Buffer(OGLR::BufType::UBO, &m_pSettings, sizeof(ParticleSettings), OGLR::UsageType::Dynamic);
+    render_ubo = new OGLR::Buffer(OGLR::BufType::UBO, &m_render_settings, sizeof(ParticleRenderSettings), OGLR::UsageType::Dynamic);
+    sim_ubo = new OGLR::Buffer(OGLR::BufType::UBO, &m_sim_settings, sizeof(ParticleSimSettings), OGLR::UsageType::Dynamic);
 
     const std::vector<PointVertex> vb_temp = spawn_cube(50, {0, 0, 0});
 
@@ -25,8 +26,8 @@ void ParticleLayer::onAttach() {
         OGLR::VertexArray::unBind();
     }
 
-    std::cout << "nb_particles: " << nb_particles << std::endl;
-    densities = new OGLR::Buffer(OGLR::BufType::SSBO, nullptr, sizeof(GLfloat) * nb_particles, OGLR::UsageType::Dynamic);
+    densities = new OGLR::Buffer(OGLR::BufType::SSBO, nullptr,
+                                 sizeof(GLfloat) * m_sim_settings.nb_particles, OGLR::UsageType::Dynamic);
 
     update_particles_shader = OGLR::Shader::fromGLSLTextFiles("test_res/shaders/particle_shaders/particles.glsl");
     densities_shader = OGLR::Shader::fromGLSLTextFiles("test_res/shaders/particle_shaders/compute_particle_densities.glsl");
@@ -37,36 +38,28 @@ void ParticleLayer::onAttach() {
 void ParticleLayer::onRender() {
     ImGui::Begin("Particle settings");
         ImGui::Text("Average frame time: %f ms", average_frame_time);
-        ImGui::SliderFloat("Viscosity multiplier", &viscosity_mul, 1.f, 500.f);
-        ImGui::SliderFloat("Pressure multiplier", &pressure_mul, 1.f, 500.f);
-        ImGui::InputFloat("Target pressure", &pressure_target);
-        ImGui::SliderFloat("Point size", &m_pSettings.pointSize, 1e-3f, 0.2f);
-        ImGui::SliderFloat("Kernel radius", &kernel_radius, 1e-3f, 2.f);
+        ImGui::SliderFloat("Viscosity multiplier", &m_sim_settings.viscosity_mul, 1.f, 500.f);
+        ImGui::SliderFloat("Pressure multiplier", &m_sim_settings.pressure_mul, 1.f, 500.f);
+        ImGui::InputFloat("Target pressure", &m_sim_settings.pressure_target);
+        ImGui::SliderFloat("Point size", &m_render_settings.pointSize, 1e-3f, 0.2f);
+        ImGui::SliderFloat("Kernel radius", &m_sim_settings.kernel_radius, 1e-3f, 2.f);
         ImGui::Checkbox("Paused", &paused);
-        if (ImGui::Button("Print densities")) {
-            std::vector<float> densities(nb_particles);
-            glGetNamedBufferSubData(this->densities->getRendererID(), 0, sizeof(float) * nb_particles, densities.data());
-            for (const float d: densities)
-                std::cout << d << ", ";
-
-            std::cout << std::endl;
-        }
     ImGui::End();
 
     m_Renderer.beginFrame(m_Camera);
 
-    ubo->bind();
-    ubo->setData(&m_pSettings, sizeof(ParticleSettings));
+    render_ubo->bind();
+    render_ubo->setData(&m_render_settings, sizeof(ParticleRenderSettings));
 
     render_shader->bind();
-    render_shader->setUniformBlock("u_ParticleSettings", *ubo);
+    render_shader->setUniformBlock("u_ParticleSettings", *render_ubo);
     render_shader->setUniform("u_proj", m_Camera.getProjection());
     render_shader->setUniform("u_view", m_Camera.getView());
 
     particles[current_buffer]->bind();
     va.bind();
 
-    glDrawArrays(GL_POINTS, 0, nb_particles);
+    glDrawArrays(GL_POINTS, 0, m_sim_settings.nb_particles);
 
     OGLR::VertexArray::unBind();
     particles[current_buffer]->unBind();
@@ -108,7 +101,8 @@ void ParticleLayer::onUpdate(float dt) {
 void ParticleLayer::onDetach() {
     delete particles[0];
     delete particles[1];
-    delete ubo;
+    delete render_ubo;
+    delete sim_ubo;
     delete render_shader;
     delete densities_shader;
     delete update_particles_shader;
@@ -117,13 +111,13 @@ void ParticleLayer::onDetach() {
 
 void ParticleLayer::compute_densities() const {
     densities_shader->bind();
-    densities_shader->setUniform<GLfloat>("u_radius", kernel_radius);
-    densities_shader->setUniform<GLuint>("u_nb_particles", nb_particles);
+    densities_shader->setUniform<GLfloat>("u_radius", m_sim_settings.kernel_radius);
+    densities_shader->setUniform<GLuint>("u_nb_particles", m_sim_settings.nb_particles);
 
     particles[current_buffer]->bindAsBufferBase(0);
     densities->bindAsBufferBase(1);
 
-    glDispatchCompute(nb_particles, 1, 1);
+    glDispatchCompute(m_sim_settings.nb_particles, 1, 1);
     glMemoryBarrier(GL_ALL_BARRIER_BITS);
 
     OGLR::Shader::unBind();
@@ -132,13 +126,12 @@ void ParticleLayer::compute_densities() const {
 }
 
 void ParticleLayer::update_particles(float dt) const {
+    sim_ubo->bind();
+    sim_ubo->setData(&m_sim_settings, sizeof(ParticleSimSettings));
+
     update_particles_shader->bind();
     update_particles_shader->setUniform<GLfloat>("u_dt", dt * 0.1f);
-    update_particles_shader->setUniform<GLuint>("u_nb_particles", nb_particles);
-    update_particles_shader->setUniform<GLfloat>("u_radius", kernel_radius);
-    update_particles_shader->setUniform<GLfloat>("u_pressure_multiplier", pressure_mul);
-    update_particles_shader->setUniform<GLfloat>("u_viscosity_factor", viscosity_mul);
-    update_particles_shader->setUniform<GLfloat>("u_pressure_target", pressure_target);
+    update_particles_shader->setUniformBlock("u_ParticleSettings", *sim_ubo);
 
     uint8_t next_buffer = (current_buffer + 1) % 2;
 
@@ -146,7 +139,7 @@ void ParticleLayer::update_particles(float dt) const {
     particles[next_buffer]->bindAsBufferBase(1);
     densities->bindAsBufferBase(2);
 
-    glDispatchCompute(nb_particles, 1, 1);
+    glDispatchCompute(m_sim_settings.nb_particles, 1, 1);
     glMemoryBarrier(GL_ALL_BARRIER_BITS);
 
     OGLR::Shader::unBind();
@@ -171,7 +164,7 @@ std::vector<ParticleLayer::PointVertex> ParticleLayer::spawn_cube(GLuint resolut
     }
 
     //vb_temp.emplace_back(glm::vec4(center, 1.f), glm::vec4(0.f));
-    nb_particles = vb_temp.size();
+    m_sim_settings.nb_particles = vb_temp.size();
 
     return vb_temp;
 }
@@ -191,6 +184,6 @@ std::vector<ParticleLayer::PointVertex> ParticleLayer::spawn_disk(GLuint resolut
         }
     }
 
-    nb_particles = vb_temp.size();
+    m_sim_settings.nb_particles = vb_temp.size();
     return vb_temp;
 }

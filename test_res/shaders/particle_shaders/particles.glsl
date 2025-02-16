@@ -9,12 +9,14 @@ struct Vertex {
 };
 
 uniform float u_dt;
-uniform uint u_nb_particles;
-uniform float u_viscosity_factor;
-uniform float u_pressure_multiplier;
-uniform float u_pressure_target;
-uniform float u_radius;
 
+layout (std140, binding = 3) uniform u_ParticleSettings {
+    uint u_nb_particles;
+    float u_viscosity_mul;
+    float u_pressure_mul;
+    float u_pressure_target;
+    float u_radius;
+};
 
 layout (std430, binding = 0) buffer Vertices_In {
     Vertex vertices_in[];
@@ -29,7 +31,7 @@ layout (std430, binding = 2) buffer Densities {
 };
 
 float compute_pressure(uint idx) {
-    return u_pressure_multiplier * (densities[idx] - u_pressure_target);
+    return u_pressure_mul * (densities[idx] - u_pressure_target);
 }
 
 float compute_shared_pressure(uint idx1, uint idx2) {
@@ -71,7 +73,7 @@ vec3 viscosity_force(uint idx) {
         res += speed_diff * viscocity_kernel_laplacian(dist, u_radius) / densities[i];
     }
 
-    return u_viscosity_factor * res;
+    return u_viscosity_mul * res;
 }
 
 
