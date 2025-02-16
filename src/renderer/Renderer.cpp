@@ -29,7 +29,7 @@ namespace OGLR
 		DEBUG::enableGLDebug();
 //#endif
 
-        m_BackGround.addShader("../test_res/shaders/background.vert.glsl", "../test_res/shaders/background.frag.glsl");
+        m_BackGround.addShader("test_res/shaders/background.vert.glsl", "test_res/shaders/background.frag.glsl");
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

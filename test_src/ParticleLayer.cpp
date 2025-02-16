@@ -28,10 +28,10 @@ void ParticleLayer::onAttach() {
     std::cout << "nb_particles: " << nb_particles << std::endl;
     densities = new OGLR::Buffer(OGLR::BufType::SSBO, nullptr, sizeof(GLfloat) * nb_particles, OGLR::UsageType::Dynamic);
 
-    update_particles_shader = OGLR::Shader::fromGLSLTextFiles("../test_res/shaders/particle_shaders/particles.glsl");
-    densities_shader = OGLR::Shader::fromGLSLTextFiles("../test_res/shaders/particle_shaders/compute_particle_densities.glsl");
-    render_shader = OGLR::Shader::fromGLSLTextFiles("../test_res/shaders/particle_shaders/particles.vert.glsl",
-                                                    "../test_res/shaders/particle_shaders/particles.frag.glsl");
+    update_particles_shader = OGLR::Shader::fromGLSLTextFiles("test_res/shaders/particle_shaders/particles.glsl");
+    densities_shader = OGLR::Shader::fromGLSLTextFiles("test_res/shaders/particle_shaders/compute_particle_densities.glsl");
+    render_shader = OGLR::Shader::fromGLSLTextFiles("test_res/shaders/particle_shaders/particles.vert.glsl",
+                                                    "test_res/shaders/particle_shaders/particles.frag.glsl");
 }
 
 void ParticleLayer::onRender() {
@@ -41,6 +41,14 @@ void ParticleLayer::onRender() {
         ImGui::SliderFloat("Point size", &m_pSettings.pointSize, 1e-3f, 0.2f);
         ImGui::SliderFloat("Kernel radius", &kernel_radius, 1e-3f, 2.f);
         ImGui::Checkbox("Paused", &paused);
+        if (ImGui::Button("Print densities")) {
+            std::vector<float> densities(nb_particles);
+            glGetNamedBufferSubData(this->densities->getRendererID(), 0, sizeof(float) * nb_particles, densities.data());
+            for (const float d: densities)
+                std::cout << d << ", ";
+
+            std::cout << std::endl;
+        }
     ImGui::End();
 
     m_Renderer.beginFrame(m_Camera);

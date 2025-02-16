@@ -11,17 +11,39 @@ namespace OGLR
 	{
 		std::string result;
 		std::ifstream in(filepath, std::ios::in | std::ios::binary);
-		if (in)
-		{
-			in.seekg(0, std::ios::end);
-			result.resize((size_t)in.tellg());
-			in.seekg(0, std::ios::beg);
-			in.read(&result[0], result.size());
-			in.close();
-		}
-		else
+		if (!in)
 		{
 			std::cout << "Could not find file : " << filepath << std::endl;
+			return result;
+		}
+
+		// Read file
+		in.seekg(0, std::ios::end);
+		result.resize((size_t)in.tellg());
+		in.seekg(0, std::ios::beg);
+		in.read(&result[0], result.size());
+		in.close();
+
+		// Search for includes:
+		size_t include_token;
+		while ((include_token = result.find("#include ")) != std::string::npos) {
+			size_t first_bracket = result.find('"', include_token + 9); // sizeof("#include ")
+			if (first_bracket == std::string::npos) {
+				std::cout << "Could not parse include directive..." << std::endl;
+				break;
+			}
+
+			size_t second_bracket = result.find('"', first_bracket + 1);
+			if (second_bracket == std::string::npos) {
+				std::cout << "Could not parse include directive..." << std::endl;
+				break;
+			}
+
+			std::string include_file_path = result.substr(first_bracket + 1, second_bracket - first_bracket - 1);
+			std::string included_file = ReadFileAsString(include_file_path);
+
+			result.replace(include_token, second_bracket - include_token + 1, included_file);
+
 		}
 
 		return result;
