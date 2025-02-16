@@ -10,6 +10,7 @@ struct Vertex {
 
 uniform float u_dt;
 uniform uint u_nb_particles;
+uniform float u_viscosity_factor;
 uniform float u_pressure_multiplier;
 uniform float u_pressure_target;
 uniform float u_radius;
@@ -40,16 +41,37 @@ float compute_shared_pressure(uint idx1, uint idx2) {
 vec3 pressure_force(uint idx) {
     const vec3 pos = vertices_in[idx].pos.xyz;
 
-    vec3 res = vec3(0.0);
+    vec3 res = vec3(0.f);
     for (uint i = 0; i < u_nb_particles; i++) {
-        if (i == idx)
+        const vec3 v_diff = vertices_in[i].pos.xyz - pos;
+        const float dist = length(v_diff);
+
+        if (dist < 1e-7f)
             continue;
 
         const float avg_pressure = compute_shared_pressure(idx, i);
-        res += avg_pressure * spicky_kernel_grad_3(pos, vertices_in[i].pos.xyz, u_radius) / densities[i];
+        const float scale = avg_pressure * spicky_kernel_grad_3(dist, u_radius) / densities[i];
+        res += scale * normalize(v_diff);
     }
 
     return res;
+}
+
+vec3 viscosity_force(uint idx) {
+    const vec3 pos = vertices_in[idx].pos.xyz;
+    const vec3 speed = vertices_in[idx].speed.xyz;
+
+
+    vec3 res = vec3(0.f);
+    for (uint i = 0; i < u_nb_particles; i++) {
+        const float dist = distance(pos, vertices_in[i].pos.xyz);
+        if (dist < 1e-7f) continue;
+
+        const vec3 speed_diff = vertices_in[i].speed.xyz - speed;
+        res += speed_diff * viscocity_kernel_laplacian(dist, u_radius) / densities[i];
+    }
+
+    return u_viscosity_factor * res;
 }
 
 
@@ -62,8 +84,9 @@ void main() {
     // =========== Vertex Positon and Speed ================
     Vertex vertex = vertices_in[vertexId];
     vec3 pressure_force = pressure_force(vertexId);
+    vec3 viscosity_force = viscosity_force(vertexId);
     vec3 gravity_force = vec3(0.f, 0.f, 0.f);
-    vec3 acceleration = (pressure_force + gravity_force) / densities[vertexId];
+    vec3 acceleration = (pressure_force + gravity_force + viscosity_force) / densities[vertexId];
 
     vertex.speed.xyz += acceleration * u_dt;
     vertex.pos.xyz += vertex.speed.xyz * u_dt;

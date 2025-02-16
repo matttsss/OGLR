@@ -37,6 +37,7 @@ void ParticleLayer::onAttach() {
 void ParticleLayer::onRender() {
     ImGui::Begin("Particle settings");
         ImGui::Text("Average frame time: %f ms", average_frame_time);
+        ImGui::SliderFloat("Viscosity multiplier", &viscosity_mul, 1.f, 500.f);
         ImGui::SliderFloat("Pressure multiplier", &pressure_mul, 1.f, 500.f);
         ImGui::InputFloat("Target pressure", &pressure_target);
         ImGui::SliderFloat("Point size", &m_pSettings.pointSize, 1e-3f, 0.2f);
@@ -136,6 +137,7 @@ void ParticleLayer::update_particles(float dt) const {
     update_particles_shader->setUniform<GLuint>("u_nb_particles", nb_particles);
     update_particles_shader->setUniform<GLfloat>("u_radius", kernel_radius);
     update_particles_shader->setUniform<GLfloat>("u_pressure_multiplier", pressure_mul);
+    update_particles_shader->setUniform<GLfloat>("u_viscosity_factor", viscosity_mul);
     update_particles_shader->setUniform<GLfloat>("u_pressure_target", pressure_target);
 
     uint8_t next_buffer = (current_buffer + 1) % 2;

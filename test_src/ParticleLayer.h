@@ -40,6 +40,7 @@ private:
 
     float kernel_radius = 0.035f;
     float pressure_mul = 1.f;
+    float viscosity_mul = 1.f;
     float pressure_target = 2.75f;
     GLuint nb_particles = 0;
     bool paused = true;
