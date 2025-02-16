@@ -36,6 +36,7 @@ void ParticleLayer::onAttach() {
 
 void ParticleLayer::onRender() {
     ImGui::Begin("Particle settings");
+        ImGui::Text("Average frame time: %f ms", average_frame_time);
         ImGui::SliderFloat("Pressure multiplier", &pressure_mul, 1.f, 500.f);
         ImGui::InputFloat("Target pressure", &pressure_target);
         ImGui::SliderFloat("Point size", &m_pSettings.pointSize, 1e-3f, 0.2f);
@@ -88,6 +89,19 @@ void ParticleLayer::onUpdate(float dt) {
 
     particles[0]->castTo(OGLR::BufType::VBO, OGLR::UsageType::Dynamic);
     particles[1]->castTo(OGLR::BufType::VBO, OGLR::UsageType::Dynamic);
+
+    // Update stats
+    frame_times[frame_idx] = dt;
+    if (frame_idx == NB_FRAMES - 1) {
+        average_frame_time = 0.f;
+        for (const float frame_time : frame_times) {
+            average_frame_time += frame_time;
+        }
+        average_frame_time /= NB_FRAMES;
+    }
+
+    frame_idx = (frame_idx + 1) % NB_FRAMES;
+
 }
 
 void ParticleLayer::onDetach() {

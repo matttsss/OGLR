@@ -21,28 +21,33 @@ private:
     void update_particles(float dt) const;
 
     struct ParticleSettings {
-        glm::ivec2 viewport_size;
+        glm::ivec2 viewport_size = glm::ivec2(0);
         float pointSize = 3e-3f;
     } m_pSettings;
 
     OGLR::Renderer m_Renderer {};
     OGLR::Camera m_Camera {1.0f * glm::vec3{0.0f, 1.0f, -1.0f},  {0.0f, -1.0f, 1.0f}};
 
-    OGLR::Buffer* ubo;
-    OGLR::Shader* render_shader;
-    OGLR::Shader* densities_shader;
-    OGLR::Shader* update_particles_shader;
+    OGLR::Buffer* ubo = nullptr;
+    OGLR::Shader* render_shader = nullptr;
+    OGLR::Shader* densities_shader = nullptr;
+    OGLR::Shader* update_particles_shader = nullptr;
 
     uint8_t current_buffer = 0;
     OGLR::VertexArray va;
-    OGLR::Buffer* densities;
-    OGLR::Buffer* particles[2];
+    OGLR::Buffer* densities = nullptr;
+    OGLR::Buffer* particles[2] = {nullptr, nullptr};
 
     float kernel_radius = 0.035f;
     float pressure_mul = 1.f;
     float pressure_target = 2.75f;
     GLuint nb_particles = 0;
     bool paused = true;
+
+    static constexpr uint32_t NB_FRAMES = 100;
+    float average_frame_time = 0.f;
+    uint32_t frame_idx = 0;
+    float frame_times[NB_FRAMES] = {};
 
 };
 
