@@ -38,6 +38,7 @@ void ParticleLayer::onAttach() {
 void ParticleLayer::onRender() {
     ImGui::Begin("Particle settings");
         ImGui::Text("Average frame time: %f ms", average_frame_time);
+        ImGui::SliderFloat("Gravity scale", &m_sim_settings.gravity_force, 1.f, 500.f);
         ImGui::SliderFloat("Viscosity multiplier", &m_sim_settings.viscosity_mul, 1.f, 500.f);
         ImGui::SliderFloat("Pressure multiplier", &m_sim_settings.pressure_mul, 1.f, 500.f);
         ImGui::InputFloat("Target pressure", &m_sim_settings.pressure_target);

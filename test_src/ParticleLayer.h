@@ -42,6 +42,7 @@ private:
     bool paused = true;
     struct ParticleSimSettings {
         GLuint nb_particles = 0;
+        float gravity_force = 1.f;
         float viscosity_mul = 1.f;
         float pressure_mul = 1.f;
         float pressure_target = 2.75f;

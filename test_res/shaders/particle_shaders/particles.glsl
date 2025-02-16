@@ -12,6 +12,7 @@ uniform float u_dt;
 
 layout (std140, binding = 3) uniform u_ParticleSettings {
     uint u_nb_particles;
+    float u_gravity_force;
     float u_viscosity_mul;
     float u_pressure_mul;
     float u_pressure_target;
@@ -87,7 +88,7 @@ void main() {
     Vertex vertex = vertices_in[vertexId];
     vec3 pressure_force = pressure_force(vertexId);
     vec3 viscosity_force = viscosity_force(vertexId);
-    vec3 gravity_force = vec3(0.f, 0.f, 0.f);
+    vec3 gravity_force = vec3(0.f, -u_gravity_force, 0.f);
     vec3 acceleration = (pressure_force + gravity_force + viscosity_force) / densities[vertexId];
 
     vertex.speed.xyz += acceleration * u_dt;
