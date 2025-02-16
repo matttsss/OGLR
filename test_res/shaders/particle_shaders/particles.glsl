@@ -1,5 +1,5 @@
 #version 450
-#define M_PI 3.14159265358979323846
+#include "test_res/shaders/particle_shaders/kernels.glsl"
 
 layout (local_size_x = 1) in;
 
@@ -37,21 +37,6 @@ float compute_shared_pressure(uint idx1, uint idx2) {
     return 0.5f * (pressure1 + pressure2);
 }
 
-vec3 spicky_kernel_grad(vec3 ref_pos, vec3 pos) {
-    vec3 v_diff = ref_pos - pos;
-    float dist = length(v_diff);
-
-    if (dist >= u_radius || dist < 1e-6)
-        return vec3(0.0);
-
-    const float volume = M_PI * pow(u_radius, 6) / 15.f;
-
-    float x = u_radius - dist;
-    vec3 grad = 3.f * v_diff * x * x / dist;
-
-    return grad / volume;
-}
-
 vec3 pressure_force(uint idx) {
     const vec3 pos = vertices_in[idx].pos.xyz;
 
@@ -61,7 +46,7 @@ vec3 pressure_force(uint idx) {
             continue;
 
         const float avg_pressure = compute_shared_pressure(idx, i);
-        res += avg_pressure * spicky_kernel_grad(pos, vertices_in[i].pos.xyz) / densities[i];
+        res += avg_pressure * spicky_kernel_grad_3(pos, vertices_in[i].pos.xyz, u_radius) / densities[i];
     }
 
     return res;
